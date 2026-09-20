@@ -1,0 +1,144 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Ica desert / mediterranean */
+  --warm-white: #f8f5ef;
+  --sand: #ebe2d3;
+  --sand-muted: #e3d7c4;
+  --sand-border: #d4c4ae;
+  --olive: #6a7a52;
+  --olive-deep: #3f4a32;
+  --olive-muted: #7d8a6a;
+  --ink: #2a2e24;
+  --ink-soft: #555c4c;
+
+  --background: var(--warm-white);
+  --foreground: var(--ink);
+  --card: #fffdf9;
+  --card-foreground: var(--ink);
+  --popover: #fffdf9;
+  --popover-foreground: var(--ink);
+  --primary: var(--olive-deep);
+  --primary-foreground: var(--warm-white);
+  --secondary: var(--sand);
+  --secondary-foreground: var(--olive-deep);
+  --muted: var(--sand-muted);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--sand);
+  --accent-foreground: var(--olive-deep);
+  --destructive: oklch(0.55 0.18 25);
+  --border: var(--sand-border);
+  --input: var(--sand-border);
+  --ring: var(--olive);
+  --chart-1: var(--olive);
+  --chart-2: var(--sand-muted);
+  --chart-3: var(--olive-deep);
+  --chart-4: #a89068;
+  --chart-5: #8a9a72;
+  --radius: 0.625rem;
+  --sidebar: var(--warm-white);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--olive-deep);
+  --sidebar-primary-foreground: var(--warm-white);
+  --sidebar-accent: var(--sand);
+  --sidebar-accent-foreground: var(--olive-deep);
+  --sidebar-border: var(--sand-border);
+  --sidebar-ring: var(--olive);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(ellipse 120% 80% at 10% -10%, rgb(106 122 82 / 0.08), transparent 50%),
+      radial-gradient(ellipse 90% 60% at 100% 20%, rgb(168 144 104 / 0.12), transparent 45%),
+      linear-gradient(180deg, var(--warm-white), #f3eee4 40%, var(--warm-white));
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+  }
+}
+
+.section-shell {
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+}
+
+.section-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--olive);
+}
+
+.section-title {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  line-height: 1.1;
+  color: var(--olive-deep);
+  margin-top: 0.35rem;
+}
+
+.section-lead {
+  color: var(--ink-soft);
+  line-height: 1.65;
+  font-size: 1.05rem;
+}
+
+.hero-grain {
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
