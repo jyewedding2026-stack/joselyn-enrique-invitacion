@@ -1,12 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { ImagePlus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { wedding } from "@/content/wedding";
-import { Button } from "@/components/ui/button";
 import { useOrigin } from "@/hooks/use-client-store";
 import {
   addAlbumFile,
@@ -25,27 +24,52 @@ export default function AlbumPage() {
   const [totalBytes, setTotalBytes] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const refresh = useCallback(async () => {
-    try {
-      setError(null);
-      const [list, total] = await Promise.all([
-        listAlbumItems(),
-        getAlbumTotalBytes(),
-      ]);
-      setItems(list);
-      setTotalBytes(total);
-    } catch {
-      setError("No se pudo cargar el álbum en este navegador.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  async function reloadAlbum() {
+    const [list, total] = await Promise.all([
+      listAlbumItems(),
+      getAlbumTotalBytes(),
+    ]);
+    setItems(list);
+    setTotalBytes(total);
+  }
 
   useEffect(() => {
-    // IndexedDB is async; hydrate gallery after mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- async client store hydrate
-    void refresh();
-  }, [refresh]);
+    let cancelled = false;
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) {
+        setLoading(false);
+        setError(
+          (prev) =>
+            prev ?? "El álbum tardó demasiado en cargar. Recarga la página."
+        );
+      }
+    }, 6000);
+
+    void (async () => {
+      try {
+        setError(null);
+        const [list, total] = await Promise.all([
+          listAlbumItems(),
+          getAlbumTotalBytes(),
+        ]);
+        if (cancelled) return;
+        setItems(list);
+        setTotalBytes(total);
+      } catch {
+        if (!cancelled) {
+          setError("No se pudo cargar el álbum en este navegador.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+        window.clearTimeout(timeout);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+    };
+  }, []);
 
   async function onFilesSelected(files: FileList | null) {
     if (!files?.length) return;
@@ -56,9 +80,11 @@ export default function AlbumPage() {
         await addAlbumFile(file);
       }
       toast.success(
-        files.length === 1 ? "Archivo añadido" : `${files.length} archivos añadidos`
+        files.length === 1
+          ? "Archivo añadido"
+          : `${files.length} archivos añadidos`
       );
-      await refresh();
+      await reloadAlbum();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Error al subir el archivo.";
@@ -128,16 +154,15 @@ export default function AlbumPage() {
             className="hidden"
             onChange={(e) => void onFilesSelected(e.target.files)}
           />
-          <Button
+          <button
             type="button"
-            size="lg"
-            className="bg-[var(--olive)] text-[var(--warm-white)] hover:bg-[var(--olive-deep)]"
+            className="inline-flex h-11 items-center gap-2 rounded-lg bg-[var(--olive)] px-4 text-sm font-medium text-[var(--warm-white)] hover:bg-[var(--olive-deep)] disabled:opacity-60"
             disabled={uploading}
             onClick={() => inputRef.current?.click()}
           >
-            <ImagePlus data-icon="inline-start" />
+            <ImagePlus className="size-4" />
             {uploading ? "Subiendo…" : "Subir fotos o videos"}
-          </Button>
+          </button>
           <p className="text-xs text-[var(--olive-muted)]">
             Máx. {(wedding.album.maxFileBytes / (1024 * 1024)).toFixed(0)} MB por
             archivo · {usedMb}/{maxMb} MB usados

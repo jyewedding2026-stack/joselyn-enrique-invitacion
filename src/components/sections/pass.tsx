@@ -6,12 +6,11 @@ import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { wedding } from "@/content/wedding";
 import { FadeIn } from "@/components/motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { savePass } from "@/lib/storage";
+import { savePass, type DigitalPass } from "@/lib/storage";
 import { useOrigin, usePasses } from "@/hooks/use-client-store";
-import type { DigitalPass } from "@/lib/storage";
+
+const fieldClass =
+  "h-10 w-full rounded-lg border border-[var(--sand-border)] bg-[var(--warm-white)] px-3 text-base text-[var(--ink)] outline-none focus-visible:border-[var(--olive)] focus-visible:ring-2 focus-visible:ring-[var(--olive)]/30";
 
 export function PassSection() {
   const passes = usePasses();
@@ -20,8 +19,7 @@ export function PassSection() {
   const [guestCount, setGuestCount] = useState("2");
   const [latest, setLatest] = useState<DigitalPass | null>(null);
 
-  function onCreate(e: React.FormEvent) {
-    e.preventDefault();
+  function createPass() {
     const name = familyName.trim();
     if (!name) {
       toast.error("Indica el nombre del invitado o familia.");
@@ -54,36 +52,47 @@ export function PassSection() {
         <div className="mt-10 grid gap-10 md:grid-cols-2">
           <FadeIn>
             <form
-              onSubmit={onCreate}
               className="space-y-4 rounded-xl border border-[var(--sand-border)] bg-[var(--warm-white)] p-5 md:p-6"
+              onSubmit={(e) => {
+                e.preventDefault();
+                createPass();
+              }}
             >
               <div className="space-y-2">
-                <Label htmlFor="pass-family">Invitado o familia</Label>
-                <Input
+                <label htmlFor="pass-family" className="text-sm font-medium">
+                  Invitado o familia
+                </label>
+                <input
                   id="pass-family"
+                  name="familyName"
+                  className={fieldClass}
                   value={familyName}
                   onChange={(e) => setFamilyName(e.target.value)}
                   placeholder="Familia Pérez"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="pass-count">Personas en el pase</Label>
-                <Input
+                <label htmlFor="pass-count" className="text-sm font-medium">
+                  Personas en el pase
+                </label>
+                <input
                   id="pass-count"
+                  name="guestCount"
                   type="number"
                   min={1}
                   max={20}
+                  className={fieldClass}
                   value={guestCount}
                   onChange={(e) => setGuestCount(e.target.value)}
                 />
               </div>
-              <Button
-                type="submit"
-                size="lg"
-                className="bg-[var(--olive)] text-[var(--warm-white)] hover:bg-[var(--olive-deep)]"
+              <button
+                type="button"
+                className="inline-flex h-11 items-center rounded-lg bg-[var(--olive)] px-5 text-base font-medium text-[var(--warm-white)] hover:bg-[var(--olive-deep)]"
+                onClick={createPass}
               >
                 Generar pase QR
-              </Button>
+              </button>
             </form>
           </FadeIn>
 
@@ -107,13 +116,12 @@ export function PassSection() {
                     fgColor="#3f4a32"
                   />
                 </div>
-                <Button
-                  render={<Link href={`/pase/${latest.id}`} />}
-                  variant="outline"
-                  className="mt-4 border-[var(--olive)]/30"
+                <Link
+                  href={`/pase/${latest.id}`}
+                  className="mt-4 inline-flex h-9 items-center rounded-lg border border-[var(--olive)]/30 px-3 text-sm text-[var(--olive-deep)] hover:bg-[var(--sand-muted)]/40"
                 >
                   Ver pase completo
-                </Button>
+                </Link>
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-[var(--sand-border)] bg-[var(--warm-white)]/60 p-6 text-sm text-[var(--ink-soft)]">

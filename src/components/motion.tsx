@@ -4,8 +4,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
 /**
- * Subtle enter motion that never leaves content invisible on SSR/hash nav.
- * Previous opacity:0 initials caused blank sections until whileInView fired.
+ * Enter motion without CSS transforms — Leaflet maps break inside transformed ancestors.
+ * Content stays visible on first paint (no opacity:0 SSR blank).
  */
 export function FadeIn({
   children,
@@ -23,10 +23,10 @@ export function FadeIn({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 1, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay }}
+      initial={{ opacity: 0.88 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay }}
     >
       {children}
     </motion.div>
@@ -47,9 +47,9 @@ export function HeroMotion({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 1, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0.9 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>

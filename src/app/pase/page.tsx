@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { wedding } from "@/content/wedding";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { savePass } from "@/lib/storage";
 import { useOrigin, usePasses } from "@/hooks/use-client-store";
+
+const fieldClass =
+  "h-10 w-full rounded-lg border border-[var(--sand-border)] bg-[var(--warm-white)] px-3 text-base text-[var(--ink)] outline-none focus-visible:border-[var(--olive)] focus-visible:ring-2 focus-visible:ring-[var(--olive)]/30";
 
 export default function PaseIndexPage() {
   const router = useRouter();
@@ -18,9 +18,9 @@ export default function PaseIndexPage() {
   const origin = useOrigin();
   const [familyName, setFamilyName] = useState("");
   const [guestCount, setGuestCount] = useState("2");
+  const [pending, setPending] = useState(false);
 
-  function onCreate(e: React.FormEvent) {
-    e.preventDefault();
+  function createPass() {
     const name = familyName.trim();
     if (!name) {
       toast.error("Indica el nombre del invitado o familia.");
@@ -31,9 +31,15 @@ export default function PaseIndexPage() {
       toast.error("El número de personas debe estar entre 1 y 20.");
       return;
     }
-    const pass = savePass({ familyName: name, guestCount: count });
-    toast.success("Pase creado");
-    router.push(`/pase/${pass.id}`);
+    setPending(true);
+    try {
+      const pass = savePass({ familyName: name, guestCount: count });
+      toast.success("Pase creado");
+      router.push(`/pase/${pass.id}`);
+    } catch {
+      setPending(false);
+      toast.error("No se pudo crear el pase.");
+    }
   }
 
   return (
@@ -51,35 +57,48 @@ export default function PaseIndexPage() {
         <p className="mt-2 text-[var(--ink-soft)]">{wedding.pass.description}</p>
 
         <form
-          onSubmit={onCreate}
           className="mt-8 space-y-4 rounded-xl border border-[var(--sand-border)] bg-[var(--sand-muted)]/40 p-5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            createPass();
+          }}
         >
           <div className="space-y-2">
-            <Label htmlFor="family">Invitado o familia</Label>
-            <Input
+            <label htmlFor="family" className="text-sm font-medium">
+              Invitado o familia
+            </label>
+            <input
               id="family"
+              name="familyName"
+              className={fieldClass}
               value={familyName}
               onChange={(e) => setFamilyName(e.target.value)}
               placeholder="Familia Pérez"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="count">Personas</Label>
-            <Input
+            <label htmlFor="count" className="text-sm font-medium">
+              Personas
+            </label>
+            <input
               id="count"
+              name="guestCount"
               type="number"
               min={1}
               max={20}
+              className={fieldClass}
               value={guestCount}
               onChange={(e) => setGuestCount(e.target.value)}
             />
           </div>
-          <Button
-            type="submit"
-            className="w-full bg-[var(--olive)] text-[var(--warm-white)] hover:bg-[var(--olive-deep)]"
+          <button
+            type="button"
+            disabled={pending}
+            className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-[var(--olive)] text-sm font-medium text-[var(--warm-white)] hover:bg-[var(--olive-deep)] disabled:opacity-60"
+            onClick={createPass}
           >
-            Generar pase
-          </Button>
+            {pending ? "Generando…" : "Generar pase"}
+          </button>
         </form>
 
         {passes.length > 0 && (

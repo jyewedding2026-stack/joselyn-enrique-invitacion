@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 
 const markerIcon = L.icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -14,14 +13,6 @@ const markerIcon = L.icon({
   iconAnchor: [12, 41],
 });
 
-function Recenter({ lat, lng }: { lat: number; lng: number }) {
-  const map = useMap();
-  useEffect(() => {
-    map.setView([lat, lng], 15);
-  }, [lat, lng, map]);
-  return null;
-}
-
 type VenueMapProps = {
   lat: number;
   lng: number;
@@ -29,8 +20,23 @@ type VenueMapProps = {
 };
 
 export function VenueMap({ lat, lng, label }: VenueMapProps) {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => setReady(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
+  if (!ready) {
+    return (
+      <div className="flex h-56 w-full items-center justify-center rounded-xl border border-[var(--sand-border)] bg-[var(--sand-muted)] text-sm text-[var(--olive-muted)] md:h-64">
+        Cargando mapa…
+      </div>
+    );
+  }
+
   return (
-    <div className="h-56 w-full overflow-hidden rounded-xl border border-[var(--sand-border)] md:h-64">
+    <div className="relative z-0 h-56 w-full overflow-hidden rounded-xl border border-[var(--sand-border)] md:h-64">
       <MapContainer
         center={[lat, lng]}
         zoom={15}
@@ -43,7 +49,6 @@ export function VenueMap({ lat, lng, label }: VenueMapProps) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={[lat, lng]} icon={markerIcon} />
-        <Recenter lat={lat} lng={lng} />
       </MapContainer>
     </div>
   );
