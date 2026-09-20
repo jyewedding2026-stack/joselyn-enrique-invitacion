@@ -36,19 +36,35 @@ type AlbumDB = DBSchema & {
   };
 };
 
+const EMPTY_RSVPS: RsvpEntry[] = [];
+const EMPTY_PASSES: DigitalPass[] = [];
+
+let rsvpCacheRaw: string | null | undefined;
+let rsvpCache: RsvpEntry[] = EMPTY_RSVPS;
+let passCacheRaw: string | null | undefined;
+let passCache: DigitalPass[] = EMPTY_PASSES;
+
 function uid() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+/** Stable snapshot for useSyncExternalStore — same reference if data unchanged. */
 export function loadRsvps(): RsvpEntry[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined") return EMPTY_RSVPS;
   try {
     const raw = localStorage.getItem(RSVP_KEY);
-    if (!raw) return [];
+    if (raw === rsvpCacheRaw) return rsvpCache;
+    rsvpCacheRaw = raw;
+    if (!raw) {
+      rsvpCache = EMPTY_RSVPS;
+      return rsvpCache;
+    }
     const parsed = JSON.parse(raw) as RsvpEntry[];
-    return Array.isArray(parsed) ? parsed : [];
+    rsvpCache = Array.isArray(parsed) ? parsed : EMPTY_RSVPS;
+    return rsvpCache;
   } catch {
-    return [];
+    rsvpCache = EMPTY_RSVPS;
+    return rsvpCache;
   }
 }
 
@@ -60,9 +76,12 @@ export function saveRsvp(
     id: uid(),
     createdAt: new Date().toISOString(),
   };
-  const all = loadRsvps();
+  const all = [...loadRsvps()];
   all.unshift(entry);
-  localStorage.setItem(RSVP_KEY, JSON.stringify(all));
+  const raw = JSON.stringify(all);
+  localStorage.setItem(RSVP_KEY, raw);
+  rsvpCacheRaw = raw;
+  rsvpCache = all;
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("boda-rsvp-changed"));
   }
@@ -70,14 +89,21 @@ export function saveRsvp(
 }
 
 export function loadPasses(): DigitalPass[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined") return EMPTY_PASSES;
   try {
     const raw = localStorage.getItem(PASSES_KEY);
-    if (!raw) return [];
+    if (raw === passCacheRaw) return passCache;
+    passCacheRaw = raw;
+    if (!raw) {
+      passCache = EMPTY_PASSES;
+      return passCache;
+    }
     const parsed = JSON.parse(raw) as DigitalPass[];
-    return Array.isArray(parsed) ? parsed : [];
+    passCache = Array.isArray(parsed) ? parsed : EMPTY_PASSES;
+    return passCache;
   } catch {
-    return [];
+    passCache = EMPTY_PASSES;
+    return passCache;
   }
 }
 
@@ -92,7 +118,10 @@ export function savePass(
   };
   const all = loadPasses().filter((p) => p.id !== pass.id);
   all.unshift(pass);
-  localStorage.setItem(PASSES_KEY, JSON.stringify(all));
+  const raw = JSON.stringify(all);
+  localStorage.setItem(PASSES_KEY, raw);
+  passCacheRaw = raw;
+  passCache = all;
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("boda-pass-changed"));
   }
