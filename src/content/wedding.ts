@@ -69,7 +69,7 @@ export const wedding = {
         title: "El comienzo",
         body: "PLACEHOLDER: Primer encuentro, primera cita, o cómo empezó todo.",
         image:
-          "https://images.unsplash.com/photo-1522673607200-164a2e637a08?w=1000&q=80",
+          "https://images.unsplash.com/photo-1519741497674-611481863552?w=1000&q=80",
       },
       {
         title: "El camino juntos",
