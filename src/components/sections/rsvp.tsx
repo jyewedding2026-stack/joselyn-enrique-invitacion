@@ -53,7 +53,7 @@ export function RsvpSection() {
   }
 
   return (
-    <section id="rsvp" className="section-shell bg-[var(--sand)]">
+    <section id="rsvp" className="invite-panel section-shell bg-[var(--sand)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <p className="section-eyebrow">RSVP</p>

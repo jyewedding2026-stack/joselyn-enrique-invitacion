@@ -11,7 +11,7 @@ const nav = [
 
 export function SiteHeader() {
   return (
-    <header className="absolute inset-x-0 top-0 z-30">
+    <header className="pointer-events-none absolute inset-x-0 top-0 z-40 [&_a]:pointer-events-auto">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:px-8">
         <a
           href="#inicio"

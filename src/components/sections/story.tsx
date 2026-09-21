@@ -4,7 +4,7 @@ import { FadeIn } from "@/components/motion";
 
 export function StorySection() {
   return (
-    <section id="historia" className="section-shell bg-[var(--warm-white)]">
+    <section id="historia" className="invite-panel section-shell bg-[var(--warm-white)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <p className="section-eyebrow">Bienvenidos</p>

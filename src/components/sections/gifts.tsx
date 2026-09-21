@@ -22,7 +22,7 @@ export function GiftsSection() {
   const [copied, setCopied] = useState<string | null>(null);
 
   return (
-    <section id="regalos" className="section-shell bg-[var(--warm-white)]">
+    <section id="regalos" className="invite-panel section-shell bg-[var(--warm-white)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <p className="section-eyebrow">Con cariño</p>

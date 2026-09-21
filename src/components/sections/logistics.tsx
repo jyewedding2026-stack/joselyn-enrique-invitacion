@@ -1,8 +1,9 @@
+"use client";
+
 import { ExternalLink, MapPin } from "lucide-react";
 import { wedding } from "@/content/wedding";
 import { FadeIn } from "@/components/motion";
-import { VenueMap } from "@/components/venue-map-dynamic";
-import { Button } from "@/components/ui/button";
+import { GoogleVenueMap } from "@/components/google-venue-map";
 
 export function LogisticsSection() {
   const venues = [
@@ -27,7 +28,7 @@ export function LogisticsSection() {
   ];
 
   return (
-    <section id="logistica" className="section-shell bg-[var(--sand)]">
+    <section id="logistica" className="invite-panel section-shell bg-[var(--sand)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <p className="section-eyebrow">El día</p>
@@ -55,15 +56,20 @@ export function LogisticsSection() {
                   </p>
                 </div>
               </div>
-              <VenueMap lat={venue.lat} lng={venue.lng} label={venue.place} />
-              <Button
-                render={<a href={venue.mapsUrl} target="_blank" rel="noreferrer" />}
-                variant="outline"
-                className="border-[var(--olive)]/30 text-[var(--olive-deep)]"
+              <GoogleVenueMap
+                lat={venue.lat}
+                lng={venue.lng}
+                label={venue.place}
+              />
+              <a
+                href={venue.mapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--olive)]/30 px-3 text-sm font-medium text-[var(--olive-deep)] hover:bg-[var(--warm-white)]"
               >
-                Abrir en Maps
-                <ExternalLink data-icon="inline-end" />
-              </Button>
+                Abrir en Google Maps
+                <ExternalLink className="size-3.5" />
+              </a>
             </FadeIn>
           ))}
         </div>

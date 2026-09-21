@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "leaflet/dist/leaflet.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -114,6 +113,22 @@
 
 .section-shell {
   padding-block: clamp(3.5rem, 8vw, 6rem);
+}
+
+/* Content panels slide over sticky hero / photo breaks (mobile card feel) */
+.invite-panel {
+  position: relative;
+  z-index: 10;
+  border-top-left-radius: 1.75rem;
+  border-top-right-radius: 1.75rem;
+  box-shadow: 0 -12px 40px rgba(40, 48, 28, 0.12);
+}
+
+@media (min-width: 768px) {
+  .invite-panel {
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
+  }
 }
 
 .section-eyebrow {

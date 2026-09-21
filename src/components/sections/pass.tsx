@@ -39,7 +39,7 @@ export function PassSection() {
   const passUrl = latest ? `${origin || ""}/pase/${latest.id}` : "";
 
   return (
-    <section id="pase" className="section-shell bg-[var(--sand)]">
+    <section id="pase" className="invite-panel section-shell bg-[var(--sand)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <p className="section-eyebrow">Acceso</p>
