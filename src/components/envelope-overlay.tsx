@@ -29,7 +29,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-[var(--olive-deep)]/92 px-6 touch-none md:bg-[color-mix(in_oklab,var(--olive-deep)_78%,transparent)] md:backdrop-blur-md"
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-[var(--olive-deep)] px-6 touch-none md:bg-[color-mix(in_oklab,var(--olive-deep)_82%,black)] md:backdrop-blur-sm"
           initial={reduce ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
