@@ -22,16 +22,16 @@ export function Countdown() {
 
   if (!now) {
     return (
-      <div className="mt-6 grid grid-cols-4 gap-2 text-center text-white/90 sm:max-w-md">
+      <div className="mt-4 grid max-w-sm grid-cols-4 gap-1.5 text-center text-white/90 sm:mt-6 sm:max-w-md sm:gap-2">
         {["Días", "Horas", "Min", "Seg"].map((label) => (
           <div
             key={label}
-            className="rounded-lg bg-black/20 px-2 py-3 backdrop-blur-sm"
+            className="rounded-lg bg-black/20 px-1.5 py-2 sm:px-2 sm:py-3 sm:backdrop-blur-sm"
           >
-            <p className="font-[family-name:var(--font-display)] text-2xl tabular-nums">
+            <p className="font-[family-name:var(--font-display)] text-xl tabular-nums sm:text-2xl">
               —
             </p>
-            <p className="mt-1 text-[10px] tracking-[0.16em] uppercase opacity-80">
+            <p className="mt-0.5 text-[9px] tracking-[0.14em] uppercase opacity-80 sm:mt-1 sm:text-[10px] sm:tracking-[0.16em]">
               {label}
             </p>
           </div>
@@ -54,20 +54,20 @@ export function Countdown() {
   ];
 
   return (
-    <div className="mt-6">
-      <p className="font-[family-name:var(--font-display)] text-lg italic text-white/90">
+    <div className="mt-4 sm:mt-6">
+      <p className="font-[family-name:var(--font-display)] text-base italic text-white/90 sm:text-lg">
         Faltan
       </p>
-      <div className="mt-2 grid grid-cols-4 gap-2 text-center text-white sm:max-w-md">
+      <div className="mt-2 grid max-w-sm grid-cols-4 gap-1.5 text-center text-white sm:max-w-md sm:gap-2">
         {parts.map((part) => (
           <div
             key={part.label}
-            className="rounded-lg bg-black/25 px-2 py-3 backdrop-blur-sm"
+            className="rounded-lg bg-black/25 px-1.5 py-2 sm:px-2 sm:py-3 sm:backdrop-blur-sm"
           >
-            <p className="font-[family-name:var(--font-display)] text-2xl tabular-nums sm:text-3xl">
+            <p className="font-[family-name:var(--font-display)] text-xl tabular-nums sm:text-3xl">
               {part.value}
             </p>
-            <p className="mt-1 text-[10px] tracking-[0.16em] text-white/75 uppercase">
+            <p className="mt-0.5 text-[9px] tracking-[0.14em] text-white/75 uppercase sm:mt-1 sm:text-[10px] sm:tracking-[0.16em]">
               {part.label}
             </p>
           </div>

@@ -10,8 +10,8 @@ export function PhotoBreak({
   alt: string;
 }) {
   return (
-    <div className="relative z-0 h-[70svh] w-full md:h-[80svh]">
-      <div className="sticky top-0 h-[70svh] w-full overflow-hidden md:h-[80svh]">
+    <div className="relative z-0 h-[115svh] w-full md:h-[135svh]">
+      <div className="sticky top-0 h-[62svh] w-full overflow-hidden md:h-[80svh]">
         <Image
           src={src}
           alt={alt}

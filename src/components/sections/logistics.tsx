@@ -28,7 +28,7 @@ export function LogisticsSection() {
   ];
 
   return (
-    <section id="logistica" className="invite-panel section-shell bg-[var(--sand)]">
+    <section id="logistica" className="relative z-10 section-shell bg-[var(--sand)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <p className="section-eyebrow">El día</p>

@@ -4,7 +4,7 @@ import { FadeIn } from "@/components/motion";
 
 export function LodgingSection() {
   return (
-    <section id="hospedaje" className="invite-panel section-shell bg-[var(--sand)]">
+    <section id="hospedaje" className="relative z-10 section-shell bg-[var(--sand)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <FadeIn>
           <p className="section-eyebrow">Para quienes viajan</p>

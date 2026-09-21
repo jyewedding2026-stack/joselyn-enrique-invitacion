@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Outfit, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -24,6 +24,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: `${wedding.couple.displayName} · Invitación de boda`,
   description: `Celebra con ${wedding.couple.displayName} el ${wedding.date.display} en Ica.`,
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f8f5ef",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

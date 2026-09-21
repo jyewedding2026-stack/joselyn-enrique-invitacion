@@ -24,7 +24,7 @@ export function AlbumCtaSection() {
   }
 
   return (
-    <section id="album" className="invite-panel section-shell bg-[var(--warm-white)]">
+    <section id="album" className="relative z-10 section-shell bg-[var(--warm-white)]">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <div className="grid items-center gap-10 md:grid-cols-[1.2fr_0.8fr]">
           <FadeIn>

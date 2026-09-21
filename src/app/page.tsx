@@ -42,7 +42,7 @@ export default function HomePage() {
         <AlbumCtaSection />
         <PassSection />
       </main>
-      <footer className="invite-panel relative z-10 border-t border-[var(--sand-border)] bg-[var(--warm-white)] py-10 text-center">
+      <footer className="relative z-10 border-t border-[var(--sand-border)] bg-[var(--warm-white)] py-10 text-center">
         <p className="font-[family-name:var(--font-display)] text-2xl text-[var(--olive-deep)]">
           {wedding.couple.displayName}
         </p>
