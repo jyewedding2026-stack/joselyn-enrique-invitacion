@@ -45,15 +45,15 @@ export const wedding = {
       "Te esperamos con elegancia: trajes, vestidos largos o cocktail sofisticado. Evita blanco y crema.",
     inspirationImages: [
       {
-        src: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80",
+        src: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=480&q=55",
         alt: "Inspiración vestido formal",
       },
       {
-        src: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80",
+        src: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=480&q=55",
         alt: "Inspiración traje formal",
       },
       {
-        src: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800&q=80",
+        src: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=480&q=55",
         alt: "Inspiración look cocktail",
       },
     ],
@@ -69,19 +69,19 @@ export const wedding = {
         title: "El comienzo",
         body: "PLACEHOLDER: Primer encuentro, primera cita, o cómo empezó todo.",
         image:
-          "https://images.unsplash.com/photo-1519741497674-611481863552?w=1000&q=80",
+          "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=720&q=55",
       },
       {
         title: "El camino juntos",
         body: "PLACEHOLDER: Viajes, risas y momentos que sellaron su historia.",
         image:
-          "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=1000&q=80",
+          "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=720&q=55",
       },
       {
         title: "El sí",
         body: "PLACEHOLDER: La propuesta y el comienzo de esta nueva etapa.",
         image:
-          "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1000&q=80",
+          "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=720&q=55",
       },
     ],
   },
@@ -125,7 +125,7 @@ export const wedding = {
 
   hero: {
     image:
-      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=1600&q=80",
+      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&w=1080&q=55",
     imageAlt: "Dunas doradas al atardecer en el desierto",
   },
 

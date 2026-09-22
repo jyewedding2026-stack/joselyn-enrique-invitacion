@@ -3,6 +3,7 @@
  * Prepare `out/` for free Arweave Turbo uploads (≤100 KiB per file):
  * - strip Next.js polyfills
  * - split oversized JS into part files + a sync loader (webpack-compatible)
+ * - prefetch part files so sync XHR hits cache (much faster on Arweave)
  */
 import {
   existsSync,
@@ -12,11 +13,11 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { join, relative } from "node:path";
+import { dirname, join, relative } from "node:path";
 
 const ROOT = join(process.cwd(), "out");
 const LIMIT = 100 * 1024;
-const PART = 90 * 1024;
+const PART = 100 * 1024 - 64;
 
 function walk(dir, acc = []) {
   for (const name of readdirSync(dir, { withFileTypes: true })) {
@@ -40,6 +41,7 @@ function stripPolyfills() {
 }
 
 function splitLargeJs() {
+  const partHrefs = [];
   for (const file of walk(ROOT)) {
     if (!file.endsWith(".js") || file.includes(".part")) continue;
     const size = statSync(file).size;
@@ -49,9 +51,9 @@ function splitLargeJs() {
     const parts = Math.ceil(buf.length / PART);
     for (let i = 0; i < parts; i++) {
       writeFileSync(`${file}.part${i}`, buf.subarray(i * PART, (i + 1) * PART));
+      partHrefs.push("./" + relative(ROOT, `${file}.part${i}`).split("\\").join("/"));
     }
-    // Sync XHR + eval so webpack chunk registration stays synchronous.
-    const classic = `!function(){var p=${parts},t=[],b=document.currentScript.src;for(var i=0;i<p;i++){var x=new XMLHttpRequest();x.open("GET",b+".part"+i,!1);x.overrideMimeType("text/plain; charset=x-user-defined");x.send();t.push(x.responseText)}(0,eval)(t.join(""))}();`;
+    const classic = `!function(){var p=${parts},t=[],b=document.currentScript.src;for(var i=0;i<p;i++){var x=new XMLHttpRequest();x.open("GET",b+".part"+i,!1);x.send();t.push(x.responseText)}(0,eval)(t.join(""))}();`;
     writeFileSync(file, classic);
     console.log(
       "split",
@@ -63,6 +65,33 @@ function splitLargeJs() {
       Buffer.byteLength(classic),
     );
   }
+  return partHrefs;
+}
+
+function injectPrefetch(partHrefs) {
+  if (!partHrefs.length) return;
+  const tags = partHrefs
+    .map((href) => `<link rel="preload" as="fetch" href="${href}" crossorigin>`)
+    .join("");
+  for (const file of walk(ROOT).filter((f) => f.endsWith(".html"))) {
+    let html = readFileSync(file, "utf8");
+    if (!html.includes("</head>")) continue;
+    // Resolve relative to this HTML file directory
+    const htmlDir = dirname(relative(ROOT, file)).replace(/\\/g, "/");
+    const localTags = partHrefs
+      .map((href) => {
+        // href is ./_next/... from site root; HTML in subdirs need ../
+        if (!htmlDir || htmlDir === ".") return `<link rel="preload" as="fetch" href="${href}" crossorigin>`;
+        const depth = htmlDir.split("/").filter(Boolean).length;
+        const prefix = "../".repeat(depth);
+        return `<link rel="preload" as="fetch" href="${prefix}${href.slice(2)}" crossorigin>`;
+      })
+      .join("");
+    html = html.replace("</head>", `${localTags}</head>`);
+    // Drop async on scripts so critical chunks run more predictably
+    html = html.replace(/<script src="([^"]+)" async="">/g, '<script src="$1">');
+    writeFileSync(file, html);
+  }
 }
 
 if (!existsSync(ROOT)) {
@@ -70,7 +99,8 @@ if (!existsSync(ROOT)) {
   process.exit(1);
 }
 stripPolyfills();
-splitLargeJs();
+const parts = splitLargeJs();
+injectPrefetch(parts);
 
 const overs = walk(ROOT).filter((f) => statSync(f).size > LIMIT);
 if (overs.length) {

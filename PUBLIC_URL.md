@@ -1,13 +1,9 @@
 # Link público permanente
 
-**No caduca. No hay que reclamar ni crear cuenta.**
+**No caduca. No hay que reclamar.**
 
-## Invitación (Arweave)
+- https://ar-io.dev/SHqCPXwfaEt3Y04PgziDfzKRGbaZoKiY5pKVM4PwFok
+- https://turbo-gateway.com/SHqCPXwfaEt3Y04PgziDfzKRGbaZoKiY5pKVM4PwFok
+- https://arweave.net/SHqCPXwfaEt3Y04PgziDfzKRGbaZoKiY5pKVM4PwFok (puede tardar unos minutos en propagar)
 
-https://ar-io.dev/3wB0zfTRdCOVpWLcj3sOeYtSyGGJfig5N9JWNASxoS4
-
-Mirror:
-- https://turbo-gateway.com/3wB0zfTRdCOVpWLcj3sOeYtSyGGJfig5N9JWNASxoS4
-- https://arweave.net/3wB0zfTRdCOVpWLcj3sOeYtSyGGJfig5N9JWNASxoS4 (puede tardar unos minutos en propagar)
-
-Republicar: `npm run publish:permanent`
+Publicado en Arweave el 2026-09-22T18:57:03.141Z.

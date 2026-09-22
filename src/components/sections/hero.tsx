@@ -16,7 +16,7 @@ export function HeroSection() {
           role="img"
           aria-label={wedding.hero.imageAlt}
         />
-        <div className="hero-grain absolute inset-0" aria-hidden />
+        <div className="hero-grain absolute inset-0 hidden md:block" aria-hidden />
 
         <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col justify-end px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-24 sm:pb-16 md:px-8 md:pb-24 md:pt-32">
           <HeroMotion>

@@ -1,24 +1,21 @@
 "use client";
 
-import Image from "next/image";
-
-export function PhotoBreak({
-  src,
-  alt,
-}: {
+type PhotoBreakProps = {
   src: string;
   alt: string;
-}) {
+};
+
+export function PhotoBreak({ src, alt }: PhotoBreakProps) {
   return (
     <div className="relative z-0 h-[115svh] w-full md:h-[135svh]">
       <div className="sticky top-0 h-[62svh] w-full overflow-hidden md:h-[80svh]">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={src}
           alt={alt}
-          fill
-          className="object-cover"
-          sizes="100vw"
-          priority={false}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(40,48,28,0.15),rgba(40,48,28,0.35))]" />
       </div>

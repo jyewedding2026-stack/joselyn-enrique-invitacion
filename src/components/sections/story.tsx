@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { wedding } from "@/content/wedding";
 import { FadeIn } from "@/components/motion";
 
@@ -21,13 +20,14 @@ export function StorySection() {
                 index % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
               }`}
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-                <Image
+              <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[var(--sand-muted)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={chapter.image}
                   alt={chapter.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div>
