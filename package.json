@@ -4,22 +4,24 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 43127 --hostname 0.0.0.0",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "npx --yes serve out -l 43127 --no-port-switching",
     "lint": "eslint",
     "keep:public": "bash scripts/keep-public.sh",
-    "publish:public": "node scripts/publish-public.mjs"
+    "publish:public": "node scripts/publish-arweave.mjs",
+    "prepare:arweave": "node scripts/prepare-arweave.mjs",
+    "publish:permanent": "node scripts/publish-arweave.mjs"
   },
   "dependencies": {
+    "@ardrive/turbo-sdk": "^2.0.0",
     "@base-ui/react": "^1.8.0",
+    "arweave": "^1.15.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cn": "^0.3.0",
-    "framer-motion": "^13.4.0",
     "idb": "^8.0.3",
     "lucide-react": "^1.47.0",
     "next": "16.3.5",
-    "next-themes": "^0.4.6",
     "qrcode.react": "^4.2.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",

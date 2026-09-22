@@ -1,18 +1,16 @@
 # Invitación digital — Joselyn & Enrique
 
-Invitación web tipo Invitify para la boda de **Joselyn y Enrique** (5 de diciembre de 2026, Ica). Next.js App Router + TypeScript + Tailwind + shadcn/ui. Copy en español. Persistencia demo solo en el navegador (`localStorage` + IndexedDB); sin backend, auth ni base de datos.
+Invitación web tipo Invitify para la boda de **Joselyn y Enrique** (5 de diciembre de 2026, Ica). Next.js App Router + TypeScript + Tailwind + shadcn/ui. Copy en español. Persistencia demo solo en el navegador (`localStorage` + IndexedDB).
 
-Export estático (`output: "export"`) para poder publicarla en hosting estático sin que el link dependa de un túnel frágil.
+Export estático (`output: "export"`) publicado de forma **permanente en Arweave** (sin reclamar, sin cuenta).
 
-## Link público
+## Link público permanente
 
-Ver siempre [`PUBLIC_URL.md`](PUBLIC_URL.md).
+Ver [`PUBLIC_URL.md`](PUBLIC_URL.md).
 
-- **Subdominio fijo (auto-recuperable):** https://invitacion-joselyn-enrique.loca.lt  
-  Mantenerlo vivo: `npm run keep:public`
-- **Vercel (permanente al reclamar):** `npm run publish:public` y abre el *claim URL* que imprime el script (1 clic).
+**Principal:** https://ar-io.dev/3wB0zfTRdCOVpWLcj3sOeYtSyGGJfig5N9JWNASxoS4
 
-## Cómo correr
+## Cómo correr en local
 
 ```bash
 npm install
@@ -22,24 +20,19 @@ npm start
 
 Abre [http://127.0.0.1:43127](http://127.0.0.1:43127).
 
-Para desarrollo con hot reload:
+Desarrollo:
 
 ```bash
 npm run dev
 ```
 
-## Publicar / no dejar caer el link
+## Publicar (permanente, sin reclamar)
 
 ```bash
-# 1) Hosting claimable en Vercel (recomendado para invitados)
-npm run publish:public
-# Abre el claim URL del resultado → el .vercel.app queda permanente
-
-# 2) Túnel con subdominio FIJO + watchdog (mismo link tras reinicios)
-npm run keep:public
+npm run publish:permanent
 ```
 
-El watchdog reinicia el servidor estático y el túnel `invitacion-joselyn-enrique.loca.lt` si se caen, para que el enlace no cambie.
+Esto genera el export estático, parte archivos grandes para el límite gratuito de Arweave Turbo y sube el sitio. El link nuevo queda en `PUBLIC_URL.md` y `publish-result.json`.
 
 ## Qué incluye
 

@@ -39,6 +39,7 @@ yarn-error.log*
 # local public hosting state
 .public-host.json
 publish-result.json
+arweave-wallet.json
 .netlify
 
 # typescript

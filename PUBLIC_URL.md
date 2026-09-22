@@ -1,14 +1,13 @@
-# Link público
+# Link público permanente
 
-## Principal (subdominio fijo — no cambia al reiniciar el túnel)
+**No caduca. No hay que reclamar ni crear cuenta.**
 
-https://invitacion-joselyn-enrique.loca.lt
+## Invitación (Arweave)
 
-Se mantiene con el watchdog: `npm run keep:public` (activo en esta sesión).
+https://ar-io.dev/3wB0zfTRdCOVpWLcj3sOeYtSyGGJfig5N9JWNASxoS4
 
-## Vercel (queda permanente si lo reclamas una vez)
+Mirror:
+- https://turbo-gateway.com/3wB0zfTRdCOVpWLcj3sOeYtSyGGJfig5N9JWNASxoS4
+- https://arweave.net/3wB0zfTRdCOVpWLcj3sOeYtSyGGJfig5N9JWNASxoS4 (puede tardar unos minutos en propagar)
 
-- Invitación: https://temporary-zippy-fjord-atygj1k.vercel.app
-- **Reclamar ahora (1 clic):** https://vercel.com/claim-deployment?code=c890d08e-4189-4a6c-9c28-5e9fa96728ba
-
-Tras reclamar, usa solo el link `.vercel.app` para invitados.
+Republicar: `npm run publish:permanent`
