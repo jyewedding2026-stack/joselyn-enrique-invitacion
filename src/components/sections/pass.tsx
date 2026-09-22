@@ -8,6 +8,7 @@ import { wedding } from "@/content/wedding";
 import { FadeIn } from "@/components/motion";
 import { savePass, type DigitalPass } from "@/lib/storage";
 import { useOrigin, usePasses } from "@/hooks/use-client-store";
+import { passPath } from "@/lib/pass-url";
 
 const fieldClass =
   "h-10 w-full rounded-lg border border-[var(--sand-border)] bg-[var(--warm-white)] px-3 text-base text-[var(--ink)] outline-none focus-visible:border-[var(--olive)] focus-visible:ring-2 focus-visible:ring-[var(--olive)]/30";
@@ -36,7 +37,7 @@ export function PassSection() {
     toast.success("Pase digital generado.");
   }
 
-  const passUrl = latest ? `${origin || ""}/pase/${latest.id}` : "";
+  const passUrl = latest ? `${origin || ""}${passPath(latest.id)}` : "";
 
   return (
     <section id="pase" className="relative z-10 section-shell bg-[var(--sand)]">
@@ -110,14 +111,14 @@ export function PassSection() {
                 </p>
                 <div className="mt-5 rounded-lg bg-[var(--sand-muted)]/60 p-4">
                   <QRCodeSVG
-                    value={passUrl || `/pase/${latest.id}`}
+                    value={passUrl || passPath(latest.id)}
                     size={160}
                     bgColor="transparent"
                     fgColor="#3f4a32"
                   />
                 </div>
                 <Link
-                  href={`/pase/${latest.id}`}
+                  href={passPath(latest.id)}
                   className="mt-4 inline-flex h-9 items-center rounded-lg border border-[var(--olive)]/30 px-3 text-sm text-[var(--olive-deep)] hover:bg-[var(--sand-muted)]/40"
                 >
                   Ver pase completo
@@ -139,7 +140,7 @@ export function PassSection() {
                   {passes.slice(0, 6).map((p) => (
                     <li key={p.id}>
                       <Link
-                        href={`/pase/${p.id}`}
+                        href={passPath(p.id)}
                         className="text-sm text-[var(--olive)] underline-offset-4 hover:underline"
                       >
                         {p.familyName} · {p.guestCount} pax

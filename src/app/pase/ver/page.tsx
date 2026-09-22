@@ -1,18 +1,21 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { wedding } from "@/content/wedding";
 import { useOrigin, usePassById } from "@/hooks/use-client-store";
+import { passPath } from "@/lib/pass-url";
 
-export default function PaseDetailPage() {
-  const params = useParams<{ id: string }>();
-  const pass = usePassById(params.id);
+function PaseDetailInner() {
+  const search = useSearchParams();
+  const id = search.get("id") ?? undefined;
+  const pass = usePassById(id);
   const origin = useOrigin();
-  const url = params.id ? `${origin || ""}/pase/${params.id}` : "";
+  const url = id ? `${origin || ""}${passPath(id)}` : "";
 
-  if (!params.id) {
+  if (!id) {
     return (
       <main className="mx-auto flex min-h-svh max-w-lg flex-col justify-center px-5 py-10">
         <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--olive-deep)]">
@@ -71,7 +74,7 @@ export default function PaseDetailPage() {
 
           <div className="my-8 rounded-xl bg-[var(--sand-muted)]/50 p-5">
             <QRCodeSVG
-              value={url || `/pase/${pass.id}`}
+              value={url || passPath(pass.id)}
               size={200}
               bgColor="transparent"
               fgColor="#3f4a32"
@@ -91,5 +94,19 @@ export default function PaseDetailPage() {
         </article>
       </div>
     </main>
+  );
+}
+
+export default function PaseDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto flex min-h-svh max-w-lg items-center justify-center px-5">
+          <p className="text-[var(--ink-soft)]">Cargando pase…</p>
+        </main>
+      }
+    >
+      <PaseDetailInner />
+    </Suspense>
   );
 }

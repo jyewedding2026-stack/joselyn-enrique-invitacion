@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { wedding } from "@/content/wedding";
 import { savePass } from "@/lib/storage";
 import { useOrigin, usePasses } from "@/hooks/use-client-store";
+import { passPath } from "@/lib/pass-url";
 
 const fieldClass =
   "h-10 w-full rounded-lg border border-[var(--sand-border)] bg-[var(--warm-white)] px-3 text-base text-[var(--ink)] outline-none focus-visible:border-[var(--olive)] focus-visible:ring-2 focus-visible:ring-[var(--olive)]/30";
@@ -35,7 +36,7 @@ export default function PaseIndexPage() {
     try {
       const pass = savePass({ familyName: name, guestCount: count });
       toast.success("Pase creado");
-      router.push(`/pase/${pass.id}`);
+      router.push(passPath(pass.id));
     } catch {
       setPending(false);
       toast.error("No se pudo crear el pase.");
@@ -118,13 +119,13 @@ export default function PaseIndexPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <QRCodeSVG
-                    value={`${origin}/pase/${p.id}`}
+                    value={`${origin}${passPath(p.id)}`}
                     size={48}
                     bgColor="transparent"
                     fgColor="#3f4a32"
                   />
                   <Link
-                    href={`/pase/${p.id}`}
+                    href={passPath(p.id)}
                     className="text-sm text-[var(--olive)] underline-offset-4 hover:underline"
                   >
                     Ver

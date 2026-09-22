@@ -36,6 +36,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local public hosting state
+.public-host.json
+publish-result.json
+.netlify
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

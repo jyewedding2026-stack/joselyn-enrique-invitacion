@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev --port 43127 --hostname 0.0.0.0",
     "build": "next build",
-    "start": "next start --port 43127 --hostname 0.0.0.0",
-    "lint": "eslint"
+    "start": "npx --yes serve out -l 43127 --no-port-switching",
+    "lint": "eslint",
+    "keep:public": "bash scripts/keep-public.sh",
+    "publish:public": "node scripts/publish-public.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
