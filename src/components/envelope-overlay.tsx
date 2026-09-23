@@ -1,35 +1,47 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { wedding } from "@/content/wedding";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 type EnvelopeOverlayProps = {
   open: boolean;
   onOpen: () => void;
 };
 
+type Phase = "idle" | "pressing" | "opening" | "exiting";
+
+const OPEN_MS = 2600;
+const EXIT_MS = 450;
+
 export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
-  const touchStartY = useRef<number | null>(null);
-  const [exiting, setExiting] = useState(false);
   const [mounted, setMounted] = useState(open);
+  const [phase, setPhase] = useState<Phase>("idle");
+  const startedRef = useRef(false);
+  const timersRef = useRef<number[]>([]);
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach((id) => window.clearTimeout(id));
+    timersRef.current = [];
+  }, []);
 
   useEffect(() => {
     if (open) {
       setMounted(true);
-      setExiting(false);
+      setPhase("idle");
+      startedRef.current = false;
       return;
     }
     if (!mounted) return;
-    setExiting(true);
+    setPhase("exiting");
     const t = window.setTimeout(() => {
       setMounted(false);
-      setExiting(false);
-    }, 380);
+      setPhase("idle");
+    }, EXIT_MS);
     return () => window.clearTimeout(t);
   }, [open, mounted]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!mounted || phase === "exiting") return;
     const prevHtml = document.documentElement.style.overflow;
     const prevBody = document.body.style.overflow;
     document.documentElement.style.overflow = "hidden";
@@ -38,52 +50,94 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       document.documentElement.style.overflow = prevHtml;
       document.body.style.overflow = prevBody;
     };
-  }, [open]);
+  }, [mounted, phase]);
+
+  useEffect(() => () => clearTimers(), [clearTimers]);
+
+  const beginOpen = useCallback(() => {
+    if (startedRef.current || !open) return;
+    startedRef.current = true;
+    clearTimers();
+
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduced) {
+      setPhase("exiting");
+      const t = window.setTimeout(() => onOpen(), 200);
+      timersRef.current.push(t);
+      return;
+    }
+
+    setPhase("pressing");
+    const t1 = window.setTimeout(() => setPhase("opening"), 180);
+    const t2 = window.setTimeout(() => {
+      setPhase("exiting");
+      onOpen();
+    }, OPEN_MS);
+    timersRef.current.push(t1, t2);
+  }, [clearTimers, onOpen, open]);
 
   if (!mounted) return null;
 
+  const isAnimating = phase === "pressing" || phase === "opening";
+  const isOpening = phase === "opening";
+  const isPressing = phase === "pressing";
+  const isExiting = phase === "exiting";
+
   return (
     <div
-      className={`fixed inset-0 z-[80] flex items-center justify-center bg-[var(--olive-deep)] px-6 touch-none transition-opacity duration-350 md:bg-[color-mix(in_oklab,var(--olive-deep)_82%,black)] md:backdrop-blur-sm ${
-        exiting ? "opacity-0" : "opacity-100"
-      }`}
+      className={`envelope-overlay ${isExiting ? "envelope-overlay--exit" : ""}`}
       role="dialog"
+      aria-modal="true"
       aria-label="Abrir invitación"
-      onTouchStart={(e) => {
-        touchStartY.current = e.touches[0]?.clientY ?? null;
-      }}
-      onTouchEnd={(e) => {
-        const start = touchStartY.current;
-        touchStartY.current = null;
-        if (start == null) return;
-        const end = e.changedTouches[0]?.clientY;
-        if (end == null) return;
-        if (end - start > 48) onOpen();
-      }}
+      aria-busy={isAnimating}
     >
       <button
         type="button"
-        onClick={onOpen}
-        className="relative w-full max-w-sm touch-auto rounded-[1.5rem] border border-white/25 bg-[var(--warm-white)]/95 px-8 py-12 text-center shadow-[0_24px_60px_rgba(40,48,28,0.35)]"
+        className="envelope-overlay__hit"
+        onClick={beginOpen}
+        disabled={phase !== "idle"}
+        aria-label="Haz clic para abrir la invitación"
       >
-        <span className="mx-auto flex size-16 items-center justify-center rounded-full border-2 border-[var(--olive)] bg-[var(--sand)] font-[family-name:var(--font-display)] text-xl text-[var(--olive-deep)]">
-          J&E
-        </span>
-        <p className="mt-6 text-xs tracking-[0.28em] text-[var(--olive)] uppercase">
-          Invitación
-        </p>
-        <h2 className="mt-2 font-[family-name:var(--font-display)] text-4xl leading-tight text-[var(--olive-deep)]">
-          {wedding.couple.displayName}
-        </h2>
-        <p className="mt-3 text-sm text-[var(--ink-soft)]">
-          {wedding.date.display} · Ica
-        </p>
-        <p className="mt-8 text-sm font-medium text-[var(--olive-deep)]">
-          Toca para abrir
-        </p>
-        <span className="mt-2 block text-xs text-[var(--olive-muted)]">
-          o desliza hacia abajo
-        </span>
+        <div
+          className={`envelope-stage ${isOpening ? "envelope-stage--open" : ""} ${
+            isPressing ? "envelope-stage--press" : ""
+          }`}
+        >
+          <div className="envelope" aria-hidden>
+            <div className="envelope__shadow" />
+            <div className="envelope__back" />
+            <div className="envelope__card">
+              <span className="envelope__card-initials">J&E</span>
+            </div>
+            <div className="envelope__pocket" />
+            <div className="envelope__flap">
+              <div className="envelope__flap-face envelope__flap-face--front" />
+              <div className="envelope__flap-face envelope__flap-face--back" />
+            </div>
+            <div className="envelope__seal">
+              <Image
+                src="/images/wax-seal-je.webp"
+                alt=""
+                width={512}
+                height={512}
+                className="envelope__seal-img"
+                priority
+                draggable={false}
+              />
+            </div>
+          </div>
+
+          <p
+            className={`envelope-hint ${
+              isAnimating || isExiting ? "envelope-hint--hide" : ""
+            }`}
+          >
+            Haz clic para abrir
+          </p>
+        </div>
       </button>
     </div>
   );
