@@ -4,9 +4,8 @@ const nav = [
   { href: "#historia", label: "Historia" },
   { href: "#logistica", label: "Logística" },
   { href: "#dress-code", label: "Dress code" },
-  { href: "#rsvp", label: "RSVP" },
+  { href: "#rsvp", label: "Confirmar" },
   { href: "#album", label: "Álbum" },
-  { href: "#pase", label: "Pase" },
 ];
 
 export function SiteHeader() {

@@ -8,10 +8,16 @@ const ALBUM_STORE = "media";
 
 export type RsvpEntry = {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   attending: boolean;
+  companion: boolean;
+  /** @deprecated kept for older local entries */
+  name?: string;
   guestCount: number;
-  message: string;
+  message?: string;
   createdAt: string;
 };
 

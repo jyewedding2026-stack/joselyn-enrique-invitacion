@@ -139,16 +139,11 @@ export const wedding = {
   },
 
   rsvp: {
-    title: "Confirmar asistencia",
+    title: "Confirma tu asistencia",
     description:
-      "Cuéntanos si nos acompañarás. Tu respuesta se guarda en este navegador (demo).",
+      "Completa el formulario para decirnos si nos acompañarás en Ica.",
     deadlineNote: "PLACEHOLDER: Confirma antes del 15 de noviembre de 2026.",
-  },
-
-  pass: {
-    title: "Pase digital",
-    description:
-      "Genera un pase con código QR único para tu familia o grupo. Úsalo el día del evento.",
+    submitLabel: "Enviar",
   },
 } as const;
 

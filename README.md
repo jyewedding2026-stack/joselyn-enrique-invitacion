@@ -36,9 +36,8 @@ Esto genera el export estático, parte archivos grandes para el límite gratuito
 
 ## Qué incluye
 
-- **Home (`/`)** — sobre, hero sticky, historia, logística con Google Maps, dress code, hospedaje, regalos, RSVP, álbum, pases QR
+- **Home (`/`)** — sobre, hero sticky, historia, logística con Google Maps, dress code, hospedaje, regalos, RSVP, álbum
 - **`/album`** — subida de fotos/videos a IndexedDB + galería + QR
-- **`/pase` y `/pase/ver?id=`** — generación y vista de pases QR (localStorage)
 
 ## Editar contenido
 

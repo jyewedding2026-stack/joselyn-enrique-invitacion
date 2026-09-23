@@ -56,13 +56,6 @@ const AlbumCtaSection = dynamic(
     })),
   { loading: () => null },
 );
-const PassSection = dynamic(
-  () =>
-    import("@/components/sections/pass").then((m) => ({
-      default: m.PassSection,
-    })),
-  { loading: () => null },
-);
 const PhotoBreak = dynamic(
   () =>
     import("@/components/photo-break").then((m) => ({
@@ -96,7 +89,6 @@ export default function HomePage() {
         <GiftsSection />
         <RsvpSection />
         <AlbumCtaSection />
-        <PassSection />
       </main>
       <footer className="relative z-10 border-t border-[var(--sand-border)] bg-[var(--warm-white)] py-10 text-center">
         <p className="font-[family-name:var(--font-display)] text-2xl text-[var(--olive-deep)]">
