@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/SHqCPXwfaEt3Y04PgziDfzKRGbaZoKiY5pKVM4PwFok
+https://turbo-gateway.com/j11xnNKQ1VevdQ_6fhvpTFPYEgtRX9pNBHVh4oQuYlY
 
 Mirrors:
-- https://ar-io.dev/SHqCPXwfaEt3Y04PgziDfzKRGbaZoKiY5pKVM4PwFok
-- https://arweave.net/SHqCPXwfaEt3Y04PgziDfzKRGbaZoKiY5pKVM4PwFok
+- https://ar-io.dev/j11xnNKQ1VevdQ_6fhvpTFPYEgtRX9pNBHVh4oQuYlY
+- https://arweave.net/j11xnNKQ1VevdQ_6fhvpTFPYEgtRX9pNBHVh4oQuYlY
 
-Optimizado: menos JS inicial, imágenes más livianas, mapas/secciones bajo demanda.
+Cambios: sin sección Pase Digital; RSVP rediseñado (formulario pill + floral).
 
 Republicar: `npm run publish:permanent`
