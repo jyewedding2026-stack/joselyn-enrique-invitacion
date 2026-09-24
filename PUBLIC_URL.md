@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/j11xnNKQ1VevdQ_6fhvpTFPYEgtRX9pNBHVh4oQuYlY
+https://turbo-gateway.com/SXZRAosnNrOm3fABqxqHXS61wHJ_1fwUx2WEY4MP2mI
 
 Mirrors:
-- https://ar-io.dev/j11xnNKQ1VevdQ_6fhvpTFPYEgtRX9pNBHVh4oQuYlY
-- https://arweave.net/j11xnNKQ1VevdQ_6fhvpTFPYEgtRX9pNBHVh4oQuYlY
+- https://ar-io.dev/SXZRAosnNrOm3fABqxqHXS61wHJ_1fwUx2WEY4MP2mI
+- https://arweave.net/SXZRAosnNrOm3fABqxqHXS61wHJ_1fwUx2WEY4MP2mI
 
-Cambios: sin sección Pase Digital; RSVP rediseñado (formulario pill + floral).
+Incluye sobre de bienvenida con sello J&E: al abrirlo se revela la invitación completa.
 
 Republicar: `npm run publish:permanent`
