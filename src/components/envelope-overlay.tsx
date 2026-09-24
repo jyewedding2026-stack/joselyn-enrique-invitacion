@@ -23,16 +23,27 @@ const FLAP_S = 0.8;
 const CARD_DELAY_S = 0.45;
 const EXIT_MS = 480;
 
-/** Relative path — required for Arweave / path-hosted static export. */
-const WAX_SEAL_SRC = "./images/wax-seal-je.webp";
+/** Relative to current page URL — works on Arweave path hosts and local serve. */
+function waxSealSrc(): string {
+  if (typeof window === "undefined") return "./images/wax-seal-je.webp";
+  try {
+    return new URL("images/wax-seal-je.webp", window.location.href).href;
+  } catch {
+    return "./images/wax-seal-je.webp";
+  }
+}
 
 export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const reduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(open);
   const [phase, setPhase] = useState<Phase>("idle");
-  const [sealReady, setSealReady] = useState(false);
+  const [sealSrc, setSealSrc] = useState("./images/wax-seal-je.webp");
   const openTimerRef = useRef<number | null>(null);
   const sealLockRef = useRef(false);
+
+  useEffect(() => {
+    setSealSrc(waxSealSrc());
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -230,27 +241,17 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                   }}
                   aria-label="Romper el sello y abrir el sobre"
                 >
+                  {/* Plain img + relative path for Arweave / static export */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={WAX_SEAL_SRC}
+                    src={sealSrc}
                     alt=""
                     width={160}
                     height={160}
-                    className={`wax-seal__img ${sealReady ? "is-ready" : ""}`}
+                    className="wax-seal__img"
                     decoding="async"
                     fetchPriority="high"
                     draggable={false}
-                    onLoad={() => setSealReady(true)}
-                    onError={() => {
-                      // Fallback if relative path fails in odd hosts
-                      const el = document.querySelector(
-                        ".wax-seal__img",
-                      ) as HTMLImageElement | null;
-                      if (el && !el.dataset.retried) {
-                        el.dataset.retried = "1";
-                        el.src = "images/wax-seal-je.webp";
-                      }
-                    }}
                   />
                 </motion.button>
               )}

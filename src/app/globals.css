@@ -374,12 +374,7 @@
   object-fit: contain;
   pointer-events: none;
   user-select: none;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.wax-seal__img.is-ready {
-  opacity: 1;
+  display: block;
 }
 
 .invitation-card {
