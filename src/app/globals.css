@@ -372,8 +372,6 @@
   -webkit-transform-style: preserve-3d;
   will-change: transform;
   pointer-events: none;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .envelope-flap--left {
@@ -402,6 +400,8 @@
     );
   box-shadow: inset 0 0 0 1px rgba(175, 160, 140, 0.22);
   overflow: hidden;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
 }
 
 /* Diagonal crease lines (X when closed) */
@@ -482,6 +482,10 @@
   pointer-events: none;
 }
 
+.envelope--open .invitation-card {
+  z-index: 4;
+}
+
 .envelope--open .envelope-flap {
   z-index: 1;
 }
@@ -538,8 +542,8 @@
 }
 
 .ribbon-bow--half {
-  width: clamp(2.75rem, 14vw, 3.5rem);
-  height: clamp(3.2rem, 16vw, 4.1rem);
+  width: clamp(3.4rem, 17vw, 4.35rem);
+  height: clamp(3.8rem, 19vw, 5rem);
   transform: translateY(-50%);
   overflow: hidden;
 }
@@ -560,16 +564,11 @@
   user-select: none;
 }
 
-.ribbon-bow__svg--left,
-.ribbon-bow__svg--right {
-  /* viewBox already crops each half */
-}
-
 /* Invisible full-bow hit target while closed */
 .ribbon-bow--hit {
   left: 50%;
-  width: clamp(5.5rem, 28vw, 7rem);
-  height: clamp(3.2rem, 16vw, 4.1rem);
+  width: clamp(6.5rem, 34vw, 8.5rem);
+  height: clamp(3.8rem, 19vw, 5rem);
   transform: translate(-50%, -50%);
   z-index: 14;
   cursor: pointer;
@@ -603,6 +602,24 @@
   text-transform: uppercase;
   color: #8a8074;
   pointer-events: none;
+  animation: envelope-hint-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes envelope-hint-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .envelope-hint {
+    animation: none;
+    opacity: 0.85;
+  }
 }
 
 .envelope-enter {
@@ -659,13 +676,13 @@
   }
 
   .ribbon-bow--half {
-    width: 3.6rem;
-    height: 4.2rem;
+    width: 4.4rem;
+    height: 5rem;
   }
 
   .ribbon-bow--hit {
-    width: 7.25rem;
-    height: 4.2rem;
+    width: 8.5rem;
+    height: 5rem;
   }
 }
 

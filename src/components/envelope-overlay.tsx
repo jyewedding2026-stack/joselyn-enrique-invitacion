@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { wedding } from "@/content/wedding";
 
 type EnvelopeOverlayProps = {
@@ -20,8 +20,8 @@ type Phase = "idle" | "opening" | "revealed" | "exiting";
 
 const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
 const EXIT_MS = 480;
-const OPEN_MS = 900;
-const REVEAL_DELAY_MS = 1050;
+const OPEN_MS = 850;
+const REVEAL_DELAY_MS = 520;
 
 function SilverBowHalf({ side }: { side: "left" | "right" }) {
   return (
@@ -167,7 +167,10 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   if (!mounted) return null;
 
   const flapsOpen = phase === "opening" || phase === "revealed";
-  const cardShown = phase === "revealed" || (reduceMotion && phase !== "idle");
+  const cardShown =
+    phase === "opening" ||
+    phase === "revealed" ||
+    (reduceMotion && phase !== "idle");
   const isExiting = phase === "exiting";
   const showChrome = phase === "idle";
 
@@ -199,7 +202,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
               transition={
                 reduceMotion
                   ? { duration: 0.15 }
-                  : { duration: 0.55, ease: EASE, delay: 0.05 }
+                  : {
+                      duration: 0.65,
+                      ease: EASE,
+                      delay: phase === "opening" ? 0.28 : 0,
+                    }
               }
             >
               <p className="invitation-card__eyebrow">Nuestra boda</p>
@@ -227,7 +234,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           <motion.div
             className="envelope-flap envelope-flap--left"
             initial={false}
-            animate={{ rotateY: flapsOpen ? -168 : 0 }}
+            animate={{ rotateY: flapsOpen ? -118 : 0 }}
             transition={flapTransition}
             style={{
               transformOrigin: "left center",
@@ -248,7 +255,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           <motion.div
             className="envelope-flap envelope-flap--right"
             initial={false}
-            animate={{ rotateY: flapsOpen ? 168 : 0 }}
+            animate={{ rotateY: flapsOpen ? 118 : 0 }}
             transition={flapTransition}
             style={{
               transformOrigin: "right center",
@@ -292,27 +299,9 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           )}
         </div>
 
-        <AnimatePresence>
-          {phase === "idle" && (
-            <motion.p
-              className="envelope-hint"
-              initial={{ opacity: 0.6 }}
-              animate={
-                reduceMotion
-                  ? { opacity: 0.85 }
-                  : { opacity: [0.55, 1, 0.55] }
-              }
-              exit={{ opacity: 0 }}
-              transition={
-                reduceMotion
-                  ? { duration: 0.2 }
-                  : { duration: 2.6, repeat: Infinity, ease: "easeInOut" }
-              }
-            >
-              Toca el lazo para abrir
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {phase === "idle" && (
+          <p className="envelope-hint">Toca el lazo para abrir</p>
+        )}
 
         {phase === "revealed" && (
           <motion.button
