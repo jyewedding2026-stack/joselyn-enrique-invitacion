@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { toast } from "sonner";
 import { wedding } from "@/content/wedding";
 import { FadeIn } from "@/components/motion";
@@ -76,13 +75,16 @@ export function RsvpSection() {
               {wedding.rsvp.title}
             </h2>
             <div className="mx-auto mt-3 mb-1 flex max-w-[280px] justify-center sm:max-w-[320px]">
-              <Image
-                src="/images/rsvp-floral.png"
+              {/* Relative path for Arweave / path-hosted static export */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="./images/rsvp-floral.png"
                 alt=""
                 width={437}
                 height={132}
                 className="h-auto w-full select-none"
-                priority={false}
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>

@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -21,18 +20,25 @@ type Phase = "idle" | "opening" | "revealed" | "exiting";
 
 const FLAP_EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
 const FLAP_S = 0.8;
-const CARD_DELAY_S = 0.55;
+const CARD_DELAY_S = 0.45;
 const EXIT_MS = 480;
+
+/** Relative path — required for Arweave / path-hosted static export. */
+const WAX_SEAL_SRC = "./images/wax-seal-je.webp";
 
 export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const reduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(open);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [sealReady, setSealReady] = useState(false);
+  const openTimerRef = useRef<number | null>(null);
+  const sealLockRef = useRef(false);
 
   useEffect(() => {
     if (open) {
       setMounted(true);
       setPhase("idle");
+      sealLockRef.current = false;
       return;
     }
     if (!mounted) return;
@@ -56,6 +62,15 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
     };
   }, [mounted, phase]);
 
+  useEffect(
+    () => () => {
+      if (openTimerRef.current != null) {
+        window.clearTimeout(openTimerRef.current);
+      }
+    },
+    [],
+  );
+
   const enterInvite = useCallback(() => {
     if (phase !== "revealed") return;
     setPhase("exiting");
@@ -64,7 +79,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   }, [onOpen, phase]);
 
   const breakSeal = useCallback(() => {
-    if (phase !== "idle" || !open) return;
+    if (phase !== "idle" || !open || sealLockRef.current) return;
+    sealLockRef.current = true;
 
     if (reduceMotion) {
       setPhase("revealed");
@@ -72,10 +88,13 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
     }
 
     setPhase("opening");
-    window.setTimeout(
-      () => setPhase("revealed"),
-      (FLAP_S + CARD_DELAY_S + 0.35) * 1000,
-    );
+    if (openTimerRef.current != null) {
+      window.clearTimeout(openTimerRef.current);
+    }
+    openTimerRef.current = window.setTimeout(() => {
+      setPhase("revealed");
+      openTimerRef.current = null;
+    }, (FLAP_S + CARD_DELAY_S + 0.4) * 1000);
   }, [open, phase, reduceMotion]);
 
   if (!mounted) return null;
@@ -87,12 +106,12 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
   const flapTransition: Transition = reduceMotion
     ? { duration: 0.01 }
-    : { duration: FLAP_S, ease: FLAP_EASE, delay: 0.16 };
+    : { duration: FLAP_S, ease: FLAP_EASE, delay: 0.12 };
 
   const cardTransition: Transition = reduceMotion
     ? { duration: 0.2 }
     : {
-        duration: 0.9,
+        duration: 0.85,
         ease: FLAP_EASE,
         delay: showCard ? CARD_DELAY_S : 0,
       };
@@ -115,16 +134,20 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
           <motion.button
             type="button"
-            className="invitation-card"
+            className={`invitation-card ${
+              phase === "revealed" ? "invitation-card--active" : ""
+            }`}
             initial={false}
             animate={
               showCard
-                ? { y: "-46%", scale: 1.05, opacity: 1, zIndex: 4 }
-                : { y: "36%", scale: 0.9, opacity: 0, zIndex: 2 }
+                ? { y: -150, scale: 1.04, opacity: 1 }
+                : { y: 72, scale: 0.94, opacity: 0 }
             }
             transition={cardTransition}
             onClick={phase === "revealed" ? enterInvite : undefined}
             disabled={phase !== "revealed"}
+            tabIndex={phase === "revealed" ? 0 : -1}
+            aria-hidden={phase !== "revealed"}
             aria-label={
               phase === "revealed"
                 ? "Ver invitación"
@@ -146,7 +169,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35, delay: 0.1 }}
+                  transition={{ duration: 0.3, delay: 0.08 }}
                 >
                   Ver invitación
                 </motion.span>
@@ -163,6 +186,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             style={{
               transformOrigin: "top center",
               transformStyle: "preserve-3d",
+              WebkitTransformStyle: "preserve-3d",
             }}
             aria-hidden
           >
@@ -180,33 +204,53 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                   initial={{ opacity: 1, scale: 1 }}
                   exit={
                     reduceMotion
-                      ? { opacity: 0, scale: 0.92, transition: { duration: 0.2 } }
+                      ? { opacity: 0, scale: 0.92, transition: { duration: 0.15 } }
                       : {
                           opacity: 0,
-                          scale: [1, 0.9, 1.12],
-                          y: -22,
-                          rotate: -16,
-                          filter: "blur(3px)",
-                          transition: { duration: 0.55, ease: FLAP_EASE },
+                          scale: 1.08,
+                          y: -16,
+                          rotate: -10,
+                          transition: { duration: 0.45, ease: FLAP_EASE },
                         }
                   }
-                  whileTap={reduceMotion ? undefined : { scale: 0.86 }}
-                  whileHover={reduceMotion ? undefined : { scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 420, damping: 24 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 420, damping: 26 }}
+                  onPointerUp={(e) => {
+                    // Prefer pointerUp on touch; ignore secondary mouse click double-fire
+                    if (e.pointerType === "mouse" && e.button !== 0) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    breakSeal();
+                  }}
                   onClick={(e) => {
+                    // Fallback for older WebViews that skip pointer events
+                    e.preventDefault();
                     e.stopPropagation();
                     breakSeal();
                   }}
                   aria-label="Romper el sello y abrir el sobre"
                 >
-                  <Image
-                    src="/images/wax-seal-je.webp"
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={WAX_SEAL_SRC}
                     alt=""
-                    width={512}
-                    height={512}
-                    className="wax-seal__img"
-                    priority
+                    width={160}
+                    height={160}
+                    className={`wax-seal__img ${sealReady ? "is-ready" : ""}`}
+                    decoding="async"
+                    fetchPriority="high"
                     draggable={false}
+                    onLoad={() => setSealReady(true)}
+                    onError={() => {
+                      // Fallback if relative path fails in odd hosts
+                      const el = document.querySelector(
+                        ".wax-seal__img",
+                      ) as HTMLImageElement | null;
+                      if (el && !el.dataset.retried) {
+                        el.dataset.retried = "1";
+                        el.src = "images/wax-seal-je.webp";
+                      }
+                    }}
                   />
                 </motion.button>
               )}
@@ -218,7 +262,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           {phase === "idle" && (
             <motion.p
               className="envelope-hint"
-              initial={{ opacity: 0.6 }}
+              initial={{ opacity: 0.65 }}
               animate={
                 reduceMotion
                   ? { opacity: 0.85 }
@@ -242,7 +286,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             className="envelope-enter"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0.15 : 0.4, delay: 0.08 }}
+            transition={{ duration: reduceMotion ? 0.15 : 0.35, delay: 0.06 }}
             onClick={enterInvite}
           >
             Ver invitación

@@ -223,6 +223,7 @@
   touch-action: manipulation;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
 }
 
 .envelope-overlay--exit {
@@ -236,17 +237,23 @@
   max-width: 26rem;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  perspective: 1600px;
-  perspective-origin: 50% 28%;
+  gap: 1.25rem;
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+  -webkit-perspective: 1200px;
+  -webkit-perspective-origin: 50% 30%;
 }
 
 .envelope {
   position: relative;
-  width: min(82vw, 19.5rem);
+  width: min(78vw, 19.5rem);
+  max-height: min(62svh, 28rem);
   aspect-ratio: 5 / 6.15;
   transform-style: preserve-3d;
-  filter: drop-shadow(0 22px 40px rgba(55, 35, 25, 0.22));
+  -webkit-transform-style: preserve-3d;
+  filter: drop-shadow(0 18px 32px rgba(55, 35, 25, 0.2));
+  /* Avoid clipping the rising card / opening flap on iOS */
+  overflow: visible;
 }
 
 .envelope-back {
@@ -274,6 +281,7 @@
     );
   clip-path: polygon(0 36%, 50% 60%, 100% 36%, 100% 100%, 0 100%);
   box-shadow: inset 0 10px 20px rgba(80, 50, 30, 0.08);
+  pointer-events: none;
 }
 
 .envelope-flap {
@@ -285,7 +293,10 @@
   z-index: 5;
   transform-origin: top center;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   will-change: transform;
+  pointer-events: none;
+  -webkit-backface-visibility: hidden;
 }
 
 .envelope-flap__front,
@@ -325,6 +336,7 @@
 
 .envelope-flap__back {
   transform: rotateX(180deg);
+  -webkit-transform: rotateX(180deg);
   background: linear-gradient(180deg, #c9a070 0%, #b8895a 40%, #a67548 100%);
 }
 
@@ -332,23 +344,28 @@
   position: absolute;
   left: 50%;
   top: 45%;
-  z-index: 7;
-  width: clamp(4.75rem, 23vw, 5.85rem);
-  height: clamp(4.75rem, 23vw, 5.85rem);
+  z-index: 8;
+  width: clamp(5.25rem, 26vw, 6.25rem);
+  height: clamp(5.25rem, 26vw, 6.25rem);
   transform: translate(-50%, -50%);
+  /* Extra hit area on mobile */
+  touch-action: manipulation;
 }
 
 .wax-seal {
-  display: block;
+  display: flex;
   width: 100%;
   height: 100%;
+  align-items: center;
+  justify-content: center;
   margin: 0;
-  padding: 0;
+  padding: 0.35rem;
   border: 0;
   background: transparent;
   cursor: pointer;
   filter: drop-shadow(0 10px 16px rgba(90, 40, 20, 0.35));
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .wax-seal__img {
@@ -357,6 +374,12 @@
   object-fit: contain;
   pointer-events: none;
   user-select: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.wax-seal__img.is-ready {
+  opacity: 1;
 }
 
 .invitation-card {
@@ -385,14 +408,18 @@
   cursor: default;
   text-align: center;
   -webkit-tap-highlight-color: transparent;
+  /* Critical on iOS: invisible disabled card must not steal seal taps */
+  pointer-events: none;
+}
+
+.invitation-card--active {
+  z-index: 6;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .invitation-card:disabled {
   cursor: default;
-}
-
-.invitation-card:not(:disabled) {
-  cursor: pointer;
 }
 
 .invitation-card__ornament {
