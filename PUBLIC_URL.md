@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/Y7yl5HSNMJcQzO_DmHiY8JuqK8V9fWfTjHp0AtigIGs
+https://turbo-gateway.com/VL-IlkxULqQoDjXH-rd5HLE-v3zvayr1SThxA80c4U4
 
 Mirrors:
-- https://ar-io.dev/Y7yl5HSNMJcQzO_DmHiY8JuqK8V9fWfTjHp0AtigIGs
-- https://arweave.net/Y7yl5HSNMJcQzO_DmHiY8JuqK8V9fWfTjHp0AtigIGs
+- https://ar-io.dev/VL-IlkxULqQoDjXH-rd5HLE-v3zvayr1SThxA80c4U4
+- https://arweave.net/VL-IlkxULqQoDjXH-rd5HLE-v3zvayr1SThxA80c4U4
 
-Fix móvil: rutas relativas `./images/` (sello + floral RSVP), toques iOS del sobre.
+Fix: sello visible (sin opacity 0), rutas relativas, toques iOS.
 
 Republicar: `npm run publish:permanent`
