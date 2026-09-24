@@ -215,10 +215,10 @@
     max(1.75rem, env(safe-area-inset-bottom));
   background:
     radial-gradient(
-      ellipse 85% 65% at 50% 38%,
-      #faf6ef 0%,
-      #efe6d6 48%,
-      #e4d5c0 100%
+      ellipse 90% 70% at 50% 36%,
+      #fffdf8 0%,
+      #f3ebe0 42%,
+      #e6d8c4 100%
     );
   touch-action: manipulation;
   outline: none;
@@ -237,51 +237,127 @@
   max-width: 26rem;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
-  perspective: 1200px;
-  perspective-origin: 50% 30%;
-  -webkit-perspective: 1200px;
-  -webkit-perspective-origin: 50% 30%;
+  gap: 1.35rem;
+  perspective: 1400px;
+  perspective-origin: 50% 28%;
+  -webkit-perspective: 1400px;
+  -webkit-perspective-origin: 50% 28%;
 }
 
 .envelope {
   position: relative;
-  width: min(78vw, 19.5rem);
-  max-height: min(62svh, 28rem);
-  aspect-ratio: 5 / 6.15;
+  width: min(76vw, 20rem);
+  max-height: min(58svh, 26rem);
+  aspect-ratio: 4 / 5;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  filter: drop-shadow(0 18px 32px rgba(55, 35, 25, 0.2));
-  /* Avoid clipping the rising card / opening flap on iOS */
   overflow: visible;
+}
+
+.envelope-glow {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -10%;
+  height: 28%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(70, 45, 25, 0.22),
+    transparent 70%
+  );
+  filter: blur(8px);
+  pointer-events: none;
 }
 
 .envelope-back {
   position: absolute;
   inset: 0;
   z-index: 1;
-  border-radius: 0.15rem;
+  border-radius: 0.35rem;
   background:
-    linear-gradient(165deg, #fffaf3 0%, #f3eadc 45%, #e8dcc8 100%);
-  box-shadow: inset 0 0 0 1px rgba(180, 150, 110, 0.28);
+    linear-gradient(
+      160deg,
+      #fffef9 0%,
+      #f7efe4 38%,
+      #ebdfcf 72%,
+      #e2d4c2 100%
+    );
+  box-shadow:
+    inset 0 0 0 1px rgba(190, 165, 130, 0.35),
+    0 22px 40px rgba(55, 35, 25, 0.18);
+}
+
+/* Soft paper grain */
+.envelope-back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.envelope-lining {
+  position: absolute;
+  inset: 7% 8% 8%;
+  z-index: 1;
+  border-radius: 0.15rem;
+  background: linear-gradient(
+    180deg,
+    rgba(139, 74, 74, 0.08),
+    rgba(196, 160, 112, 0.06)
+  );
+  pointer-events: none;
 }
 
 .envelope-pocket {
   position: absolute;
   inset: 0;
   z-index: 3;
-  border-radius: 0.15rem;
+  border-radius: 0.35rem;
   background:
     linear-gradient(
       180deg,
-      transparent 0 36%,
-      rgba(210, 180, 140, 0.2) 36.2%,
-      #eadfce 48%,
-      #dccfb8 100%
+      transparent 0 34%,
+      rgba(220, 200, 170, 0.35) 34.15%,
+      #e8dccb 46%,
+      #d9cbb6 100%
     );
-  clip-path: polygon(0 36%, 50% 60%, 100% 36%, 100% 100%, 0 100%);
-  box-shadow: inset 0 10px 20px rgba(80, 50, 30, 0.08);
+  clip-path: polygon(0 34%, 50% 58%, 100% 34%, 100% 100%, 0 100%);
+  box-shadow: inset 0 12px 22px rgba(80, 50, 30, 0.07);
   pointer-events: none;
+}
+
+/* Soft fold hints — avoid harsh X */
+.envelope-pocket::before,
+.envelope-pocket::after {
+  content: "";
+  position: absolute;
+  top: 34%;
+  width: 52%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(150, 120, 85, 0.22),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.envelope-pocket::before {
+  left: 0;
+  transform: rotate(24deg);
+  transform-origin: left center;
+}
+
+.envelope-pocket::after {
+  right: 0;
+  transform: rotate(-24deg);
+  transform-origin: right center;
 }
 
 .envelope-flap {
@@ -289,7 +365,7 @@
   left: 0;
   right: 0;
   top: 0;
-  height: 50%;
+  height: 48%;
   z-index: 5;
   transform-origin: top center;
   transform-style: preserve-3d;
@@ -309,8 +385,13 @@
 }
 
 .envelope-flap__front {
-  background: linear-gradient(180deg, #fffaf4 0%, #f0e6d6 58%, #ddcfb8 100%);
-  box-shadow: 0 8px 16px rgba(60, 40, 25, 0.08);
+  background: linear-gradient(
+    180deg,
+    #fffef9 0%,
+    #f5ebe0 52%,
+    #e4d6c2 100%
+  );
+  box-shadow: 0 10px 18px rgba(60, 40, 25, 0.08);
 }
 
 .envelope-flap__front::after {
@@ -320,15 +401,15 @@
   background:
     linear-gradient(
       135deg,
-      transparent 47%,
-      rgba(150, 110, 70, 0.2) 50%,
-      transparent 53%
+      transparent 48%,
+      rgba(160, 125, 85, 0.14) 50%,
+      transparent 52%
     ),
     linear-gradient(
       225deg,
-      transparent 47%,
-      rgba(150, 110, 70, 0.2) 50%,
-      transparent 53%
+      transparent 48%,
+      rgba(160, 125, 85, 0.14) 50%,
+      transparent 52%
     );
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   pointer-events: none;
@@ -337,18 +418,17 @@
 .envelope-flap__back {
   transform: rotateX(180deg);
   -webkit-transform: rotateX(180deg);
-  background: linear-gradient(180deg, #c9a070 0%, #b8895a 40%, #a67548 100%);
+  background: linear-gradient(180deg, #d4b896 0%, #c4a070 45%, #a67c4a 100%);
 }
 
 .wax-seal-anchor {
   position: absolute;
   left: 50%;
-  top: 45%;
+  top: 44%;
   z-index: 8;
-  width: clamp(5.25rem, 26vw, 6.25rem);
-  height: clamp(5.25rem, 26vw, 6.25rem);
+  width: clamp(5rem, 24vw, 5.85rem);
+  height: clamp(5rem, 24vw, 5.85rem);
   transform: translate(-50%, -50%);
-  /* Extra hit area on mobile */
   touch-action: manipulation;
 }
 
@@ -359,11 +439,11 @@
   align-items: center;
   justify-content: center;
   margin: 0;
-  padding: 0.35rem;
+  padding: 0.3rem;
   border: 0;
   background: transparent;
   cursor: pointer;
-  filter: drop-shadow(0 10px 16px rgba(90, 40, 20, 0.35));
+  filter: drop-shadow(0 8px 14px rgba(90, 40, 20, 0.32));
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
@@ -379,31 +459,30 @@
 
 .invitation-card {
   position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 10%;
+  left: 7%;
+  right: 7%;
+  top: 8%;
   z-index: 2;
   display: flex;
-  min-height: 72%;
+  min-height: 74%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
   margin: 0;
-  padding: 1.35rem 1rem 1.5rem;
+  padding: 1.75rem 1rem 1.4rem;
   border: 1.5px solid #c4a070;
-  border-radius: 0.2rem;
+  border-radius: 0.25rem;
   background:
-    linear-gradient(180deg, #fffdf9 0%, #faf4ea 100%);
+    linear-gradient(180deg, #fffefb 0%, #faf3e8 100%);
   box-shadow:
-    0 0 0 4px rgba(255, 252, 246, 0.9),
-    0 0 0 5px rgba(196, 160, 112, 0.35),
-    0 14px 28px rgba(60, 40, 25, 0.14);
+    0 0 0 5px rgba(255, 252, 246, 0.95),
+    0 0 0 6px rgba(196, 160, 112, 0.4),
+    0 16px 32px rgba(60, 40, 25, 0.16);
   color: #4a3728;
   cursor: default;
   text-align: center;
   -webkit-tap-highlight-color: transparent;
-  /* Critical on iOS: invisible disabled card must not steal seal taps */
   pointer-events: none;
 }
 
@@ -417,49 +496,45 @@
   cursor: default;
 }
 
-.invitation-card__ornament {
-  width: 2.5rem;
-  height: 1px;
-  margin-bottom: 0.35rem;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #c4a070,
-    transparent
-  );
+.invitation-card__lazo {
+  display: block;
+  width: min(7.5rem, 58%);
+  height: auto;
+  margin: 0 0 0.35rem;
+  filter: drop-shadow(0 3px 5px rgba(90, 35, 40, 0.22));
+  flex-shrink: 0;
 }
 
 .invitation-card__eyebrow {
-  margin: 0;
+  margin: 0.15rem 0 0;
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: #8b6b4a;
 }
 
 .invitation-card__names {
-  margin: 0.15rem 0 0;
+  margin: 0.1rem 0 0;
   font-family: var(--font-display), ui-serif, Georgia, serif;
-  font-size: clamp(1.45rem, 5.5vw, 1.85rem);
+  font-size: clamp(1.4rem, 5.2vw, 1.8rem);
   font-weight: 500;
-  line-height: 1.15;
+  line-height: 1.12;
   color: #5c3d2e;
 }
 
 .invitation-card__rule {
   display: block;
-  width: 3rem;
+  width: 2.75rem;
   height: 1px;
-  margin: 0.35rem 0;
-  background: #c4a070;
-  opacity: 0.7;
+  margin: 0.4rem 0;
+  background: linear-gradient(90deg, transparent, #c4a070, transparent);
 }
 
 .invitation-card__date {
   margin: 0;
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   letter-spacing: 0.04em;
   color: #6b5340;
 }
@@ -467,52 +542,30 @@
 .invitation-card__place {
   margin: 0;
   font-family: var(--font-display), ui-serif, Georgia, serif;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-style: italic;
   color: #8b4a4a;
 }
 
 .invitation-card__cta {
   display: inline-flex;
-  margin-top: 0.85rem;
-  padding: 0.55rem 1.15rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 1.1rem;
   border: 1px solid #c4a070;
   border-radius: 999px;
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #5c3d2e;
-  background: rgba(255, 250, 242, 0.9);
-}
-
-.invitation-card__floral {
-  position: absolute;
-  bottom: 0.55rem;
-  left: 50%;
-  width: 4.5rem;
-  height: 1.1rem;
-  transform: translateX(-50%);
-  background:
-    radial-gradient(circle at 20% 60%, #8b4a4a 0 2px, transparent 2.5px),
-    radial-gradient(circle at 50% 40%, #c4a070 0 2.5px, transparent 3px),
-    radial-gradient(circle at 78% 65%, #6a7a52 0 2px, transparent 2.5px),
-    linear-gradient(
-      90deg,
-      transparent 10%,
-      rgba(106, 122, 82, 0.45) 50%,
-      transparent 90%
-    );
-  background-size: 100% 100%;
-  opacity: 0.7;
-  pointer-events: none;
+  background: rgba(255, 250, 242, 0.95);
 }
 
 .envelope-hint {
   margin: 0;
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #8b6b4a;
@@ -560,11 +613,15 @@
 
 @media (min-width: 768px) {
   .envelope {
-    width: min(42vw, 22rem);
+    width: min(40vw, 22rem);
   }
 
   .invitation-card__names {
-    font-size: 2rem;
+    font-size: 1.95rem;
+  }
+
+  .invitation-card__lazo {
+    width: 8rem;
   }
 }
 

@@ -33,6 +33,80 @@ function waxSealSrc(): string {
   }
 }
 
+/** Elegant wine-gold ribbon bow for the invitation card. */
+function RibbonBow() {
+  return (
+    <svg
+      className="invitation-card__lazo"
+      viewBox="0 0 120 56"
+      aria-hidden
+      focusable="false"
+    >
+      <defs>
+        <linearGradient id="lazo-fill" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#9a3f45" />
+          <stop offset="42%" stopColor="#c45c58" />
+          <stop offset="100%" stopColor="#7a2f36" />
+        </linearGradient>
+        <linearGradient id="lazo-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#e2c48a" />
+          <stop offset="55%" stopColor="#c4a070" />
+          <stop offset="100%" stopColor="#9a7548" />
+        </linearGradient>
+      </defs>
+      {/* Left loop */}
+      <path
+        d="M58 26 C42 8 18 10 14 22 C10 34 28 40 52 32 Z"
+        fill="url(#lazo-fill)"
+        opacity="0.95"
+      />
+      {/* Right loop */}
+      <path
+        d="M62 26 C78 8 102 10 106 22 C110 34 92 40 68 32 Z"
+        fill="url(#lazo-fill)"
+        opacity="0.95"
+      />
+      {/* Left tail */}
+      <path
+        d="M52 32 C40 38 28 48 22 54 C34 50 46 44 54 36 Z"
+        fill="url(#lazo-fill)"
+      />
+      {/* Right tail */}
+      <path
+        d="M68 32 C80 38 92 48 98 54 C86 50 74 44 66 36 Z"
+        fill="url(#lazo-fill)"
+      />
+      {/* Knot */}
+      <ellipse cx="60" cy="28" rx="9" ry="7.5" fill="url(#lazo-gold)" />
+      <ellipse
+        cx="60"
+        cy="27.5"
+        rx="5.5"
+        ry="4.5"
+        fill="#7a2f36"
+        opacity="0.35"
+      />
+      {/* Soft highlight on loops */}
+      <path
+        d="M48 20 C40 14 28 15 24 20"
+        fill="none"
+        stroke="#f0c8c4"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        opacity="0.45"
+      />
+      <path
+        d="M72 20 C80 14 92 15 96 20"
+        fill="none"
+        stroke="#f0c8c4"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        opacity="0.45"
+      />
+    </svg>
+  );
+}
+
 export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const reduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(open);
@@ -140,7 +214,9 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
     >
       <div className="envelope-scene">
         <div className="envelope">
+          <div className="envelope-glow" aria-hidden />
           <div className="envelope-back" aria-hidden />
+          <div className="envelope-lining" aria-hidden />
           <div className="envelope-pocket" aria-hidden />
 
           <motion.button
@@ -151,8 +227,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             initial={false}
             animate={
               showCard
-                ? { y: -150, scale: 1.04, opacity: 1 }
-                : { y: 72, scale: 0.94, opacity: 0 }
+                ? { y: -158, scale: 1.05, opacity: 1 }
+                : { y: 78, scale: 0.94, opacity: 0 }
             }
             transition={cardTransition}
             onClick={phase === "revealed" ? enterInvite : undefined}
@@ -165,7 +241,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                 : "Tarjeta de la invitación"
             }
           >
-            <span className="invitation-card__ornament" aria-hidden />
+            <RibbonBow />
             <p className="invitation-card__eyebrow">Nuestra boda</p>
             <h2 className="invitation-card__names">
               {wedding.couple.displayName}
@@ -186,7 +262,6 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                 </motion.span>
               )}
             </AnimatePresence>
-            <span className="invitation-card__floral" aria-hidden />
           </motion.button>
 
           <motion.div
@@ -227,21 +302,18 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                   whileTap={reduceMotion ? undefined : { scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 420, damping: 26 }}
                   onPointerUp={(e) => {
-                    // Prefer pointerUp on touch; ignore secondary mouse click double-fire
                     if (e.pointerType === "mouse" && e.button !== 0) return;
                     e.preventDefault();
                     e.stopPropagation();
                     breakSeal();
                   }}
                   onClick={(e) => {
-                    // Fallback for older WebViews that skip pointer events
                     e.preventDefault();
                     e.stopPropagation();
                     breakSeal();
                   }}
                   aria-label="Romper el sello y abrir el sobre"
                 >
-                  {/* Plain img + relative path for Arweave / static export */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={sealSrc}
