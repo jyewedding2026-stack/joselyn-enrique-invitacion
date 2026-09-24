@@ -490,20 +490,13 @@
   z-index: 0;
 }
 
-/* Silver satin ribbon wrapping closed gatefold */
-.ribbon {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-  overflow: visible;
-}
-
+/* Silver satin ribbon — halves live on each flap and split with them */
 .ribbon-band {
   position: absolute;
   top: 46%;
   height: clamp(1.35rem, 5.2vw, 1.65rem);
   transform: translateY(-50%);
+  z-index: 2;
   background: linear-gradient(
     180deg,
     #f0f1f4 0%,
@@ -516,48 +509,74 @@
     0 2px 4px rgba(40, 40, 50, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.55),
     inset 0 -1px 0 rgba(70, 75, 90, 0.25);
+  pointer-events: none;
 }
 
 .ribbon-band--left {
-  left: -6%;
-  right: 48%;
-  border-radius: 1px 0 0 1px;
+  left: -4%;
+  right: 0;
 }
 
 .ribbon-band--right {
-  left: 48%;
-  right: -6%;
-  border-radius: 0 1px 1px 0;
+  left: 0;
+  right: -4%;
 }
 
 .ribbon-bow {
   position: absolute;
-  left: 50%;
   top: 46%;
-  z-index: 12;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(5.5rem, 28vw, 7rem);
-  height: clamp(3.2rem, 16vw, 4.1rem);
   margin: 0;
   padding: 0;
   border: 0;
   background: transparent;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  pointer-events: auto;
+  pointer-events: none;
   filter: drop-shadow(0 6px 10px rgba(50, 50, 60, 0.28));
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+}
+
+.ribbon-bow--half {
+  width: clamp(2.75rem, 14vw, 3.5rem);
+  height: clamp(3.2rem, 16vw, 4.1rem);
+  transform: translateY(-50%);
+  overflow: hidden;
+}
+
+.ribbon-bow--left {
+  right: 0;
+}
+
+.ribbon-bow--right {
+  left: 0;
 }
 
 .ribbon-bow__svg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   pointer-events: none;
   user-select: none;
+}
+
+.ribbon-bow__svg--left,
+.ribbon-bow__svg--right {
+  /* viewBox already crops each half */
+}
+
+/* Invisible full-bow hit target while closed */
+.ribbon-bow--hit {
+  left: 50%;
+  width: clamp(5.5rem, 28vw, 7rem);
+  height: clamp(3.2rem, 16vw, 4.1rem);
+  transform: translate(-50%, -50%);
+  z-index: 14;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .envelope-tap-hint {
@@ -639,7 +658,12 @@
     font-size: 1.3rem;
   }
 
-  .ribbon-bow {
+  .ribbon-bow--half {
+    width: 3.6rem;
+    height: 4.2rem;
+  }
+
+  .ribbon-bow--hit {
     width: 7.25rem;
     height: 4.2rem;
   }

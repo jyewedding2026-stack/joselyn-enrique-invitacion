@@ -1,12 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  type Transition,
-} from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { wedding } from "@/content/wedding";
 
 type EnvelopeOverlayProps = {
@@ -15,78 +10,91 @@ type EnvelopeOverlayProps = {
 };
 
 /**
- * Sponsalia TikTok reference (7669384565022133537) interaction:
- * 0.0s  tap silver bow on closed gatefold
- * 0–0.6s ribbon splits & slides L/R off
- * 0.3–1.2s left/right flaps open (gatefold)
- * 1.2–2.0s invitation text fades in on center card
- * then “Ver invitación” → onOpen()
+ * Sponsalia TikTok (7669384565022133537) interaction — verified from video:
+ * Idle: cream gatefold + silver ribbon/bow centered; names above; TAP TO OPEN.
+ * Tap bow → names/hint fade; ribbon+bow split on center seam.
+ * ~0–0.8s: L/R flaps open (hinge outer edges), each carrying its ribbon/bow half.
+ * Revealed: invitation card (no lazo on card) → “Ver invitación” → onOpen().
  */
-type Phase = "idle" | "untying" | "opening" | "revealed" | "exiting";
+type Phase = "idle" | "opening" | "revealed" | "exiting";
 
 const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
 const EXIT_MS = 480;
+const OPEN_MS = 900;
+const REVEAL_DELAY_MS = 1050;
 
-function SilverBow() {
+function SilverBowHalf({ side }: { side: "left" | "right" }) {
   return (
     <svg
-      className="ribbon-bow__svg"
-      viewBox="0 0 160 90"
+      className={`ribbon-bow__svg ribbon-bow__svg--${side}`}
+      viewBox={side === "left" ? "0 0 80 90" : "80 0 80 90"}
       aria-hidden
       focusable="false"
     >
       <defs>
-        <linearGradient id="satin" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id={`satin-${side}`} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#f4f4f6" />
           <stop offset="35%" stopColor="#c8cad0" />
           <stop offset="55%" stopColor="#e8e9ed" />
           <stop offset="100%" stopColor="#9a9da6" />
         </linearGradient>
-        <linearGradient id="satin-deep" x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient
+          id={`satin-deep-${side}`}
+          x1="0%"
+          y1="0%"
+          x2="0%"
+          y2="100%"
+        >
           <stop offset="0%" stopColor="#d8dae0" />
           <stop offset="100%" stopColor="#7e828c" />
         </linearGradient>
       </defs>
-      {/* Left loop */}
-      <path
-        d="M78 38 C52 10 22 14 16 32 C10 50 36 58 70 46 Z"
-        fill="url(#satin)"
-      />
-      {/* Right loop */}
-      <path
-        d="M82 38 C108 10 138 14 144 32 C150 50 124 58 90 46 Z"
-        fill="url(#satin)"
-      />
-      {/* Left tail */}
-      <path
-        d="M72 46 C52 54 34 70 26 84 L48 78 C58 66 68 54 76 48 Z"
-        fill="url(#satin-deep)"
-      />
-      {/* Right tail */}
-      <path
-        d="M88 46 C108 54 126 70 134 84 L112 78 C102 66 92 54 84 48 Z"
-        fill="url(#satin-deep)"
-      />
-      {/* Knot */}
-      <ellipse cx="80" cy="42" rx="12" ry="10" fill="url(#satin)" />
-      <ellipse cx="80" cy="41" rx="7" ry="5.5" fill="#6e727a" opacity="0.28" />
-      {/* Sheen */}
-      <path
-        d="M58 28 C48 22 34 24 28 30"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        opacity="0.55"
-      />
-      <path
-        d="M102 28 C112 22 126 24 132 30"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        opacity="0.55"
-      />
+      {side === "left" ? (
+        <>
+          <path
+            d="M78 38 C52 10 22 14 16 32 C10 50 36 58 70 46 Z"
+            fill={`url(#satin-${side})`}
+          />
+          <path
+            d="M72 46 C52 54 34 70 26 84 L48 78 C58 66 68 54 76 48 Z"
+            fill={`url(#satin-deep-${side})`}
+          />
+          <path
+            d="M68 32 C78 36 80 48 78 52 L80 32 Z"
+            fill={`url(#satin-${side})`}
+          />
+          <ellipse cx="80" cy="42" rx="12" ry="10" fill={`url(#satin-${side})`} />
+          <path
+            d="M58 28 C48 22 34 24 28 30"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            opacity="0.55"
+          />
+        </>
+      ) : (
+        <>
+          <path
+            d="M82 38 C108 10 138 14 144 32 C150 50 124 58 90 46 Z"
+            fill={`url(#satin-${side})`}
+          />
+          <path
+            d="M88 46 C108 54 126 70 134 84 L112 78 C102 66 92 54 84 48 Z"
+            fill={`url(#satin-deep-${side})`}
+          />
+          <ellipse cx="80" cy="42" rx="12" ry="10" fill={`url(#satin-${side})`} />
+          <ellipse cx="80" cy="41" rx="7" ry="5.5" fill="#6e727a" opacity="0.28" />
+          <path
+            d="M102 28 C112 22 126 24 132 30"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            opacity="0.55"
+          />
+        </>
+      )}
     </svg>
   );
 }
@@ -150,27 +158,22 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       return;
     }
 
-    setPhase("untying");
+    setPhase("opening");
     timersRef.current.push(
-      window.setTimeout(() => setPhase("opening"), 320),
-      window.setTimeout(() => setPhase("revealed"), 1400),
+      window.setTimeout(() => setPhase("revealed"), REVEAL_DELAY_MS),
     );
   }, [clearTimers, open, phase, reduceMotion]);
 
   if (!mounted) return null;
 
-  const ribbonGone = phase !== "idle";
   const flapsOpen = phase === "opening" || phase === "revealed";
   const cardShown = phase === "revealed" || (reduceMotion && phase !== "idle");
   const isExiting = phase === "exiting";
+  const showChrome = phase === "idle";
 
-  const flapTransition: Transition = reduceMotion
+  const flapTransition = reduceMotion
     ? { duration: 0.01 }
-    : { duration: 0.9, ease: EASE, delay: 0.05 };
-
-  const ribbonTransition: Transition = reduceMotion
-    ? { duration: 0.15 }
-    : { duration: 0.55, ease: EASE };
+    : { duration: OPEN_MS / 1000, ease: EASE };
 
   return (
     <motion.div
@@ -178,7 +181,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Abrir invitación"
-      aria-busy={phase === "untying" || phase === "opening"}
+      aria-busy={phase === "opening"}
       initial={false}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: EXIT_MS / 1000, ease: "easeOut" }}
@@ -187,7 +190,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
         <div className={`envelope ${flapsOpen ? "envelope--open" : ""}`}>
           <div className="envelope-glow" aria-hidden />
 
-          {/* Center invitation card (under flaps) */}
+          {/* Center invitation card (under flaps) — no lazo */}
           <div className="invitation-card" aria-hidden={!cardShown}>
             <motion.div
               className="invitation-card__inner"
@@ -196,7 +199,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
               transition={
                 reduceMotion
                   ? { duration: 0.15 }
-                  : { duration: 0.7, ease: EASE, delay: 0.15 }
+                  : { duration: 0.55, ease: EASE, delay: 0.05 }
               }
             >
               <p className="invitation-card__eyebrow">Nuestra boda</p>
@@ -209,26 +212,22 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             </motion.div>
           </div>
 
-          {/* Names sit on closed gatefold (above flaps, under ribbon) */}
+          {/* Names on closed face (fade on open) */}
           <motion.p
             className="envelope-closed-names"
             initial={false}
-            animate={{ opacity: flapsOpen ? 0 : 1 }}
-            transition={
-              reduceMotion
-                ? { duration: 0.1 }
-                : { duration: 0.25, ease: EASE }
-            }
+            animate={{ opacity: showChrome ? 1 : 0 }}
+            transition={{ duration: reduceMotion ? 0.08 : 0.2 }}
             aria-hidden
           >
             {wedding.couple.displayName}
           </motion.p>
 
-          {/* Gatefold flaps — left & right (X creases when closed) */}
+          {/* Left gatefold flap + left ribbon/bow half */}
           <motion.div
             className="envelope-flap envelope-flap--left"
             initial={false}
-            animate={{ rotateY: flapsOpen ? -165 : 0 }}
+            animate={{ rotateY: flapsOpen ? -168 : 0 }}
             transition={flapTransition}
             style={{
               transformOrigin: "left center",
@@ -237,13 +236,19 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             }}
             aria-hidden
           >
-            <div className="envelope-flap__face" />
+            <div className="envelope-flap__face">
+              <div className="ribbon-band ribbon-band--left" />
+              <div className="ribbon-bow ribbon-bow--half ribbon-bow--left">
+                <SilverBowHalf side="left" />
+              </div>
+            </div>
           </motion.div>
 
+          {/* Right gatefold flap + right ribbon/bow half */}
           <motion.div
             className="envelope-flap envelope-flap--right"
             initial={false}
-            animate={{ rotateY: flapsOpen ? 165 : 0 }}
+            animate={{ rotateY: flapsOpen ? 168 : 0 }}
             transition={flapTransition}
             style={{
               transformOrigin: "right center",
@@ -252,72 +257,33 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             }}
             aria-hidden
           >
-            <div className="envelope-flap__face envelope-flap__face--emboss" />
+            <div className="envelope-flap__face envelope-flap__face--emboss">
+              <div className="ribbon-band ribbon-band--right" />
+              <div className="ribbon-bow ribbon-bow--half ribbon-bow--right">
+                <SilverBowHalf side="right" />
+              </div>
+            </div>
           </motion.div>
 
-          {/* Silver ribbon wrapping the closed envelope */}
-          <AnimatePresence>
-            {!ribbonGone && (
-              <motion.div
-                className="ribbon"
-                key="ribbon"
-                initial={{ opacity: 1 }}
-                exit={
-                  reduceMotion
-                    ? { opacity: 0, transition: { duration: 0.15 } }
-                    : { opacity: 0, transition: { duration: 0.45, delay: 0.15 } }
-                }
-              >
-                <motion.div
-                  className="ribbon-band ribbon-band--left"
-                  exit={
-                    reduceMotion
-                      ? { opacity: 0 }
-                      : { x: "-110%", opacity: 0, transition: ribbonTransition }
-                  }
-                  aria-hidden
-                />
-                <motion.div
-                  className="ribbon-band ribbon-band--right"
-                  exit={
-                    reduceMotion
-                      ? { opacity: 0 }
-                      : { x: "110%", opacity: 0, transition: ribbonTransition }
-                  }
-                  aria-hidden
-                />
-                <motion.button
-                  type="button"
-                  className="ribbon-bow"
-                  exit={
-                    reduceMotion
-                      ? { opacity: 0, scale: 0.9 }
-                      : {
-                          scale: 0.85,
-                          opacity: 0,
-                          y: 8,
-                          transition: { duration: 0.35, ease: EASE },
-                        }
-                  }
-                  whileTap={reduceMotion ? undefined : { scale: 0.94 }}
-                  onPointerUp={(e) => {
-                    if (e.pointerType === "mouse" && e.button !== 0) return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    beginOpen();
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    beginOpen();
-                  }}
-                  aria-label="Desatar el lazo y abrir la invitación"
-                >
-                  <SilverBow />
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Tap target — full bow hit area while closed */}
+          {phase === "idle" && (
+            <button
+              type="button"
+              className="ribbon-bow ribbon-bow--hit"
+              onPointerUp={(e) => {
+                if (e.pointerType === "mouse" && e.button !== 0) return;
+                e.preventDefault();
+                e.stopPropagation();
+                beginOpen();
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                beginOpen();
+              }}
+              aria-label="Desatar el lazo y abrir la invitación"
+            />
+          )}
 
           {phase === "idle" && (
             <p className="envelope-tap-hint" aria-hidden>
@@ -354,7 +320,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             className="envelope-enter"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0.15 : 0.35, delay: 0.1 }}
+            transition={{ duration: reduceMotion ? 0.15 : 0.35, delay: 0.08 }}
             onClick={enterInvite}
           >
             Ver invitación
