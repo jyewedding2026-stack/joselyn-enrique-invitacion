@@ -203,7 +203,7 @@
   }
 }
 
-/* —— Envelope welcome overlay —— */
+/* —— Envelope welcome overlay (Sponsalia-style unboxing) —— */
 .envelope-overlay {
   position: fixed;
   inset: 0;
@@ -212,170 +212,84 @@
   align-items: center;
   justify-content: center;
   padding: max(1.25rem, env(safe-area-inset-top)) 1.25rem
-    max(1.25rem, env(safe-area-inset-bottom));
+    max(1.75rem, env(safe-area-inset-bottom));
   background:
     radial-gradient(
-      ellipse 80% 60% at 50% 42%,
-      #ffffff 0%,
-      #f4efe6 55%,
-      #ebe4d8 100%
+      ellipse 85% 65% at 50% 38%,
+      #faf6ef 0%,
+      #efe6d6 48%,
+      #e4d5c0 100%
     );
   touch-action: manipulation;
-  cursor: pointer;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.envelope-overlay--opening {
-  cursor: default;
 }
 
 .envelope-overlay--exit {
-  opacity: 0;
-  visibility: hidden;
   pointer-events: none;
 }
 
-.envelope-stage {
+.envelope-scene {
   position: relative;
   display: flex;
   width: 100%;
-  max-width: 28rem;
+  max-width: 26rem;
   flex-direction: column;
   align-items: center;
-  gap: 1.75rem;
-  perspective: 1400px;
-  perspective-origin: 50% 35%;
+  gap: 1.5rem;
+  perspective: 1600px;
+  perspective-origin: 50% 28%;
 }
 
 .envelope {
   position: relative;
-  width: min(78vw, 20.5rem);
-  aspect-ratio: 5 / 6.2;
+  width: min(82vw, 19.5rem);
+  aspect-ratio: 5 / 6.15;
   transform-style: preserve-3d;
-  filter: drop-shadow(0 18px 36px rgba(60, 48, 30, 0.18));
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 22px 40px rgba(55, 35, 25, 0.22));
 }
 
-.envelope-stage--press .envelope {
-  transform: scale(0.978);
-}
-
-.envelope-stage--open .envelope {
-  transform: scale(1.03) translateY(-0.35rem);
-}
-
-.envelope__shadow {
-  position: absolute;
-  inset: 8% 4% -4%;
-  border-radius: 0.35rem;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(70, 55, 35, 0.18),
-    transparent 70%
-  );
-  transform: translateZ(-1px);
-  pointer-events: none;
-}
-
-.envelope__back {
+.envelope-back {
   position: absolute;
   inset: 0;
-  border-radius: 0.2rem;
-  background:
-    linear-gradient(165deg, #fffcf7 0%, #f5efe6 48%, #ebe3d6 100%);
-  box-shadow: inset 0 0 0 1px rgba(210, 198, 178, 0.45);
-}
-
-.envelope__card {
-  position: absolute;
-  left: 7%;
-  right: 7%;
-  top: 18%;
-  height: 68%;
+  z-index: 1;
   border-radius: 0.15rem;
   background:
-    linear-gradient(180deg, #fffdf9 0%, #f7f1e7 100%);
-  box-shadow:
-    0 2px 8px rgba(60, 48, 30, 0.08),
-    inset 0 0 0 1px rgba(220, 208, 188, 0.55);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.85rem;
-  z-index: 2;
-  transform: translateY(14%);
-  opacity: 0.92;
-  transition:
-    transform 1.45s cubic-bezier(0.22, 1, 0.36, 1) 0.45s,
-    opacity 0.7s ease 0.45s;
+    linear-gradient(165deg, #fffaf3 0%, #f3eadc 45%, #e8dcc8 100%);
+  box-shadow: inset 0 0 0 1px rgba(180, 150, 110, 0.28);
 }
 
-.envelope-stage--open .envelope__card {
-  transform: translateY(-132%);
-  opacity: 1;
-}
-
-.envelope__card-initials {
-  font-family: var(--font-display), ui-serif, Georgia, serif;
-  font-size: clamp(1.6rem, 6vw, 2.1rem);
-  letter-spacing: 0.08em;
-  color: #c4a070;
-  opacity: 0.9;
-}
-
-.envelope__card-line {
-  display: block;
-  width: 2.75rem;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(196, 160, 112, 0.55),
-    transparent
-  );
-}
-
-.envelope__pocket {
+.envelope-pocket {
   position: absolute;
   inset: 0;
   z-index: 3;
-  border-radius: 0.2rem;
+  border-radius: 0.15rem;
   background:
     linear-gradient(
       180deg,
-      transparent 0%,
-      transparent 38%,
-      rgba(235, 227, 214, 0.55) 38.2%,
-      #f3ebe0 52%,
-      #ebe2d4 100%
-    ),
-    linear-gradient(135deg, transparent 49.5%, rgba(210, 198, 178, 0.35) 50%, transparent 50.5%),
-    linear-gradient(225deg, transparent 49.5%, rgba(210, 198, 178, 0.35) 50%, transparent 50.5%);
-  clip-path: polygon(0 38%, 50% 62%, 100% 38%, 100% 100%, 0 100%);
-  box-shadow: inset 0 8px 18px rgba(90, 70, 40, 0.06);
+      transparent 0 36%,
+      rgba(210, 180, 140, 0.2) 36.2%,
+      #eadfce 48%,
+      #dccfb8 100%
+    );
+  clip-path: polygon(0 36%, 50% 60%, 100% 36%, 100% 100%, 0 100%);
+  box-shadow: inset 0 10px 20px rgba(80, 50, 30, 0.08);
 }
 
-.envelope__flap {
+.envelope-flap {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  height: 52%;
+  height: 50%;
   z-index: 5;
   transform-origin: top center;
   transform-style: preserve-3d;
-  transition: transform 1.35s cubic-bezier(0.4, 0.02, 0.2, 1) 0.22s;
   will-change: transform;
 }
 
-.envelope-stage--open .envelope__flap {
-  transform: rotateX(-175deg);
-}
-
-.envelope__flap-face {
+.envelope-flap__front,
+.envelope-flap__back {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
@@ -383,72 +297,61 @@
   clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
 
-.envelope__flap-face--front {
-  background:
-    linear-gradient(
-      180deg,
-      #fffcf8 0%,
-      #f6f0e7 55%,
-      #e8dfd0 100%
-    );
-  box-shadow:
-    inset 0 -1px 0 rgba(200, 185, 160, 0.35),
-    0 6px 14px rgba(60, 48, 30, 0.06);
+.envelope-flap__front {
+  background: linear-gradient(180deg, #fffaf4 0%, #f0e6d6 58%, #ddcfb8 100%);
+  box-shadow: 0 8px 16px rgba(60, 40, 25, 0.08);
 }
 
-.envelope__flap-face--front::after {
+.envelope-flap__front::after {
   content: "";
   position: absolute;
   inset: 0;
   background:
     linear-gradient(
       135deg,
-      transparent 46%,
-      rgba(190, 175, 150, 0.22) 49.5%,
+      transparent 47%,
+      rgba(150, 110, 70, 0.2) 50%,
       transparent 53%
     ),
     linear-gradient(
       225deg,
-      transparent 46%,
-      rgba(190, 175, 150, 0.22) 49.5%,
+      transparent 47%,
+      rgba(150, 110, 70, 0.2) 50%,
       transparent 53%
     );
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   pointer-events: none;
 }
 
-.envelope__flap-face--back {
+.envelope-flap__back {
   transform: rotateX(180deg);
-  background: linear-gradient(180deg, #e6ddd0 0%, #f0e8dc 100%);
+  background: linear-gradient(180deg, #c9a070 0%, #b8895a 40%, #a67548 100%);
 }
 
-.envelope__seal {
+.wax-seal-anchor {
   position: absolute;
   left: 50%;
-  top: 46%;
-  z-index: 6;
-  width: clamp(4.6rem, 22vw, 5.75rem);
-  height: clamp(4.6rem, 22vw, 5.75rem);
+  top: 45%;
+  z-index: 7;
+  width: clamp(4.75rem, 23vw, 5.85rem);
+  height: clamp(4.75rem, 23vw, 5.85rem);
   transform: translate(-50%, -50%);
-  filter: drop-shadow(0 8px 14px rgba(80, 55, 20, 0.28));
-  transition:
-    transform 0.22s ease,
-    opacity 0.85s ease 0.18s,
-    filter 0.85s ease 0.18s;
 }
 
-.envelope-stage--press .envelope__seal {
-  transform: translate(-50%, -50%) scale(0.88);
-  filter: drop-shadow(0 3px 6px rgba(80, 55, 20, 0.35));
+.wax-seal {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  filter: drop-shadow(0 10px 16px rgba(90, 40, 20, 0.35));
+  -webkit-tap-highlight-color: transparent;
 }
 
-.envelope-stage--open .envelope__seal {
-  transform: translate(-50%, -58%) scale(1.12) rotate(-14deg);
-  opacity: 0;
-  filter: drop-shadow(0 16px 22px rgba(80, 55, 20, 0.12));
-}
-
-.envelope__seal-img {
+.wax-seal__img {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -456,31 +359,163 @@
   user-select: none;
 }
 
-.envelope-hint {
+.invitation-card {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 10%;
+  z-index: 2;
+  display: flex;
+  min-height: 72%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 1.35rem 1rem 1.5rem;
+  border: 1.5px solid #c4a070;
+  border-radius: 0.2rem;
+  background:
+    linear-gradient(180deg, #fffdf9 0%, #faf4ea 100%);
+  box-shadow:
+    0 0 0 4px rgba(255, 252, 246, 0.9),
+    0 0 0 5px rgba(196, 160, 112, 0.35),
+    0 14px 28px rgba(60, 40, 25, 0.14);
+  color: #4a3728;
+  cursor: default;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.invitation-card:disabled {
+  cursor: default;
+}
+
+.invitation-card:not(:disabled) {
+  cursor: pointer;
+}
+
+.invitation-card__ornament {
+  width: 2.5rem;
+  height: 1px;
+  margin-bottom: 0.35rem;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #c4a070,
+    transparent
+  );
+}
+
+.invitation-card__eyebrow {
   margin: 0;
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.22em;
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: #a89880;
-  transition: opacity 0.35s ease;
-  animation: envelope-hint-pulse 2.6s ease-in-out infinite;
+  color: #8b6b4a;
+}
+
+.invitation-card__names {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-size: clamp(1.45rem, 5.5vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: #5c3d2e;
+}
+
+.invitation-card__rule {
+  display: block;
+  width: 3rem;
+  height: 1px;
+  margin: 0.35rem 0;
+  background: #c4a070;
+  opacity: 0.7;
+}
+
+.invitation-card__date {
+  margin: 0;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: #6b5340;
+}
+
+.invitation-card__place {
+  margin: 0;
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #8b4a4a;
+}
+
+.invitation-card__cta {
+  display: inline-flex;
+  margin-top: 0.85rem;
+  padding: 0.55rem 1.15rem;
+  border: 1px solid #c4a070;
+  border-radius: 999px;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #5c3d2e;
+  background: rgba(255, 250, 242, 0.9);
+}
+
+.invitation-card__floral {
+  position: absolute;
+  bottom: 0.55rem;
+  left: 50%;
+  width: 4.5rem;
+  height: 1.1rem;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 20% 60%, #8b4a4a 0 2px, transparent 2.5px),
+    radial-gradient(circle at 50% 40%, #c4a070 0 2.5px, transparent 3px),
+    radial-gradient(circle at 78% 65%, #6a7a52 0 2px, transparent 2.5px),
+    linear-gradient(
+      90deg,
+      transparent 10%,
+      rgba(106, 122, 82, 0.45) 50%,
+      transparent 90%
+    );
+  background-size: 100% 100%;
+  opacity: 0.7;
   pointer-events: none;
 }
 
-.envelope-hint--hide {
-  opacity: 0;
-  animation: none;
+.envelope-hint {
+  margin: 0;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8b6b4a;
+  pointer-events: none;
 }
 
-@keyframes envelope-hint-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
+.envelope-enter {
+  margin: 0;
+  padding: 0.7rem 1.5rem;
+  border: 1px solid rgba(139, 74, 74, 0.35);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #8b4a4a 0%, #6e3838 100%);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #faf6ef;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(90, 40, 35, 0.22);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.envelope-enter:hover {
+  filter: brightness(1.05);
 }
 
 .invite-shell {
@@ -501,18 +536,18 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .envelope-hint {
-    animation: none;
-    opacity: 0.85;
+@media (min-width: 768px) {
+  .envelope {
+    width: min(42vw, 22rem);
   }
 
-  .envelope__flap,
-  .envelope__card,
-  .envelope__seal,
-  .envelope,
+  .invitation-card__names {
+    font-size: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
   .invite-shell {
-    transition-duration: 0.01ms !important;
     animation: none !important;
   }
 }
