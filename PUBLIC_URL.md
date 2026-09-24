@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/VL-IlkxULqQoDjXH-rd5HLE-v3zvayr1SThxA80c4U4
+https://turbo-gateway.com/KWxbxr0gd5PtAEOwK6a8ARg3TtoqjA2-heNDu_5gI2M
 
 Mirrors:
-- https://ar-io.dev/VL-IlkxULqQoDjXH-rd5HLE-v3zvayr1SThxA80c4U4
-- https://arweave.net/VL-IlkxULqQoDjXH-rd5HLE-v3zvayr1SThxA80c4U4
+- https://ar-io.dev/KWxbxr0gd5PtAEOwK6a8ARg3TtoqjA2-heNDu_5gI2M
+- https://arweave.net/KWxbxr0gd5PtAEOwK6a8ARg3TtoqjA2-heNDu_5gI2M
 
-Fix: sello visible (sin opacity 0), rutas relativas, toques iOS.
+Sobre pulido + lazo SVG en la tarjeta.
 
 Republicar: `npm run publish:permanent`
