@@ -1,15 +1,9 @@
-# Link público permanente (rápido)
+# Link público permanente
 
 **No caduca. No hay que reclamar.**
 
-## Invitación
+- https://ar-io.dev/0pYJa2rsLGniY1RA6WpJg29KhB4hC30PqFhnM0nNU5A
+- https://turbo-gateway.com/0pYJa2rsLGniY1RA6WpJg29KhB4hC30PqFhnM0nNU5A
+- https://arweave.net/0pYJa2rsLGniY1RA6WpJg29KhB4hC30PqFhnM0nNU5A (puede tardar unos minutos en propagar)
 
-https://turbo-gateway.com/79kjeItEvLxL5Tvagpq5VRIq8k_OKVukJEwWaskSUsY
-
-Mirrors:
-- https://ar-io.dev/79kjeItEvLxL5Tvagpq5VRIq8k_OKVukJEwWaskSUsY
-- https://arweave.net/79kjeItEvLxL5Tvagpq5VRIq8k_OKVukJEwWaskSUsY
-
-Sobre tipo Sponsalia: gatefold crema + lazo plateado que se parte con las solapas.
-
-Republicar: `npm run publish:permanent`
+Publicado en Arweave el 2026-09-24T22:56:02.294Z.
