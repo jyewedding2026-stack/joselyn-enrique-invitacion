@@ -4,14 +4,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 type EnvelopeOverlayProps = {
+  /** When true, the welcome overlay is visible (envelope closed). */
   open: boolean;
+  /** Called after the open animation finishes — reveals the main invite. */
   onOpen: () => void;
 };
 
 type Phase = "idle" | "pressing" | "opening" | "exiting";
 
-const OPEN_MS = 2600;
-const EXIT_MS = 450;
+const PRESS_MS = 200;
+const OPEN_MS = 2800;
+const EXIT_MS = 500;
 
 export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const [mounted, setMounted] = useState(open);
@@ -65,15 +68,19 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
     if (reduced) {
       setPhase("exiting");
-      const t = window.setTimeout(() => onOpen(), 200);
+      const t = window.setTimeout(() => {
+        window.scrollTo(0, 0);
+        onOpen();
+      }, 180);
       timersRef.current.push(t);
       return;
     }
 
     setPhase("pressing");
-    const t1 = window.setTimeout(() => setPhase("opening"), 180);
+    const t1 = window.setTimeout(() => setPhase("opening"), PRESS_MS);
     const t2 = window.setTimeout(() => {
       setPhase("exiting");
+      window.scrollTo(0, 0);
       onOpen();
     }, OPEN_MS);
     timersRef.current.push(t1, t2);
@@ -85,60 +92,69 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const isOpening = phase === "opening";
   const isPressing = phase === "pressing";
   const isExiting = phase === "exiting";
+  const canClick = phase === "idle";
 
   return (
     <div
-      className={`envelope-overlay ${isExiting ? "envelope-overlay--exit" : ""}`}
+      className={`envelope-overlay ${isExiting ? "envelope-overlay--exit" : ""} ${
+        isOpening ? "envelope-overlay--opening" : ""
+      }`}
       role="dialog"
       aria-modal="true"
       aria-label="Abrir invitación"
       aria-busy={isAnimating}
+      onClick={canClick ? beginOpen : undefined}
+      onKeyDown={
+        canClick
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                beginOpen();
+              }
+            }
+          : undefined
+      }
+      tabIndex={canClick ? 0 : -1}
     >
-      <button
-        type="button"
-        className="envelope-overlay__hit"
-        onClick={beginOpen}
-        disabled={phase !== "idle"}
-        aria-label="Haz clic para abrir la invitación"
+      <div
+        className={`envelope-stage ${isOpening ? "envelope-stage--open" : ""} ${
+          isPressing ? "envelope-stage--press" : ""
+        }`}
       >
-        <div
-          className={`envelope-stage ${isOpening ? "envelope-stage--open" : ""} ${
-            isPressing ? "envelope-stage--press" : ""
+        <div className="envelope" aria-hidden>
+          <div className="envelope__shadow" />
+          <div className="envelope__back" />
+          <div className="envelope__card">
+            <span className="envelope__card-line" />
+            <span className="envelope__card-initials">J&E</span>
+            <span className="envelope__card-line" />
+          </div>
+          <div className="envelope__pocket" />
+          <div className="envelope__flap">
+            <div className="envelope__flap-face envelope__flap-face--front" />
+            <div className="envelope__flap-face envelope__flap-face--back" />
+          </div>
+          <div className="envelope__seal">
+            <Image
+              src="/images/wax-seal-je.webp"
+              alt=""
+              width={512}
+              height={512}
+              className="envelope__seal-img"
+              priority
+              draggable={false}
+            />
+          </div>
+        </div>
+
+        <p
+          className={`envelope-hint ${
+            isAnimating || isExiting ? "envelope-hint--hide" : ""
           }`}
         >
-          <div className="envelope" aria-hidden>
-            <div className="envelope__shadow" />
-            <div className="envelope__back" />
-            <div className="envelope__card">
-              <span className="envelope__card-initials">J&E</span>
-            </div>
-            <div className="envelope__pocket" />
-            <div className="envelope__flap">
-              <div className="envelope__flap-face envelope__flap-face--front" />
-              <div className="envelope__flap-face envelope__flap-face--back" />
-            </div>
-            <div className="envelope__seal">
-              <Image
-                src="/images/wax-seal-je.webp"
-                alt=""
-                width={512}
-                height={512}
-                className="envelope__seal-img"
-                priority
-                draggable={false}
-              />
-            </div>
-          </div>
-
-          <p
-            className={`envelope-hint ${
-              isAnimating || isExiting ? "envelope-hint--hide" : ""
-            }`}
-          >
-            Haz clic para abrir
-          </p>
-        </div>
-      </button>
+          Haz clic para abrir
+        </p>
+      </div>
     </div>
   );
 }
