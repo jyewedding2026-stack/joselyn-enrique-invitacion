@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import { motion, useReducedMotion, type Transition } from "framer-motion";
 import { wedding } from "@/content/wedding";
 
 type EnvelopeOverlayProps = {
@@ -10,92 +10,191 @@ type EnvelopeOverlayProps = {
 };
 
 /**
- * Sponsalia TikTok (7669384565022133537) interaction — verified from video:
- * Idle: cream gatefold + silver ribbon/bow centered; names above; TAP TO OPEN.
- * Tap bow → names/hint fade; ribbon+bow split on center seam.
- * ~0–0.8s: L/R flaps open (hinge outer edges), each carrying its ribbon/bow half.
- * Revealed: invitation card (no lazo on card) → “Ver invitación” → onOpen().
+ * Mandatory welcome sequence:
+ * TAP → animateKnot (0–300) → releaseBow (300–900) → releaseRibbon (700–1200)
+ * → wait (1200–1400) → openCard (1400–2400) → onOpen().
+ * HARD RULE: openCard never starts before lazo+cinta clear center + pause.
  */
-type Phase = "idle" | "opening" | "revealed" | "exiting";
+type Phase =
+  | "idle"
+  | "knot"
+  | "bow"
+  | "ribbon"
+  | "pause"
+  | "opening"
+  | "revealed"
+  | "exiting";
 
 const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
+const EASE_FALL: [number, number, number, number] = [0.33, 0.1, 0.25, 1];
 const EXIT_MS = 480;
-const OPEN_MS = 850;
-const REVEAL_DELAY_MS = 520;
 
-function SilverBowHalf({ side }: { side: "left" | "right" }) {
+/** Absolute timeline from tap (ms) */
+const T = {
+  knotEnd: 300,
+  bowStart: 300,
+  bowEnd: 900,
+  ribbonStart: 700,
+  ribbonEnd: 1200,
+  pauseEnd: 1400,
+  openEnd: 2400,
+  handoff: 2600,
+} as const;
+
+function wait(ms: number) {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+function BowParts({
+  knotActive,
+  released,
+  reduceMotion,
+}: {
+  knotActive: boolean;
+  released: boolean;
+  reduceMotion: boolean | null;
+}) {
+  const loopTransition: Transition = reduceMotion
+    ? { duration: 0.12 }
+    : { duration: 0.55, ease: EASE_FALL, delay: 0.05 };
+  const tailTransition: Transition = reduceMotion
+    ? { duration: 0.12 }
+    : { duration: 0.6, ease: EASE_FALL };
+  const knotTransition: Transition = reduceMotion
+    ? { duration: 0.1 }
+    : { duration: 0.3, ease: EASE };
+
   return (
-    <svg
-      className={`ribbon-bow__svg ribbon-bow__svg--${side}`}
-      viewBox={side === "left" ? "0 0 80 90" : "80 0 80 90"}
-      aria-hidden
-      focusable="false"
-    >
-      <defs>
-        <linearGradient id={`satin-${side}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#f4f4f6" />
-          <stop offset="35%" stopColor="#c8cad0" />
-          <stop offset="55%" stopColor="#e8e9ed" />
-          <stop offset="100%" stopColor="#9a9da6" />
-        </linearGradient>
-        <linearGradient
-          id={`satin-deep-${side}`}
-          x1="0%"
-          y1="0%"
-          x2="0%"
-          y2="100%"
+    <div className="lazo" aria-hidden>
+      <svg className="lazo__svg" viewBox="0 0 200 120" focusable="false">
+        <defs>
+          <linearGradient id="lazoSatin" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="28%" stopColor="#e8e9ed" />
+            <stop offset="55%" stopColor="#c8cad2" />
+            <stop offset="100%" stopColor="#9a9eaa" />
+          </linearGradient>
+          <linearGradient id="lazoDeep" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#dfe1e8" />
+            <stop offset="100%" stopColor="#7a7e8a" />
+          </linearGradient>
+        </defs>
+
+        <motion.g
+          style={{ transformOrigin: "88px 48px" }}
+          animate={
+            released
+              ? { x: -28, y: 56, rotate: -38, opacity: 0.12, scale: 0.92 }
+              : { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 }
+          }
+          transition={loopTransition}
         >
-          <stop offset="0%" stopColor="#d8dae0" />
-          <stop offset="100%" stopColor="#7e828c" />
-        </linearGradient>
-      </defs>
-      {side === "left" ? (
-        <>
           <path
-            d="M78 38 C52 10 22 14 16 32 C10 50 36 58 70 46 Z"
-            fill={`url(#satin-${side})`}
+            d="M96 46 C68 8 28 12 20 34 C12 56 44 68 88 54 Z"
+            fill="url(#lazoSatin)"
           />
           <path
-            d="M72 46 C52 54 34 70 26 84 L48 78 C58 66 68 54 76 48 Z"
-            fill={`url(#satin-deep-${side})`}
-          />
-          <path
-            d="M68 32 C78 36 80 48 78 52 L80 32 Z"
-            fill={`url(#satin-${side})`}
-          />
-          <ellipse cx="80" cy="42" rx="12" ry="10" fill={`url(#satin-${side})`} />
-          <path
-            d="M58 28 C48 22 34 24 28 30"
+            d="M72 30 C58 22 40 24 32 32"
             fill="none"
             stroke="#fff"
-            strokeWidth="1.4"
+            strokeWidth="1.6"
             strokeLinecap="round"
             opacity="0.55"
           />
-        </>
-      ) : (
-        <>
+        </motion.g>
+
+        <motion.g
+          style={{ transformOrigin: "112px 48px" }}
+          animate={
+            released
+              ? { x: 28, y: 56, rotate: 38, opacity: 0.12, scale: 0.92 }
+              : { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 }
+          }
+          transition={loopTransition}
+        >
           <path
-            d="M82 38 C108 10 138 14 144 32 C150 50 124 58 90 46 Z"
-            fill={`url(#satin-${side})`}
+            d="M104 46 C132 8 172 12 180 34 C188 56 156 68 112 54 Z"
+            fill="url(#lazoSatin)"
           />
           <path
-            d="M88 46 C108 54 126 70 134 84 L112 78 C102 66 92 54 84 48 Z"
-            fill={`url(#satin-deep-${side})`}
-          />
-          <ellipse cx="80" cy="42" rx="12" ry="10" fill={`url(#satin-${side})`} />
-          <ellipse cx="80" cy="41" rx="7" ry="5.5" fill="#6e727a" opacity="0.28" />
-          <path
-            d="M102 28 C112 22 126 24 132 30"
+            d="M128 30 C142 22 160 24 168 32"
             fill="none"
             stroke="#fff"
-            strokeWidth="1.4"
+            strokeWidth="1.6"
             strokeLinecap="round"
             opacity="0.55"
           />
-        </>
-      )}
-    </svg>
+        </motion.g>
+
+        <motion.g
+          style={{ transformOrigin: "92px 52px" }}
+          animate={
+            released
+              ? { x: -18, y: 78, rotate: -52, opacity: 0.08 }
+              : { x: 0, y: 0, rotate: 0, opacity: 1 }
+          }
+          transition={tailTransition}
+        >
+          <path
+            d="M90 52 C66 62 42 84 30 108 L58 98 C70 80 84 62 96 54 Z"
+            fill="url(#lazoDeep)"
+          />
+        </motion.g>
+
+        <motion.g
+          style={{ transformOrigin: "108px 52px" }}
+          animate={
+            released
+              ? { x: 18, y: 78, rotate: 52, opacity: 0.08 }
+              : { x: 0, y: 0, rotate: 0, opacity: 1 }
+          }
+          transition={tailTransition}
+        >
+          <path
+            d="M110 52 C134 62 158 84 170 108 L142 98 C130 80 116 62 104 54 Z"
+            fill="url(#lazoDeep)"
+          />
+        </motion.g>
+
+        <motion.g
+          style={{ transformOrigin: "100px 48px" }}
+          animate={
+            released
+              ? { y: 64, scale: 0.7, opacity: 0.1, rotate: 12 }
+              : knotActive
+                ? { y: 0, scale: [1, 1.12, 0.94, 1], opacity: 1, rotate: 0 }
+                : { y: 0, scale: 1, opacity: 1, rotate: 0 }
+          }
+          transition={
+            released
+              ? tailTransition
+              : knotActive
+                ? knotTransition
+                : { duration: 0.2 }
+          }
+        >
+          <ellipse cx="100" cy="48" rx="16" ry="13" fill="url(#lazoSatin)" />
+          <ellipse
+            cx="100"
+            cy="47"
+            rx="9"
+            ry="7"
+            fill="#6e727a"
+            opacity="0.28"
+          />
+          <ellipse
+            cx="96"
+            cy="44"
+            rx="4"
+            ry="2.5"
+            fill="#fff"
+            opacity="0.45"
+          />
+        </motion.g>
+      </svg>
+    </div>
   );
 }
 
@@ -103,7 +202,12 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const reduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(open);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [bowReleased, setBowReleased] = useState(false);
+  const [ribbonReleased, setRibbonReleased] = useState(false);
+  const [leavesOpen, setLeavesOpen] = useState(false);
   const lockRef = useRef(false);
+  const runIdRef = useRef(0);
+  const abortRef = useRef(false);
   const timersRef = useRef<number[]>([]);
 
   const clearTimers = useCallback(() => {
@@ -111,21 +215,32 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
     timersRef.current = [];
   }, []);
 
+  const resetMotion = useCallback(() => {
+    setBowReleased(false);
+    setRibbonReleased(false);
+    setLeavesOpen(false);
+  }, []);
+
   useEffect(() => {
     if (open) {
       setMounted(true);
       setPhase("idle");
       lockRef.current = false;
+      abortRef.current = false;
+      resetMotion();
       return;
     }
     if (!mounted) return;
+    abortRef.current = true;
+    clearTimers();
     setPhase("exiting");
     const t = window.setTimeout(() => {
       setMounted(false);
       setPhase("idle");
+      resetMotion();
     }, EXIT_MS);
     return () => window.clearTimeout(t);
-  }, [open, mounted]);
+  }, [open, mounted, clearTimers, resetMotion]);
 
   useEffect(() => {
     if (!mounted || phase === "exiting") return;
@@ -141,42 +256,128 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
-  const enterInvite = useCallback(() => {
-    if (phase !== "revealed") return;
-    setPhase("exiting");
-    window.scrollTo(0, 0);
-    onOpen();
-  }, [onOpen, phase]);
+  const animateKnot = useCallback(async () => {
+    setPhase("knot");
+    await wait(T.knotEnd);
+  }, []);
 
-  const beginOpen = useCallback(() => {
+  const releaseBow = useCallback(async () => {
+    setPhase("bow");
+    setBowReleased(true);
+    // Bow motion runs 300–900; we return after full bow window from call site
+  }, []);
+
+  const releaseRibbon = useCallback(async () => {
+    setPhase("ribbon");
+    setRibbonReleased(true);
+    // Ribbon motion runs 700–1200; wait handled by sequence
+  }, []);
+
+  const openCard = useCallback(async () => {
+    // HARD RULE: only called after ribbon cleared + pause
+    setPhase("opening");
+    setLeavesOpen(true);
+    await wait(T.openEnd - T.pauseEnd);
+  }, []);
+
+  const startOpeningSequence = useCallback(async () => {
     if (phase !== "idle" || !open || lockRef.current) return;
     lockRef.current = true;
+    abortRef.current = false;
     clearTimers();
+    const runId = ++runIdRef.current;
+
+    const alive = () =>
+      !abortRef.current && runIdRef.current === runId && open;
 
     if (reduceMotion) {
+      setBowReleased(true);
+      setRibbonReleased(true);
+      setLeavesOpen(true);
+      setPhase("opening");
+      await wait(160);
+      if (!alive()) return;
       setPhase("revealed");
+      await wait(200);
+      if (!alive()) return;
+      window.scrollTo(0, 0);
+      onOpen();
       return;
     }
 
-    setPhase("opening");
-    timersRef.current.push(
-      window.setTimeout(() => setPhase("revealed"), REVEAL_DELAY_MS),
-    );
-  }, [clearTimers, open, phase, reduceMotion]);
+    // 0–300: knot tension
+    await animateKnot();
+    if (!alive()) return;
+
+    // 300: start bow fall
+    await releaseBow();
+    if (!alive()) return;
+
+    // 300→700: bow falling alone
+    await wait(T.ribbonStart - T.bowStart);
+    if (!alive()) return;
+
+    // 700: ribbon physical release (overlaps remaining bow to 900)
+    await releaseRibbon();
+    if (!alive()) return;
+
+    // 700→1200: ribbon slides/falls clear of center
+    await wait(T.ribbonEnd - T.ribbonStart);
+    if (!alive()) return;
+
+    // 1200–1400: pause — center clear before openCard
+    setPhase("pause");
+    await wait(T.pauseEnd - T.ribbonEnd);
+    if (!alive()) return;
+
+    // 1400–2400: leaves open in 3D (NEVER before this gate)
+    await openCard();
+    if (!alive()) return;
+
+    setPhase("revealed");
+    await wait(T.handoff - T.openEnd);
+    if (!alive()) return;
+
+    window.scrollTo(0, 0);
+    onOpen();
+  }, [
+    animateKnot,
+    clearTimers,
+    open,
+    onOpen,
+    openCard,
+    phase,
+    reduceMotion,
+    releaseBow,
+    releaseRibbon,
+  ]);
+
+  const onTap = useCallback(
+    (e: PointerEvent<HTMLButtonElement> | MouseEvent<HTMLButtonElement>) => {
+      if ("pointerType" in e && e.pointerType === "mouse" && e.button !== 0) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      void startOpeningSequence();
+    },
+    [startOpeningSequence],
+  );
 
   if (!mounted) return null;
 
-  const flapsOpen = phase === "opening" || phase === "revealed";
-  const cardShown =
-    phase === "opening" ||
-    phase === "revealed" ||
-    (reduceMotion && phase !== "idle");
   const isExiting = phase === "exiting";
-  const showChrome = phase === "idle";
+  const knotActive = phase === "knot";
+  const showClosedCopy = !leavesOpen;
+  const cardShown = leavesOpen || (reduceMotion && phase !== "idle");
 
-  const flapTransition = reduceMotion
-    ? { duration: 0.01 }
-    : { duration: OPEN_MS / 1000, ease: EASE };
+  const leafTransition: Transition = reduceMotion
+    ? { duration: 0.15 }
+    : { duration: 1, ease: EASE };
+
+  const ribbonTransition: Transition = reduceMotion
+    ? { duration: 0.12 }
+    : { duration: 0.5, ease: EASE_FALL };
 
   return (
     <motion.div
@@ -184,16 +385,20 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Abrir invitación"
-      aria-busy={phase === "opening"}
+      aria-busy={phase !== "idle" && phase !== "revealed" && phase !== "exiting"}
+      data-phase={phase}
       initial={false}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: EXIT_MS / 1000, ease: "easeOut" }}
     >
       <div className="envelope-scene">
-        <div className={`envelope ${flapsOpen ? "envelope--open" : ""}`}>
+        <div
+          className={`envelope ${leavesOpen ? "envelope--open" : ""} ${
+            phase !== "idle" ? "envelope--sequencing" : ""
+          }`}
+        >
           <div className="envelope-glow" aria-hidden />
 
-          {/* Center invitation card (under flaps) — no lazo */}
           <div className="invitation-card" aria-hidden={!cardShown}>
             <motion.div
               className="invitation-card__inner"
@@ -201,12 +406,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
               animate={{ opacity: cardShown ? 1 : 0 }}
               transition={
                 reduceMotion
-                  ? { duration: 0.15 }
-                  : {
-                      duration: 0.65,
-                      ease: EASE,
-                      delay: phase === "opening" ? 0.28 : 0,
-                    }
+                  ? { duration: 0.12 }
+                  : { duration: 0.55, ease: EASE, delay: 0.2 }
               }
             >
               <p className="invitation-card__eyebrow">Nuestra boda</p>
@@ -219,44 +420,24 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             </motion.div>
           </div>
 
-          {/* Names on closed face (fade on open) */}
-          <motion.p
-            className="envelope-closed-names"
-            initial={false}
-            animate={{ opacity: showChrome ? 1 : 0 }}
-            transition={{ duration: reduceMotion ? 0.08 : 0.2 }}
-            aria-hidden
-          >
-            {wedding.couple.displayName}
-          </motion.p>
-
-          {/* Left gatefold flap + left ribbon/bow half */}
           <motion.div
-            className="envelope-flap envelope-flap--left"
+            className="envelope-closed-face"
             initial={false}
-            animate={{ rotateY: flapsOpen ? -118 : 0 }}
-            transition={flapTransition}
-            style={{
-              transformOrigin: "left center",
-              transformStyle: "preserve-3d",
-              WebkitTransformStyle: "preserve-3d",
-            }}
+            animate={{ opacity: showClosedCopy ? 1 : 0 }}
+            transition={{ duration: reduceMotion ? 0.08 : 0.25 }}
             aria-hidden
           >
-            <div className="envelope-flap__face">
-              <div className="ribbon-band ribbon-band--left" />
-              <div className="ribbon-bow ribbon-bow--half ribbon-bow--left">
-                <SilverBowHalf side="left" />
-              </div>
-            </div>
+            <p className="envelope-closed-names">
+              {wedding.couple.displayName}
+            </p>
+            <p className="envelope-closed-initials">J&amp;E</p>
           </motion.div>
 
-          {/* Right gatefold flap + right ribbon/bow half */}
           <motion.div
-            className="envelope-flap envelope-flap--right"
+            className="card-leaf card-leaf--left"
             initial={false}
-            animate={{ rotateY: flapsOpen ? 118 : 0 }}
-            transition={flapTransition}
+            animate={{ rotateY: leavesOpen ? -118 : 0 }}
+            transition={leafTransition}
             style={{
               transformOrigin: "right center",
               transformStyle: "preserve-3d",
@@ -264,30 +445,54 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             }}
             aria-hidden
           >
-            <div className="envelope-flap__face envelope-flap__face--emboss">
-              <div className="ribbon-band ribbon-band--right" />
-              <div className="ribbon-bow ribbon-bow--half ribbon-bow--right">
-                <SilverBowHalf side="right" />
-              </div>
-            </div>
+            <div className="card-leaf__face" />
           </motion.div>
 
-          {/* Tap target — full bow hit area while closed */}
+          <motion.div
+            className="card-leaf card-leaf--right"
+            initial={false}
+            animate={{ rotateY: leavesOpen ? 118 : 0 }}
+            transition={leafTransition}
+            style={{
+              transformOrigin: "left center",
+              transformStyle: "preserve-3d",
+              WebkitTransformStyle: "preserve-3d",
+            }}
+            aria-hidden
+          >
+            <div className="card-leaf__face card-leaf__face--emboss" />
+          </motion.div>
+
+          {/* Independent ribbon — physical slide/fall */}
+          <div className="ribbon-slot" aria-hidden>
+            <motion.div
+              className="ribbon-wrap"
+              initial={false}
+              animate={
+                ribbonReleased
+                  ? { x: "78%", y: 56, rotate: 16, opacity: 0.18 }
+                  : { x: 0, y: 0, rotate: 0, opacity: 1 }
+              }
+              transition={ribbonTransition}
+            >
+              <div className="ribbon-band ribbon-band--full" />
+            </motion.div>
+          </div>
+
+          <div className="lazo-anchor" aria-hidden>
+            <BowParts
+              knotActive={knotActive}
+              released={bowReleased}
+              reduceMotion={reduceMotion}
+            />
+          </div>
+
           {phase === "idle" && (
             <button
               type="button"
-              className="ribbon-bow ribbon-bow--hit"
-              onPointerUp={(e) => {
-                if (e.pointerType === "mouse" && e.button !== 0) return;
-                e.preventDefault();
-                e.stopPropagation();
-                beginOpen();
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                beginOpen();
-              }}
+              className="envelope-hit"
+              onPointerUp={onTap}
+              onClick={onTap}
               aria-label="Desatar el lazo y abrir la invitación"
             />
           )}
@@ -301,19 +506,6 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
         {phase === "idle" && (
           <p className="envelope-hint">Toca el lazo para abrir</p>
-        )}
-
-        {phase === "revealed" && (
-          <motion.button
-            type="button"
-            className="envelope-enter"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0.15 : 0.35, delay: 0.08 }}
-            onClick={enterInvite}
-          >
-            Ver invitación
-          </motion.button>
         )}
       </div>
     </motion.div>
