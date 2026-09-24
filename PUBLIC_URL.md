@@ -1,15 +1,9 @@
-# Link público permanente (rápido)
+# Link público permanente
 
 **No caduca. No hay que reclamar.**
 
-## Invitación
+- https://ar-io.dev/v-9JUk87chhQK7mYM6ulPFbchn_33jIrA8fy7rGEsvM
+- https://turbo-gateway.com/v-9JUk87chhQK7mYM6ulPFbchn_33jIrA8fy7rGEsvM
+- https://arweave.net/v-9JUk87chhQK7mYM6ulPFbchn_33jIrA8fy7rGEsvM (puede tardar unos minutos en propagar)
 
-https://turbo-gateway.com/SXZRAosnNrOm3fABqxqHXS61wHJ_1fwUx2WEY4MP2mI
-
-Mirrors:
-- https://ar-io.dev/SXZRAosnNrOm3fABqxqHXS61wHJ_1fwUx2WEY4MP2mI
-- https://arweave.net/SXZRAosnNrOm3fABqxqHXS61wHJ_1fwUx2WEY4MP2mI
-
-Incluye sobre de bienvenida con sello J&E: al abrirlo se revela la invitación completa.
-
-Republicar: `npm run publish:permanent`
+Publicado en Arweave el 2026-09-24T06:38:31.114Z.
