@@ -1,9 +1,15 @@
-# Link público permanente
+# Link público permanente (rápido)
 
 **No caduca. No hay que reclamar.**
 
-- https://ar-io.dev/v-9JUk87chhQK7mYM6ulPFbchn_33jIrA8fy7rGEsvM
-- https://turbo-gateway.com/v-9JUk87chhQK7mYM6ulPFbchn_33jIrA8fy7rGEsvM
-- https://arweave.net/v-9JUk87chhQK7mYM6ulPFbchn_33jIrA8fy7rGEsvM (puede tardar unos minutos en propagar)
+## Invitación
 
-Publicado en Arweave el 2026-09-24T06:38:31.114Z.
+https://turbo-gateway.com/Y7yl5HSNMJcQzO_DmHiY8JuqK8V9fWfTjHp0AtigIGs
+
+Mirrors:
+- https://ar-io.dev/Y7yl5HSNMJcQzO_DmHiY8JuqK8V9fWfTjHp0AtigIGs
+- https://arweave.net/Y7yl5HSNMJcQzO_DmHiY8JuqK8V9fWfTjHp0AtigIGs
+
+Fix móvil: rutas relativas `./images/` (sello + floral RSVP), toques iOS del sobre.
+
+Republicar: `npm run publish:permanent`
