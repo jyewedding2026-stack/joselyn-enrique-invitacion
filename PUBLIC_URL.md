@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/KWxbxr0gd5PtAEOwK6a8ARg3TtoqjA2-heNDu_5gI2M
+https://turbo-gateway.com/79kjeItEvLxL5Tvagpq5VRIq8k_OKVukJEwWaskSUsY
 
 Mirrors:
-- https://ar-io.dev/KWxbxr0gd5PtAEOwK6a8ARg3TtoqjA2-heNDu_5gI2M
-- https://arweave.net/KWxbxr0gd5PtAEOwK6a8ARg3TtoqjA2-heNDu_5gI2M
+- https://ar-io.dev/79kjeItEvLxL5Tvagpq5VRIq8k_OKVukJEwWaskSUsY
+- https://arweave.net/79kjeItEvLxL5Tvagpq5VRIq8k_OKVukJEwWaskSUsY
 
-Sobre pulido + lazo SVG en la tarjeta.
+Sobre tipo Sponsalia: gatefold crema + lazo plateado que se parte con las solapas.
 
 Republicar: `npm run publish:permanent`
