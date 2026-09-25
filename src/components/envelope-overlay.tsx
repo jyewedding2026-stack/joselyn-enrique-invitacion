@@ -56,8 +56,8 @@ function wait(ms: number) {
 }
 
 /**
- * Satin bow: knot / loops / long V-tips with volume.
- * Fall uses staggered keyframes (fabric), not teleport + fade.
+ * Large premium satin bow (~60% card width via CSS).
+ * Separate knot / loops / long V-tips; staggered fabric fall keyframes.
  */
 function BowParts({
   knotActive,
@@ -76,261 +76,292 @@ function BowParts({
 
   const knotFall: Transition = reduceMotion
     ? { duration: 0.15 }
-    : { duration: 0.7, ease: EASE_SOFT, times: [0, 0.25, 0.55, 1] };
+    : { duration: 0.75, ease: EASE_SOFT, times: [0, 0.28, 0.58, 1] };
 
   const loopFall: Transition = reduceMotion
     ? { duration: 0.12 }
     : {
-        // loops ~200–700ms from tap
-        delay: 0.2,
-        duration: 0.5,
+        delay: 0.18,
+        duration: 0.55,
         ease: EASE_SOFT,
-        times: [0, 0.35, 0.7, 1],
+        times: [0, 0.3, 0.65, 1],
       };
 
   const tipFall: Transition = reduceMotion
     ? { duration: 0.15 }
     : {
-        // tips 350–1100ms from tap
-        duration: 0.75,
+        duration: 0.8,
         ease: EASE_GRAVITY,
-        times: [0, 0.18, 0.42, 0.68, 1],
+        times: [0, 0.16, 0.4, 0.68, 1],
       };
 
   return (
     <div className="lazo" aria-hidden>
-      <svg className="lazo__svg" viewBox="0 0 240 170" focusable="false">
+      <svg className="lazo__svg" viewBox="0 0 280 210" focusable="false">
         <defs>
-          <linearGradient id="lazoSatin" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="lazoSatin" x1="8%" y1="0%" x2="92%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="22%" stopColor="#f2f3f6" />
-            <stop offset="48%" stopColor="#d0d3db" />
-            <stop offset="72%" stopColor="#b4b8c2" />
-            <stop offset="100%" stopColor="#8e929e" />
+            <stop offset="18%" stopColor="#f7f8fb" />
+            <stop offset="38%" stopColor="#dde0e8" />
+            <stop offset="55%" stopColor="#c5c9d4" />
+            <stop offset="78%" stopColor="#a8adb8" />
+            <stop offset="100%" stopColor="#8a8f9c" />
           </linearGradient>
-          <linearGradient id="lazoSatinSide" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#e6e8ee" />
-            <stop offset="45%" stopColor="#c2c5ce" />
-            <stop offset="100%" stopColor="#7c808c" />
+          <linearGradient id="lazoSatinDeep" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#e8eaf0" />
+            <stop offset="40%" stopColor="#b4b8c4" />
+            <stop offset="100%" stopColor="#6e7380" />
           </linearGradient>
-          <linearGradient id="lazoTip" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f7f8fa" />
-            <stop offset="40%" stopColor="#cfd2da" />
-            <stop offset="100%" stopColor="#8a8e9a" />
+          <linearGradient id="lazoTipFace" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="25%" stopColor="#eef0f5" />
+            <stop offset="55%" stopColor="#c8ccd6" />
+            <stop offset="100%" stopColor="#9196a4" />
           </linearGradient>
-          <linearGradient id="lazoTipEdge" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#b8bcc6" />
-            <stop offset="100%" stopColor="#6a6e7a" />
+          <linearGradient id="lazoTipSide" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#a0a4b0" />
+            <stop offset="50%" stopColor="#7a7e8a" />
+            <stop offset="100%" stopColor="#5c606c" />
           </linearGradient>
-          <radialGradient id="lazoKnotShade" cx="40%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
-            <stop offset="45%" stopColor="#d8dae0" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#6e727c" stopOpacity="0.45" />
+          <radialGradient id="lazoKnotLit" cx="32%" cy="28%" r="70%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+            <stop offset="35%" stopColor="#e4e6ec" stopOpacity="0.55" />
+            <stop offset="70%" stopColor="#aeb2bc" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#5a5e6a" stopOpacity="0.55" />
           </radialGradient>
-          <filter id="lazoSoft" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b" />
-            <feOffset dy="1.2" result="o" />
-            <feFlood floodColor="#4a4e58" floodOpacity="0.22" />
+          <linearGradient id="lazoSpec" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#fff" stopOpacity="0" />
+            <stop offset="40%" stopColor="#fff" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+          </linearGradient>
+          <filter id="lazoDrop" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1.8" result="b" />
+            <feOffset dy="2" result="o" />
+            <feFlood floodColor="#3a3e48" floodOpacity="0.28" />
             <feComposite in2="o" operator="in" />
             <feMerge>
               <feMergeNode />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <filter id="lazoInner" x="-10%" y="-10%" width="120%" height="120%">
+            <feGaussianBlur stdDeviation="1.4" />
+          </filter>
         </defs>
 
-        {/* Left tip — long V with thickness; gravity fall + sway */}
         <motion.g
           className="lazo__tip lazo__tip--left"
-          style={{ transformOrigin: "108px 72px" }}
+          style={{ transformOrigin: "128px 88px" }}
           initial={false}
           animate={
             released
               ? {
-                  x: [0, -6, -14, -22, -28],
-                  y: [0, 14, 42, 88, 128],
-                  rotate: [0, -12, -22, -32, -38],
-                  opacity: [1, 1, 1, 0.9, 0.2],
+                  x: [0, -8, -16, -26, -34],
+                  y: [0, 18, 52, 105, 148],
+                  rotate: [0, -10, -20, -30, -36],
+                  opacity: [1, 1, 1, 0.92, 0.18],
                 }
               : { x: 0, y: 0, rotate: 0, opacity: 1 }
           }
           transition={tipFall}
         >
           <path
-            d="M108 70 C88 82 64 108 48 138 L72 146 C84 118 98 90 112 76 Z"
-            fill="url(#lazoTipEdge)"
-            opacity="0.85"
+            d="M126 86 C108 98 88 122 68 152 L68 162 C92 138 112 112 130 96 Z"
+            fill="url(#lazoTipSide)"
+            opacity="0.75"
           />
           <path
-            d="M110 68 C86 78 58 102 42 134 L46 142 L70 132 C82 106 98 84 114 72 Z"
-            fill="url(#lazoTip)"
-            filter="url(#lazoSoft)"
+            d="M130 82 C108 92 84 118 58 154 L72 168 L86 152 L100 168 L112 148 C120 122 128 100 136 88 Z"
+            fill="url(#lazoTipFace)"
+            filter="url(#lazoDrop)"
           />
-          <path d="M42 134 L54 128 L46 142 Z" fill="#9a9eaa" />
           <path
-            d="M102 74 C86 86 68 108 54 128"
+            d="M124 90 C104 108 86 132 70 156"
             fill="none"
             stroke="#fff"
-            strokeWidth="1.4"
+            strokeWidth="2"
             strokeLinecap="round"
-            opacity="0.45"
+            opacity="0.5"
+          />
+          <path
+            d="M128 94 C110 112 94 134 80 154"
+            fill="none"
+            stroke="#6a6e7a"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            opacity="0.28"
           />
         </motion.g>
 
-        {/* Right tip */}
         <motion.g
           className="lazo__tip lazo__tip--right"
-          style={{ transformOrigin: "132px 72px" }}
+          style={{ transformOrigin: "152px 88px" }}
           initial={false}
           animate={
             released
               ? {
-                  x: [0, 6, 14, 22, 28],
-                  y: [0, 16, 46, 92, 132],
-                  rotate: [0, 10, 20, 30, 36],
-                  opacity: [1, 1, 1, 0.9, 0.2],
+                  x: [0, 8, 16, 26, 34],
+                  y: [0, 20, 56, 110, 152],
+                  rotate: [0, 9, 18, 28, 34],
+                  opacity: [1, 1, 1, 0.92, 0.18],
                 }
               : { x: 0, y: 0, rotate: 0, opacity: 1 }
           }
           transition={{
             ...tipFall,
-            delay: reduceMotion ? 0 : 0.04,
+            delay: reduceMotion ? 0 : 0.05,
           }}
         >
           <path
-            d="M132 70 C152 82 176 108 192 138 L168 146 C156 118 142 90 128 76 Z"
-            fill="url(#lazoTipEdge)"
-            opacity="0.85"
+            d="M154 86 C172 98 192 122 212 152 L212 162 C188 138 168 112 150 96 Z"
+            fill="url(#lazoTipSide)"
+            opacity="0.75"
           />
           <path
-            d="M130 68 C154 78 182 102 198 134 L194 142 L170 132 C158 106 142 84 126 72 Z"
-            fill="url(#lazoTip)"
-            filter="url(#lazoSoft)"
+            d="M150 82 C172 92 196 118 222 154 L208 168 L194 152 L180 168 L168 148 C160 122 152 100 144 88 Z"
+            fill="url(#lazoTipFace)"
+            filter="url(#lazoDrop)"
           />
-          <path d="M198 134 L186 128 L194 142 Z" fill="#9a9eaa" />
           <path
-            d="M138 74 C154 86 172 108 186 128"
+            d="M156 90 C176 108 194 132 210 156"
             fill="none"
             stroke="#fff"
-            strokeWidth="1.4"
+            strokeWidth="2"
             strokeLinecap="round"
-            opacity="0.45"
+            opacity="0.5"
+          />
+          <path
+            d="M152 94 C170 112 186 134 200 154"
+            fill="none"
+            stroke="#6a6e7a"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            opacity="0.28"
           />
         </motion.g>
 
-        {/* Left loop — soft collapse outward/down */}
         <motion.g
           className="lazo__loop lazo__loop--left"
-          style={{ transformOrigin: "104px 58px" }}
+          style={{ transformOrigin: "122px 70px" }}
           initial={false}
           animate={
             loopsFalling
               ? {
-                  x: [0, -10, -22, -30],
-                  y: [0, 6, 28, 52],
-                  rotate: [0, -8, -18, -26],
-                  scale: [1, 0.98, 0.94, 0.9],
-                  opacity: [1, 1, 0.95, 0.25],
+                  x: [0, -14, -28, -40],
+                  y: [0, 8, 34, 62],
+                  rotate: [0, -10, -20, -28],
+                  scale: [1, 0.98, 0.93, 0.88],
+                  opacity: [1, 1, 0.96, 0.22],
                 }
               : { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
           }
           transition={loopFall}
         >
           <path
-            d="M112 58 C86 22 42 24 28 48 C16 70 48 86 100 68 Z"
-            fill="#8a8e98"
-            opacity="0.35"
+            d="M132 72 C98 28 42 30 24 58 C8 84 48 104 118 84 Z"
+            fill="#6e7280"
+            opacity="0.28"
+            filter="url(#lazoInner)"
           />
           <path
-            d="M114 56 C84 16 36 18 24 44 C12 68 46 84 102 66 Z"
+            d="M136 68 C96 18 34 20 16 52 C0 80 44 102 122 80 Z"
             fill="url(#lazoSatin)"
-            filter="url(#lazoSoft)"
+            filter="url(#lazoDrop)"
           />
           <path
-            d="M100 58 C78 42 52 40 36 50"
+            d="M120 70 C92 42 58 42 38 58 C48 72 78 78 112 76 Z"
+            fill="url(#lazoSatinDeep)"
+            opacity="0.45"
+          />
+          <path
+            d="M100 42 C72 28 46 32 30 46"
             fill="none"
-            stroke="#6e727c"
+            stroke="url(#lazoSpec)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            opacity="0.9"
+          />
+          <path
+            d="M118 66 C90 48 58 48 36 60"
+            fill="none"
+            stroke="#5c606c"
             strokeWidth="2"
             strokeLinecap="round"
-            opacity="0.22"
-          />
-          <path
-            d="M88 40 C70 30 50 32 38 42"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            opacity="0.55"
+            opacity="0.2"
           />
         </motion.g>
 
-        {/* Right loop */}
         <motion.g
           className="lazo__loop lazo__loop--right"
-          style={{ transformOrigin: "136px 58px" }}
+          style={{ transformOrigin: "158px 70px" }}
           initial={false}
           animate={
             loopsFalling
               ? {
-                  x: [0, 10, 22, 30],
-                  y: [0, 8, 30, 54],
-                  rotate: [0, 8, 18, 26],
-                  scale: [1, 0.98, 0.94, 0.9],
-                  opacity: [1, 1, 0.95, 0.25],
+                  x: [0, 14, 28, 40],
+                  y: [0, 10, 36, 64],
+                  rotate: [0, 10, 20, 28],
+                  scale: [1, 0.98, 0.93, 0.88],
+                  opacity: [1, 1, 0.96, 0.22],
                 }
               : { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
           }
           transition={{
             ...loopFall,
-            delay: reduceMotion ? 0 : 0.24,
+            delay: reduceMotion ? 0 : 0.22,
           }}
         >
           <path
-            d="M128 58 C154 22 198 24 212 48 C224 70 192 86 140 68 Z"
-            fill="#8a8e98"
-            opacity="0.35"
+            d="M148 72 C182 28 238 30 256 58 C272 84 232 104 162 84 Z"
+            fill="#6e7280"
+            opacity="0.28"
+            filter="url(#lazoInner)"
           />
           <path
-            d="M126 56 C156 16 204 18 216 44 C228 68 194 84 138 66 Z"
+            d="M144 68 C184 18 246 20 264 52 C280 80 236 102 158 80 Z"
             fill="url(#lazoSatin)"
-            filter="url(#lazoSoft)"
+            filter="url(#lazoDrop)"
           />
           <path
-            d="M140 58 C162 42 188 40 204 50"
+            d="M160 70 C188 42 222 42 242 58 C232 72 202 78 168 76 Z"
+            fill="url(#lazoSatinDeep)"
+            opacity="0.45"
+          />
+          <path
+            d="M180 42 C208 28 234 32 250 46"
             fill="none"
-            stroke="#6e727c"
+            stroke="url(#lazoSpec)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            opacity="0.9"
+          />
+          <path
+            d="M162 66 C190 48 222 48 244 60"
+            fill="none"
+            stroke="#5c606c"
             strokeWidth="2"
             strokeLinecap="round"
-            opacity="0.22"
-          />
-          <path
-            d="M152 40 C170 30 190 32 202 42"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            opacity="0.55"
+            opacity="0.2"
           />
         </motion.g>
 
-        {/* Knot — tension then loosen; fall last */}
         <motion.g
           className="lazo__knot"
-          style={{ transformOrigin: "120px 60px" }}
+          style={{ transformOrigin: "140px 74px" }}
           initial={false}
           animate={
             released
               ? {
-                  y: [0, 10, 36, 72],
-                  x: [0, 2, 4, 6],
-                  rotate: [0, 6, 14, 18],
-                  scale: [1, 0.96, 0.88, 0.82],
-                  opacity: [1, 1, 0.85, 0.18],
+                  y: [0, 12, 42, 86],
+                  x: [0, 3, 5, 8],
+                  rotate: [0, 5, 12, 16],
+                  scale: [1, 0.97, 0.9, 0.84],
+                  opacity: [1, 1, 0.88, 0.16],
                 }
               : knotActive
                 ? {
-                    scale: [1, 1.1, 0.96, 1.02, 1],
-                    y: [0, -1, 1, 0, 0],
+                    scale: [1, 1.12, 0.95, 1.03, 1],
+                    y: [0, -1.5, 1, 0, 0],
                     opacity: 1,
                     rotate: 0,
                     x: 0,
@@ -340,33 +371,41 @@ function BowParts({
           transition={released ? knotFall : knotTension}
         >
           <ellipse
-            cx="120"
-            cy="62"
-            rx="20"
-            ry="15"
-            fill="url(#lazoSatinSide)"
-            opacity="0.9"
+            cx="140"
+            cy="78"
+            rx="28"
+            ry="20"
+            fill="url(#lazoSatinDeep)"
+            opacity="0.85"
           />
-          <ellipse cx="120" cy="58" rx="18" ry="14" fill="url(#lazoSatin)" />
           <ellipse
-            cx="120"
-            cy="58"
-            rx="18"
-            ry="14"
-            fill="url(#lazoKnotShade)"
+            cx="140"
+            cy="72"
+            rx="26"
+            ry="20"
+            fill="url(#lazoSatin)"
+            filter="url(#lazoDrop)"
           />
+          <ellipse cx="140" cy="72" rx="26" ry="20" fill="url(#lazoKnotLit)" />
           <path
-            d="M108 52 C114 48 126 48 132 52 C128 56 112 56 108 52"
+            d="M122 64 C132 56 148 56 158 64 C152 70 128 70 122 64"
             fill="#fff"
-            opacity="0.35"
+            opacity="0.4"
           />
-          <ellipse cx="114" cy="54" rx="5" ry="3.2" fill="#fff" opacity="0.5" />
+          <ellipse cx="132" cy="66" rx="7" ry="4.5" fill="#fff" opacity="0.55" />
           <path
-            d="M112 64 C118 68 122 68 128 64"
+            d="M124 80 C134 88 146 88 156 80"
             fill="none"
-            stroke="#5c606a"
-            strokeWidth="1.2"
-            opacity="0.3"
+            stroke="#4a4e58"
+            strokeWidth="1.6"
+            opacity="0.28"
+          />
+          <path
+            d="M126 68 C134 74 146 74 154 68"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="1.4"
+            opacity="0.35"
           />
         </motion.g>
       </svg>
