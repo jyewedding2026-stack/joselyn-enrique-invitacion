@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/ifUuAEsmJL-UF_bxu8GA8VylcYSgFIhiZXEvu-r3168
+https://turbo-gateway.com/6gf6BeVyMweGGaaJnp3rRVxhCeo1mhz12fA2CcH_5ds
 
 Mirrors:
-- https://ar-io.dev/ifUuAEsmJL-UF_bxu8GA8VylcYSgFIhiZXEvu-r3168
-- https://arweave.net/ifUuAEsmJL-UF_bxu8GA8VylcYSgFIhiZXEvu-r3168
+- https://ar-io.dev/6gf6BeVyMweGGaaJnp3rRVxhCeo1mhz12fA2CcH_5ds
+- https://arweave.net/6gf6BeVyMweGGaaJnp3rRVxhCeo1mhz12fA2CcH_5ds
 
-Lazo satinado más real + desatar sutil → cinta → pausa → abrir.
+Sello dorado J & E → carta bifold se abre lento a los lados → presentación.
 
 Republicar: `npm run publish:permanent`

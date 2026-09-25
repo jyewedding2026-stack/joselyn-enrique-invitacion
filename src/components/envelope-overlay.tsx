@@ -137,30 +137,30 @@ function GoldSeal({ pressed }: { pressed: boolean }) {
           strokeWidth="0.8"
           opacity="0.35"
         />
-        {/* Initials */}
+        {/* Initials — deep stamp + light highlight for readable J & E */}
         <text
           x="60"
-          y="66"
+          y="67"
           textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="26"
-          fontWeight="500"
-          letterSpacing="0.04em"
-          fill="#5c420c"
-          opacity="0.88"
+          fontSize="24"
+          fontWeight="600"
+          letterSpacing="0.06em"
+          fill="#3d2a08"
+          opacity="0.55"
         >
           J &amp; E
         </text>
         <text
           x="60"
-          y="65"
+          y="64.5"
           textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="26"
-          fontWeight="500"
-          letterSpacing="0.04em"
-          fill="#f5e6b8"
-          opacity="0.75"
+          fontSize="24"
+          fontWeight="600"
+          letterSpacing="0.06em"
+          fill="#fff1c2"
+          opacity="0.92"
         >
           J &amp; E
         </text>
@@ -378,8 +378,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
               initial={false}
               animate={
                 leavesOpen
-                  ? { opacity: 0, scale: 0.85, y: 8 }
-                  : { opacity: 1, scale: 1, y: 0 }
+                  ? { opacity: 0, scale: 0.85, x: "-50%", y: "calc(-50% + 8px)" }
+                  : { opacity: 1, scale: 1, x: "-50%", y: "-50%" }
               }
               transition={sealExit}
               aria-hidden

@@ -504,7 +504,6 @@
   z-index: 12;
   width: clamp(5.25rem, 28vw, 6.5rem);
   height: clamp(5.25rem, 28vw, 6.5rem);
-  transform: translate(-50%, -50%);
   pointer-events: none;
   filter: drop-shadow(0 8px 14px rgba(90, 60, 15, 0.32));
 }
