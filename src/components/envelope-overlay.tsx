@@ -373,20 +373,24 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
           {/* Golden J & E seal — above leaves while closed; fades as they open */}
           {showSeal && (
-            <motion.div
+            <div
               className="gold-seal"
-              initial={false}
-              animate={
-                leavesOpen
-                  ? { opacity: 0, scale: 0.85, x: "-50%", y: "calc(-50% + 8px)" }
-                  : { opacity: 1, scale: 1, x: "-50%", y: "-50%" }
-              }
-              transition={sealExit}
               style={{ zIndex: leavesOpen ? 7 : 12 }}
               aria-hidden
             >
-              <GoldSeal pressed={sealPressed} />
-            </motion.div>
+              <motion.div
+                className="gold-seal__motion"
+                initial={false}
+                animate={
+                  leavesOpen
+                    ? { opacity: 0, scale: 0.85, y: 8 }
+                    : { opacity: 1, scale: 1, y: 0 }
+                }
+                transition={sealExit}
+              >
+                <GoldSeal pressed={sealPressed} />
+              </motion.div>
+            </div>
           )}
 
           {phase === "idle" && (
