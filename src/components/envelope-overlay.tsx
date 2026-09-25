@@ -31,22 +31,22 @@ type Phase =
   | "revealed"
   | "exiting";
 
-const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
-/** Soft gravity — accelerate down, no bounce */
-const EASE_GRAVITY: [number, number, number, number] = [0.4, 0.0, 0.7, 0.2];
-const EASE_SOFT: [number, number, number, number] = [0.33, 0.05, 0.45, 1];
+const EASE: [number, number, number, number] = [0.33, 0.1, 0.25, 1];
+/** Soft gravity — gentle settle, no bounce */
+const EASE_GRAVITY: [number, number, number, number] = [0.45, 0.05, 0.55, 0.95];
+const EASE_SOFT: [number, number, number, number] = [0.4, 0.0, 0.2, 1];
 const EXIT_MS = 480;
 
-/** Absolute timeline from tap (ms) — tips fall 350–1100 before ribbon clears */
+/** Absolute timeline from tap (ms) — subtler untie, same order */
 const T = {
-  knotEnd: 350,
-  bowStart: 350,
-  bowEnd: 1100,
-  ribbonStart: 800,
-  ribbonEnd: 1300,
-  pauseEnd: 1500,
-  openEnd: 2500,
-  handoff: 2700,
+  knotEnd: 420,
+  bowStart: 420,
+  bowEnd: 1300,
+  ribbonStart: 950,
+  ribbonEnd: 1450,
+  pauseEnd: 1650,
+  openEnd: 2650,
+  handoff: 2850,
 } as const;
 
 function wait(ms: number) {
@@ -56,8 +56,8 @@ function wait(ms: number) {
 }
 
 /**
- * Large premium satin bow (~60% card width via CSS).
- * Separate knot / loops / long V-tips; staggered fabric fall keyframes.
+ * Soft photoreal satin bow — subtle fabric unwrap (option 2).
+ * Separate knot / loops / tips; gentle staggered fall, no theatrical punch.
  */
 function BowParts({
   knotActive,
@@ -72,83 +72,83 @@ function BowParts({
 
   const knotTension: Transition = reduceMotion
     ? { duration: 0.1 }
-    : { duration: 0.35, ease: EASE };
+    : { duration: 0.42, ease: EASE };
 
   const knotFall: Transition = reduceMotion
     ? { duration: 0.15 }
-    : { duration: 0.75, ease: EASE_SOFT, times: [0, 0.28, 0.58, 1] };
+    : { duration: 0.95, ease: EASE_SOFT, times: [0, 0.3, 0.62, 1] };
 
   const loopFall: Transition = reduceMotion
     ? { duration: 0.12 }
     : {
-        delay: 0.18,
-        duration: 0.55,
+        delay: 0.22,
+        duration: 0.72,
         ease: EASE_SOFT,
-        times: [0, 0.3, 0.65, 1],
+        times: [0, 0.35, 0.7, 1],
       };
 
   const tipFall: Transition = reduceMotion
     ? { duration: 0.15 }
     : {
-        duration: 0.8,
+        duration: 1.05,
         ease: EASE_GRAVITY,
-        times: [0, 0.16, 0.4, 0.68, 1],
+        times: [0, 0.2, 0.45, 0.72, 1],
       };
 
   return (
     <div className="lazo" aria-hidden>
       <svg className="lazo__svg" viewBox="0 0 280 210" focusable="false">
         <defs>
-          <linearGradient id="lazoSatin" x1="8%" y1="0%" x2="92%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="18%" stopColor="#f7f8fb" />
-            <stop offset="38%" stopColor="#dde0e8" />
-            <stop offset="55%" stopColor="#c5c9d4" />
-            <stop offset="78%" stopColor="#a8adb8" />
-            <stop offset="100%" stopColor="#8a8f9c" />
+          <linearGradient id="lazoSatin" x1="10%" y1="5%" x2="90%" y2="95%">
+            <stop offset="0%" stopColor="#fbfbfc" />
+            <stop offset="22%" stopColor="#eef0f4" />
+            <stop offset="48%" stopColor="#d5d8e0" />
+            <stop offset="72%" stopColor="#b9bdc8" />
+            <stop offset="100%" stopColor="#9aa0ac" />
           </linearGradient>
           <linearGradient id="lazoSatinDeep" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#e8eaf0" />
-            <stop offset="40%" stopColor="#b4b8c4" />
-            <stop offset="100%" stopColor="#6e7380" />
+            <stop offset="0%" stopColor="#e4e6ec" />
+            <stop offset="50%" stopColor="#c0c4ce" />
+            <stop offset="100%" stopColor="#8b909c" />
           </linearGradient>
-          <linearGradient id="lazoTipFace" x1="20%" y1="0%" x2="80%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="25%" stopColor="#eef0f5" />
-            <stop offset="55%" stopColor="#c8ccd6" />
-            <stop offset="100%" stopColor="#9196a4" />
+          <linearGradient id="lazoTipFace" x1="15%" y1="0%" x2="85%" y2="100%">
+            <stop offset="0%" stopColor="#fafafb" />
+            <stop offset="30%" stopColor="#e6e8ee" />
+            <stop offset="65%" stopColor="#c2c6d0" />
+            <stop offset="100%" stopColor="#9a9fad" />
           </linearGradient>
           <linearGradient id="lazoTipSide" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#a0a4b0" />
-            <stop offset="50%" stopColor="#7a7e8a" />
-            <stop offset="100%" stopColor="#5c606c" />
+            <stop offset="0%" stopColor="#b4b8c2" />
+            <stop offset="55%" stopColor="#8e939f" />
+            <stop offset="100%" stopColor="#747986" />
           </linearGradient>
-          <radialGradient id="lazoKnotLit" cx="32%" cy="28%" r="70%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="35%" stopColor="#e4e6ec" stopOpacity="0.55" />
-            <stop offset="70%" stopColor="#aeb2bc" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#5a5e6a" stopOpacity="0.55" />
+          <radialGradient id="lazoKnotLit" cx="38%" cy="32%" r="68%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
+            <stop offset="40%" stopColor="#e8eaf0" stopOpacity="0.35" />
+            <stop offset="75%" stopColor="#b8bcc6" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#7a7e88" stopOpacity="0.38" />
           </radialGradient>
           <linearGradient id="lazoSpec" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#fff" stopOpacity="0" />
-            <stop offset="40%" stopColor="#fff" stopOpacity="0.85" />
+            <stop offset="45%" stopColor="#fff" stopOpacity="0.45" />
             <stop offset="100%" stopColor="#fff" stopOpacity="0" />
           </linearGradient>
-          <filter id="lazoDrop" x="-25%" y="-25%" width="150%" height="150%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="1.8" result="b" />
-            <feOffset dy="2" result="o" />
-            <feFlood floodColor="#3a3e48" floodOpacity="0.28" />
+          <filter id="lazoDrop" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b" />
+            <feOffset dy="1.5" result="o" />
+            <feFlood floodColor="#4a4e58" floodOpacity="0.16" />
             <feComposite in2="o" operator="in" />
             <feMerge>
               <feMergeNode />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          <filter id="lazoInner" x="-10%" y="-10%" width="120%" height="120%">
-            <feGaussianBlur stdDeviation="1.4" />
+          <filter id="lazoInner" x="-12%" y="-12%" width="124%" height="124%">
+            <feGaussianBlur stdDeviation="1.8" />
           </filter>
         </defs>
 
+        {/* Left tip — soft ribbon strip, gentle fall */}
         <motion.g
           className="lazo__tip lazo__tip--left"
           style={{ transformOrigin: "128px 88px" }}
@@ -156,40 +156,38 @@ function BowParts({
           animate={
             released
               ? {
-                  x: [0, -8, -16, -26, -34],
-                  y: [0, 18, 52, 105, 148],
-                  rotate: [0, -10, -20, -30, -36],
-                  opacity: [1, 1, 1, 0.92, 0.18],
+                  x: [0, -3, -8, -14, -18],
+                  y: [0, 10, 32, 68, 98],
+                  rotate: [0, -5, -11, -16, -20],
+                  opacity: [1, 1, 1, 0.85, 0.35],
                 }
               : { x: 0, y: 0, rotate: 0, opacity: 1 }
           }
           transition={tipFall}
         >
           <path
-            d="M126 86 C108 98 88 122 68 152 L68 162 C92 138 112 112 130 96 Z"
+            d="M126 86 C110 96 92 118 74 146 L76 154 C96 132 114 108 130 94 Z"
             fill="url(#lazoTipSide)"
-            opacity="0.75"
+            opacity="0.55"
           />
           <path
-            d="M130 82 C108 92 84 118 58 154 L72 168 L86 152 L100 168 L112 148 C120 122 128 100 136 88 Z"
+            d="M130 84
+               C110 92 88 116 64 148
+               L76 160
+               L88 146
+               L100 160
+               L112 144
+               C120 120 128 100 136 88 Z"
             fill="url(#lazoTipFace)"
             filter="url(#lazoDrop)"
           />
           <path
-            d="M124 90 C104 108 86 132 70 156"
+            d="M124 92 C108 108 92 128 78 148"
             fill="none"
             stroke="#fff"
-            strokeWidth="2"
+            strokeWidth="1.5"
             strokeLinecap="round"
-            opacity="0.5"
-          />
-          <path
-            d="M128 94 C110 112 94 134 80 154"
-            fill="none"
-            stroke="#6a6e7a"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            opacity="0.28"
+            opacity="0.32"
           />
         </motion.g>
 
@@ -200,46 +198,45 @@ function BowParts({
           animate={
             released
               ? {
-                  x: [0, 8, 16, 26, 34],
-                  y: [0, 20, 56, 110, 152],
-                  rotate: [0, 9, 18, 28, 34],
-                  opacity: [1, 1, 1, 0.92, 0.18],
+                  x: [0, 3, 8, 14, 18],
+                  y: [0, 12, 34, 72, 102],
+                  rotate: [0, 4, 10, 15, 18],
+                  opacity: [1, 1, 1, 0.85, 0.35],
                 }
               : { x: 0, y: 0, rotate: 0, opacity: 1 }
           }
           transition={{
             ...tipFall,
-            delay: reduceMotion ? 0 : 0.05,
+            delay: reduceMotion ? 0 : 0.06,
           }}
         >
           <path
-            d="M154 86 C172 98 192 122 212 152 L212 162 C188 138 168 112 150 96 Z"
+            d="M154 86 C170 96 188 118 206 146 L204 154 C184 132 166 108 150 94 Z"
             fill="url(#lazoTipSide)"
-            opacity="0.75"
+            opacity="0.55"
           />
           <path
-            d="M150 82 C172 92 196 118 222 154 L208 168 L194 152 L180 168 L168 148 C160 122 152 100 144 88 Z"
+            d="M150 84
+               C170 92 192 116 216 148
+               L204 160
+               L192 146
+               L180 160
+               L168 144
+               C160 120 152 100 144 88 Z"
             fill="url(#lazoTipFace)"
             filter="url(#lazoDrop)"
           />
           <path
-            d="M156 90 C176 108 194 132 210 156"
+            d="M156 92 C172 108 188 128 202 148"
             fill="none"
             stroke="#fff"
-            strokeWidth="2"
+            strokeWidth="1.5"
             strokeLinecap="round"
-            opacity="0.5"
-          />
-          <path
-            d="M152 94 C170 112 186 134 200 154"
-            fill="none"
-            stroke="#6a6e7a"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            opacity="0.28"
+            opacity="0.32"
           />
         </motion.g>
 
+        {/* Left loop — soft collapse */}
         <motion.g
           className="lazo__loop lazo__loop--left"
           style={{ transformOrigin: "122px 70px" }}
@@ -247,47 +244,39 @@ function BowParts({
           animate={
             loopsFalling
               ? {
-                  x: [0, -14, -28, -40],
-                  y: [0, 8, 34, 62],
-                  rotate: [0, -10, -20, -28],
-                  scale: [1, 0.98, 0.93, 0.88],
-                  opacity: [1, 1, 0.96, 0.22],
+                  x: [0, -6, -14, -22],
+                  y: [0, 4, 18, 36],
+                  rotate: [0, -4, -10, -14],
+                  scale: [1, 0.99, 0.96, 0.94],
+                  opacity: [1, 1, 0.9, 0.4],
                 }
               : { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
           }
           transition={loopFall}
         >
           <path
-            d="M132 72 C98 28 42 30 24 58 C8 84 48 104 118 84 Z"
-            fill="#6e7280"
-            opacity="0.28"
+            d="M132 72 C102 36 52 38 34 60 C20 80 52 96 116 82 Z"
+            fill="#8a8e98"
+            opacity="0.16"
             filter="url(#lazoInner)"
           />
           <path
-            d="M136 68 C96 18 34 20 16 52 C0 80 44 102 122 80 Z"
+            d="M134 70 C100 28 46 30 28 54 C14 76 50 96 118 80 Z"
             fill="url(#lazoSatin)"
             filter="url(#lazoDrop)"
           />
           <path
-            d="M120 70 C92 42 58 42 38 58 C48 72 78 78 112 76 Z"
+            d="M118 70 C94 48 66 48 48 60 C56 70 82 74 110 74 Z"
             fill="url(#lazoSatinDeep)"
-            opacity="0.45"
+            opacity="0.28"
           />
           <path
-            d="M100 42 C72 28 46 32 30 46"
+            d="M102 44 C78 34 56 36 42 48"
             fill="none"
             stroke="url(#lazoSpec)"
-            strokeWidth="3"
+            strokeWidth="2.2"
             strokeLinecap="round"
-            opacity="0.9"
-          />
-          <path
-            d="M118 66 C90 48 58 48 36 60"
-            fill="none"
-            stroke="#5c606c"
-            strokeWidth="2"
-            strokeLinecap="round"
-            opacity="0.2"
+            opacity="0.7"
           />
         </motion.g>
 
@@ -298,53 +287,46 @@ function BowParts({
           animate={
             loopsFalling
               ? {
-                  x: [0, 14, 28, 40],
-                  y: [0, 10, 36, 64],
-                  rotate: [0, 10, 20, 28],
-                  scale: [1, 0.98, 0.93, 0.88],
-                  opacity: [1, 1, 0.96, 0.22],
+                  x: [0, 6, 14, 22],
+                  y: [0, 5, 20, 38],
+                  rotate: [0, 4, 10, 14],
+                  scale: [1, 0.99, 0.96, 0.94],
+                  opacity: [1, 1, 0.9, 0.4],
                 }
               : { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
           }
           transition={{
             ...loopFall,
-            delay: reduceMotion ? 0 : 0.22,
+            delay: reduceMotion ? 0 : 0.26,
           }}
         >
           <path
-            d="M148 72 C182 28 238 30 256 58 C272 84 232 104 162 84 Z"
-            fill="#6e7280"
-            opacity="0.28"
+            d="M148 72 C178 36 228 38 246 60 C260 80 228 96 164 82 Z"
+            fill="#8a8e98"
+            opacity="0.16"
             filter="url(#lazoInner)"
           />
           <path
-            d="M144 68 C184 18 246 20 264 52 C280 80 236 102 158 80 Z"
+            d="M146 70 C180 28 234 30 252 54 C266 76 230 96 162 80 Z"
             fill="url(#lazoSatin)"
             filter="url(#lazoDrop)"
           />
           <path
-            d="M160 70 C188 42 222 42 242 58 C232 72 202 78 168 76 Z"
+            d="M162 70 C186 48 214 48 232 60 C224 70 198 74 170 74 Z"
             fill="url(#lazoSatinDeep)"
-            opacity="0.45"
+            opacity="0.28"
           />
           <path
-            d="M180 42 C208 28 234 32 250 46"
+            d="M178 44 C202 34 224 36 238 48"
             fill="none"
             stroke="url(#lazoSpec)"
-            strokeWidth="3"
+            strokeWidth="2.2"
             strokeLinecap="round"
-            opacity="0.9"
-          />
-          <path
-            d="M162 66 C190 48 222 48 244 60"
-            fill="none"
-            stroke="#5c606c"
-            strokeWidth="2"
-            strokeLinecap="round"
-            opacity="0.2"
+            opacity="0.7"
           />
         </motion.g>
 
+        {/* Knot — soft tension, quiet settle */}
         <motion.g
           className="lazo__knot"
           style={{ transformOrigin: "140px 74px" }}
@@ -352,16 +334,16 @@ function BowParts({
           animate={
             released
               ? {
-                  y: [0, 12, 42, 86],
-                  x: [0, 3, 5, 8],
-                  rotate: [0, 5, 12, 16],
-                  scale: [1, 0.97, 0.9, 0.84],
-                  opacity: [1, 1, 0.88, 0.16],
+                  y: [0, 6, 24, 52],
+                  x: [0, 1, 2, 3],
+                  rotate: [0, 2, 6, 8],
+                  scale: [1, 0.99, 0.96, 0.93],
+                  opacity: [1, 1, 0.8, 0.32],
                 }
               : knotActive
                 ? {
-                    scale: [1, 1.12, 0.95, 1.03, 1],
-                    y: [0, -1.5, 1, 0, 0],
+                    scale: [1, 1.04, 0.98, 1.01, 1],
+                    y: [0, -0.6, 0.4, 0, 0],
                     opacity: 1,
                     rotate: 0,
                     x: 0,
@@ -372,40 +354,33 @@ function BowParts({
         >
           <ellipse
             cx="140"
-            cy="78"
-            rx="28"
-            ry="20"
+            cy="76"
+            rx="24"
+            ry="17"
             fill="url(#lazoSatinDeep)"
-            opacity="0.85"
+            opacity="0.65"
           />
           <ellipse
             cx="140"
             cy="72"
-            rx="26"
-            ry="20"
+            rx="22"
+            ry="17"
             fill="url(#lazoSatin)"
             filter="url(#lazoDrop)"
           />
-          <ellipse cx="140" cy="72" rx="26" ry="20" fill="url(#lazoKnotLit)" />
+          <ellipse cx="140" cy="72" rx="22" ry="17" fill="url(#lazoKnotLit)" />
           <path
-            d="M122 64 C132 56 148 56 158 64 C152 70 128 70 122 64"
+            d="M126 66 C134 60 146 60 154 66 C148 70 132 70 126 66"
             fill="#fff"
-            opacity="0.4"
+            opacity="0.22"
           />
-          <ellipse cx="132" cy="66" rx="7" ry="4.5" fill="#fff" opacity="0.55" />
+          <ellipse cx="134" cy="67" rx="5" ry="3" fill="#fff" opacity="0.28" />
           <path
-            d="M124 80 C134 88 146 88 156 80"
+            d="M128 78 C136 84 144 84 152 78"
             fill="none"
-            stroke="#4a4e58"
-            strokeWidth="1.6"
-            opacity="0.28"
-          />
-          <path
-            d="M126 68 C134 74 146 74 154 68"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="1.4"
-            opacity="0.35"
+            stroke="#6a6e78"
+            strokeWidth="1.1"
+            opacity="0.18"
           />
         </motion.g>
       </svg>
@@ -584,8 +559,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const ribbonTransition: Transition = reduceMotion
     ? { duration: 0.12 }
     : {
-        duration: 0.55,
-        ease: EASE_GRAVITY,
+        duration: 0.7,
+        ease: EASE_SOFT,
         times: [0, 0.35, 0.7, 1],
       };
 
@@ -680,10 +655,10 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
               animate={
                 ribbonReleased
                   ? {
-                      x: ["0%", "28%", "62%", "82%"],
-                      y: [0, 18, 48, 72],
-                      rotate: [0, 6, 14, 18],
-                      opacity: [1, 1, 0.7, 0.15],
+                      x: ["0%", "18%", "42%", "58%"],
+                      y: [0, 10, 28, 44],
+                      rotate: [0, 3, 8, 10],
+                      opacity: [1, 1, 0.75, 0.3],
                     }
                   : { x: "0%", y: 0, rotate: 0, opacity: 1 }
               }
