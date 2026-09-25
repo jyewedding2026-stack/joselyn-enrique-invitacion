@@ -1,9 +1,15 @@
-# Link público permanente
+# Link público permanente (rápido)
 
 **No caduca. No hay que reclamar.**
 
-- https://ar-io.dev/0pYJa2rsLGniY1RA6WpJg29KhB4hC30PqFhnM0nNU5A
-- https://turbo-gateway.com/0pYJa2rsLGniY1RA6WpJg29KhB4hC30PqFhnM0nNU5A
-- https://arweave.net/0pYJa2rsLGniY1RA6WpJg29KhB4hC30PqFhnM0nNU5A (puede tardar unos minutos en propagar)
+## Invitación
 
-Publicado en Arweave el 2026-09-24T22:56:02.294Z.
+https://turbo-gateway.com/8krUzl7WEGO0GrxZI-c8V9LXbdy6L5-yhx_EVECOCp0
+
+Mirrors:
+- https://ar-io.dev/8krUzl7WEGO0GrxZI-c8V9LXbdy6L5-yhx_EVECOCp0
+- https://arweave.net/8krUzl7WEGO0GrxZI-c8V9LXbdy6L5-yhx_EVECOCp0
+
+Lazo satén con caída suave de puntas → cinta → pausa → abrir.
+
+Republicar: `npm run publish:permanent`

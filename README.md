@@ -8,7 +8,7 @@ Export estático (`output: "export"`) publicado de forma **permanente en Arweave
 
 Ver [`PUBLIC_URL.md`](PUBLIC_URL.md).
 
-**Principal:** https://turbo-gateway.com/0pYJa2rsLGniY1RA6WpJg29KhB4hC30PqFhnM0nNU5A
+**Principal:** https://turbo-gateway.com/8krUzl7WEGO0GrxZI-c8V9LXbdy6L5-yhx_EVECOCp0
 
 ## Cómo correr en local
 
