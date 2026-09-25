@@ -331,7 +331,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             className="envelope-closed-face"
             initial={false}
             animate={{ opacity: showClosedCopy ? 1 : 0 }}
-            transition={{ duration: reduceMotion ? 0.08 : 0.35 }}
+            transition={{ duration: reduceMotion ? 0.08 : 0.22 }}
             aria-hidden
           >
             <p className="envelope-closed-names">
@@ -371,7 +371,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             <div className="card-leaf__face card-leaf__face--emboss" />
           </motion.div>
 
-          {/* Golden J & E seal */}
+          {/* Golden J & E seal — above leaves while closed; fades as they open */}
           {showSeal && (
             <motion.div
               className="gold-seal"
@@ -382,6 +382,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                   : { opacity: 1, scale: 1, x: "-50%", y: "-50%" }
               }
               transition={sealExit}
+              style={{ zIndex: leavesOpen ? 7 : 12 }}
               aria-hidden
             >
               <GoldSeal pressed={sealPressed} />

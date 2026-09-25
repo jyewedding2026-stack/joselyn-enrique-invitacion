@@ -251,6 +251,8 @@
   aspect-ratio: 3 / 4;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
+  perspective: 1400px;
+  -webkit-perspective: 1400px;
   overflow: visible;
   border-radius: 0.2rem;
   background:
@@ -370,6 +372,9 @@
   -webkit-transform-style: preserve-3d;
   will-change: transform;
   pointer-events: none;
+  /* Promote to own layer so bifold rotateY composites reliably */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .card-leaf--left {
@@ -392,8 +397,9 @@
     );
   box-shadow: inset 0 0 0 1px rgba(175, 160, 140, 0.22);
   overflow: hidden;
-  backface-visibility: visible;
-  -webkit-backface-visibility: visible;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0.5px);
 }
 
 .card-leaf__face::before,
@@ -484,15 +490,18 @@
   color: #a39a90;
 }
 
-.envelope--open .invitation-card {
+.envelope--open .invitation-card,
+.envelope--sequencing .invitation-card {
   z-index: 4;
 }
 
-.envelope--open .card-leaf {
-  z-index: 1;
+.envelope--open .card-leaf,
+.envelope--sequencing .card-leaf {
+  z-index: 8;
 }
 
-.envelope--open .envelope-closed-face {
+.envelope--open .envelope-closed-face,
+.envelope--sequencing .envelope-closed-face {
   z-index: 0;
 }
 
