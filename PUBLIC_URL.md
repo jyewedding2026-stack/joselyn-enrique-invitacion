@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/07kYknCzBWd3nncSK96feGTb0Kk_vxlmUhC-rQrL_EE
+https://turbo-gateway.com/ifUuAEsmJL-UF_bxu8GA8VylcYSgFIhiZXEvu-r3168
 
 Mirrors:
-- https://ar-io.dev/07kYknCzBWd3nncSK96feGTb0Kk_vxlmUhC-rQrL_EE
-- https://arweave.net/07kYknCzBWd3nncSK96feGTb0Kk_vxlmUhC-rQrL_EE
+- https://ar-io.dev/ifUuAEsmJL-UF_bxu8GA8VylcYSgFIhiZXEvu-r3168
+- https://arweave.net/ifUuAEsmJL-UF_bxu8GA8VylcYSgFIhiZXEvu-r3168
 
-Lazo grande satinado (~60% ancho) → puntas caen → cinta → pausa → abrir.
+Lazo satinado más real + desatar sutil → cinta → pausa → abrir.
 
 Republicar: `npm run publish:permanent`
