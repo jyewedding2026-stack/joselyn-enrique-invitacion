@@ -516,21 +516,19 @@
 .ribbon-band--full {
   position: absolute;
   inset: 0;
-  border-radius: 3px;
+  border-radius: 2px;
   background: linear-gradient(
     180deg,
-    #fbfbfc 0%,
-    #eef0f4 14%,
-    #d4d7df 36%,
-    #e6e8ee 52%,
-    #b8bcc6 74%,
-    #a4a8b4 90%,
-    #c2c5ce 100%
+    #f7f7f9 0%,
+    #e8eaf0 28%,
+    #d2d5dd 55%,
+    #b8bcc6 82%,
+    #c8cbd4 100%
   );
   box-shadow:
-    0 2px 6px rgba(50, 52, 60, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(90, 94, 104, 0.16);
+    0 1px 4px rgba(50, 52, 60, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(100, 104, 114, 0.12);
 }
 
 /* ~58% card — large but not cartoonishly oversized */
