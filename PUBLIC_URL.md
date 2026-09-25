@@ -4,11 +4,11 @@
 
 ## Invitación
 
-https://turbo-gateway.com/cVu9TqnHRew_zdcLVSOe50BUKq5DcKch-yFqBXsnCGQ
+https://turbo-gateway.com/GgxRzeme4w-82WOmaoStIqER_CSzrW5YI41SJyvm-Hg
 
 Mirrors:
-- https://ar-io.dev/cVu9TqnHRew_zdcLVSOe50BUKq5DcKch-yFqBXsnCGQ
-- https://arweave.net/cVu9TqnHRew_zdcLVSOe50BUKq5DcKch-yFqBXsnCGQ
+- https://ar-io.dev/GgxRzeme4w-82WOmaoStIqER_CSzrW5YI41SJyvm-Hg
+- https://arweave.net/GgxRzeme4w-82WOmaoStIqER_CSzrW5YI41SJyvm-Hg
 
 Sello dorado J & E → carta bifold se abre lento a los lados → presentación.
 
