@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/8krUzl7WEGO0GrxZI-c8V9LXbdy6L5-yhx_EVECOCp0
+https://turbo-gateway.com/07kYknCzBWd3nncSK96feGTb0Kk_vxlmUhC-rQrL_EE
 
 Mirrors:
-- https://ar-io.dev/8krUzl7WEGO0GrxZI-c8V9LXbdy6L5-yhx_EVECOCp0
-- https://arweave.net/8krUzl7WEGO0GrxZI-c8V9LXbdy6L5-yhx_EVECOCp0
+- https://ar-io.dev/07kYknCzBWd3nncSK96feGTb0Kk_vxlmUhC-rQrL_EE
+- https://arweave.net/07kYknCzBWd3nncSK96feGTb0Kk_vxlmUhC-rQrL_EE
 
-Lazo satén con caída suave de puntas → cinta → pausa → abrir.
+Lazo grande satinado (~60% ancho) → puntas caen → cinta → pausa → abrir.
 
 Republicar: `npm run publish:permanent`
