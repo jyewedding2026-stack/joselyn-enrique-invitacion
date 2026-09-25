@@ -29,7 +29,7 @@ const EXIT_MS = 480;
 /** Timeline from tap (ms) */
 const T = {
   sealPress: 380,
-  openDuration: 1650,
+  openDuration: 1800,
   settle: 280,
 } as const;
 
@@ -343,12 +343,13 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           <motion.div
             className="card-leaf card-leaf--left"
             initial={false}
-            animate={{ rotateY: leavesOpen ? -128 : 0 }}
+            animate={{ rotateY: leavesOpen ? -102 : 0 }}
             transition={leafTransition}
             style={{
               transformOrigin: "right center",
               transformStyle: "preserve-3d",
               WebkitTransformStyle: "preserve-3d",
+              transformPerspective: 1100,
             }}
             aria-hidden
           >
@@ -359,12 +360,13 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           <motion.div
             className="card-leaf card-leaf--right"
             initial={false}
-            animate={{ rotateY: leavesOpen ? 128 : 0 }}
+            animate={{ rotateY: leavesOpen ? 102 : 0 }}
             transition={leafTransition}
             style={{
               transformOrigin: "left center",
               transformStyle: "preserve-3d",
               WebkitTransformStyle: "preserve-3d",
+              transformPerspective: 1100,
             }}
             aria-hidden
           >
