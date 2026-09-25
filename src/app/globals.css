@@ -537,16 +537,18 @@
   left: 50%;
   top: 46%;
   z-index: 12;
-  width: clamp(7.5rem, 38vw, 9.5rem);
-  height: clamp(4.4rem, 22vw, 5.6rem);
-  transform: translate(-50%, -50%);
+  width: clamp(8.5rem, 42vw, 11rem);
+  height: clamp(5.8rem, 28vw, 7.5rem);
+  transform: translate(-50%, -42%);
   pointer-events: none;
-  filter: drop-shadow(0 6px 10px rgba(50, 50, 60, 0.28));
+  filter: drop-shadow(0 7px 12px rgba(50, 50, 60, 0.3));
+  overflow: visible;
 }
 
 .lazo {
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
 .lazo__svg {
@@ -554,6 +556,12 @@
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+.lazo__tip,
+.lazo__loop,
+.lazo__knot {
+  transform-box: fill-box;
 }
 
 .envelope-hit {
@@ -648,8 +656,8 @@
   }
 
   .lazo-anchor {
-    width: 9.75rem;
-    height: 5.75rem;
+    width: 11.25rem;
+    height: 7.75rem;
   }
 }
 

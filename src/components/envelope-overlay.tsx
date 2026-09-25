@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+} from "react";
 import { motion, useReducedMotion, type Transition } from "framer-motion";
 import { wedding } from "@/content/wedding";
 
@@ -10,9 +17,8 @@ type EnvelopeOverlayProps = {
 };
 
 /**
- * Mandatory welcome sequence:
- * TAP → animateKnot (0–300) → releaseBow (300–900) → releaseRibbon (700–1200)
- * → wait (1200–1400) → openCard (1400–2400) → onOpen().
+ * Sequence (unchanged order):
+ * TAP → animateKnot → releaseBow (tips fall) → releaseRibbon → wait → openCard → onOpen
  * HARD RULE: openCard never starts before lazo+cinta clear center + pause.
  */
 type Phase =
@@ -26,19 +32,21 @@ type Phase =
   | "exiting";
 
 const EASE: [number, number, number, number] = [0.25, 1, 0.5, 1];
-const EASE_FALL: [number, number, number, number] = [0.33, 0.1, 0.25, 1];
+/** Soft gravity — accelerate down, no bounce */
+const EASE_GRAVITY: [number, number, number, number] = [0.4, 0.0, 0.7, 0.2];
+const EASE_SOFT: [number, number, number, number] = [0.33, 0.05, 0.45, 1];
 const EXIT_MS = 480;
 
-/** Absolute timeline from tap (ms) */
+/** Absolute timeline from tap (ms) — tips fall 350–1100 before ribbon clears */
 const T = {
-  knotEnd: 300,
-  bowStart: 300,
-  bowEnd: 900,
-  ribbonStart: 700,
-  ribbonEnd: 1200,
-  pauseEnd: 1400,
-  openEnd: 2400,
-  handoff: 2600,
+  knotEnd: 350,
+  bowStart: 350,
+  bowEnd: 1100,
+  ribbonStart: 800,
+  ribbonEnd: 1300,
+  pauseEnd: 1500,
+  openEnd: 2500,
+  handoff: 2700,
 } as const;
 
 function wait(ms: number) {
@@ -47,6 +55,10 @@ function wait(ms: number) {
   });
 }
 
+/**
+ * Satin bow: knot / loops / long V-tips with volume.
+ * Fall uses staggered keyframes (fabric), not teleport + fade.
+ */
 function BowParts({
   knotActive,
   released,
@@ -56,141 +68,305 @@ function BowParts({
   released: boolean;
   reduceMotion: boolean | null;
 }) {
-  const loopTransition: Transition = reduceMotion
-    ? { duration: 0.12 }
-    : { duration: 0.55, ease: EASE_FALL, delay: 0.05 };
-  const tailTransition: Transition = reduceMotion
-    ? { duration: 0.12 }
-    : { duration: 0.6, ease: EASE_FALL };
-  const knotTransition: Transition = reduceMotion
+  const loopsFalling = knotActive || released;
+
+  const knotTension: Transition = reduceMotion
     ? { duration: 0.1 }
-    : { duration: 0.3, ease: EASE };
+    : { duration: 0.35, ease: EASE };
+
+  const knotFall: Transition = reduceMotion
+    ? { duration: 0.15 }
+    : { duration: 0.7, ease: EASE_SOFT, times: [0, 0.25, 0.55, 1] };
+
+  const loopFall: Transition = reduceMotion
+    ? { duration: 0.12 }
+    : {
+        // loops ~200–700ms from tap
+        delay: 0.2,
+        duration: 0.5,
+        ease: EASE_SOFT,
+        times: [0, 0.35, 0.7, 1],
+      };
+
+  const tipFall: Transition = reduceMotion
+    ? { duration: 0.15 }
+    : {
+        // tips 350–1100ms from tap
+        duration: 0.75,
+        ease: EASE_GRAVITY,
+        times: [0, 0.18, 0.42, 0.68, 1],
+      };
 
   return (
     <div className="lazo" aria-hidden>
-      <svg className="lazo__svg" viewBox="0 0 200 120" focusable="false">
+      <svg className="lazo__svg" viewBox="0 0 240 170" focusable="false">
         <defs>
           <linearGradient id="lazoSatin" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="28%" stopColor="#e8e9ed" />
-            <stop offset="55%" stopColor="#c8cad2" />
-            <stop offset="100%" stopColor="#9a9eaa" />
+            <stop offset="22%" stopColor="#f2f3f6" />
+            <stop offset="48%" stopColor="#d0d3db" />
+            <stop offset="72%" stopColor="#b4b8c2" />
+            <stop offset="100%" stopColor="#8e929e" />
           </linearGradient>
-          <linearGradient id="lazoDeep" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#dfe1e8" />
-            <stop offset="100%" stopColor="#7a7e8a" />
+          <linearGradient id="lazoSatinSide" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#e6e8ee" />
+            <stop offset="45%" stopColor="#c2c5ce" />
+            <stop offset="100%" stopColor="#7c808c" />
           </linearGradient>
+          <linearGradient id="lazoTip" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f7f8fa" />
+            <stop offset="40%" stopColor="#cfd2da" />
+            <stop offset="100%" stopColor="#8a8e9a" />
+          </linearGradient>
+          <linearGradient id="lazoTipEdge" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#b8bcc6" />
+            <stop offset="100%" stopColor="#6a6e7a" />
+          </linearGradient>
+          <radialGradient id="lazoKnotShade" cx="40%" cy="35%" r="65%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.7" />
+            <stop offset="45%" stopColor="#d8dae0" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#6e727c" stopOpacity="0.45" />
+          </radialGradient>
+          <filter id="lazoSoft" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b" />
+            <feOffset dy="1.2" result="o" />
+            <feFlood floodColor="#4a4e58" floodOpacity="0.22" />
+            <feComposite in2="o" operator="in" />
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
+        {/* Left tip — long V with thickness; gravity fall + sway */}
         <motion.g
-          style={{ transformOrigin: "88px 48px" }}
+          className="lazo__tip lazo__tip--left"
+          style={{ transformOrigin: "108px 72px" }}
+          initial={false}
           animate={
             released
-              ? { x: -28, y: 56, rotate: -38, opacity: 0.12, scale: 0.92 }
-              : { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 }
-          }
-          transition={loopTransition}
-        >
-          <path
-            d="M96 46 C68 8 28 12 20 34 C12 56 44 68 88 54 Z"
-            fill="url(#lazoSatin)"
-          />
-          <path
-            d="M72 30 C58 22 40 24 32 32"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            opacity="0.55"
-          />
-        </motion.g>
-
-        <motion.g
-          style={{ transformOrigin: "112px 48px" }}
-          animate={
-            released
-              ? { x: 28, y: 56, rotate: 38, opacity: 0.12, scale: 0.92 }
-              : { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1 }
-          }
-          transition={loopTransition}
-        >
-          <path
-            d="M104 46 C132 8 172 12 180 34 C188 56 156 68 112 54 Z"
-            fill="url(#lazoSatin)"
-          />
-          <path
-            d="M128 30 C142 22 160 24 168 32"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            opacity="0.55"
-          />
-        </motion.g>
-
-        <motion.g
-          style={{ transformOrigin: "92px 52px" }}
-          animate={
-            released
-              ? { x: -18, y: 78, rotate: -52, opacity: 0.08 }
+              ? {
+                  x: [0, -6, -14, -22, -28],
+                  y: [0, 14, 42, 88, 128],
+                  rotate: [0, -12, -22, -32, -38],
+                  opacity: [1, 1, 1, 0.9, 0.2],
+                }
               : { x: 0, y: 0, rotate: 0, opacity: 1 }
           }
-          transition={tailTransition}
+          transition={tipFall}
         >
           <path
-            d="M90 52 C66 62 42 84 30 108 L58 98 C70 80 84 62 96 54 Z"
-            fill="url(#lazoDeep)"
+            d="M108 70 C88 82 64 108 48 138 L72 146 C84 118 98 90 112 76 Z"
+            fill="url(#lazoTipEdge)"
+            opacity="0.85"
           />
-        </motion.g>
-
-        <motion.g
-          style={{ transformOrigin: "108px 52px" }}
-          animate={
-            released
-              ? { x: 18, y: 78, rotate: 52, opacity: 0.08 }
-              : { x: 0, y: 0, rotate: 0, opacity: 1 }
-          }
-          transition={tailTransition}
-        >
           <path
-            d="M110 52 C134 62 158 84 170 108 L142 98 C130 80 116 62 104 54 Z"
-            fill="url(#lazoDeep)"
+            d="M110 68 C86 78 58 102 42 134 L46 142 L70 132 C82 106 98 84 114 72 Z"
+            fill="url(#lazoTip)"
+            filter="url(#lazoSoft)"
           />
-        </motion.g>
-
-        <motion.g
-          style={{ transformOrigin: "100px 48px" }}
-          animate={
-            released
-              ? { y: 64, scale: 0.7, opacity: 0.1, rotate: 12 }
-              : knotActive
-                ? { y: 0, scale: [1, 1.12, 0.94, 1], opacity: 1, rotate: 0 }
-                : { y: 0, scale: 1, opacity: 1, rotate: 0 }
-          }
-          transition={
-            released
-              ? tailTransition
-              : knotActive
-                ? knotTransition
-                : { duration: 0.2 }
-          }
-        >
-          <ellipse cx="100" cy="48" rx="16" ry="13" fill="url(#lazoSatin)" />
-          <ellipse
-            cx="100"
-            cy="47"
-            rx="9"
-            ry="7"
-            fill="#6e727a"
-            opacity="0.28"
-          />
-          <ellipse
-            cx="96"
-            cy="44"
-            rx="4"
-            ry="2.5"
-            fill="#fff"
+          <path d="M42 134 L54 128 L46 142 Z" fill="#9a9eaa" />
+          <path
+            d="M102 74 C86 86 68 108 54 128"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="1.4"
+            strokeLinecap="round"
             opacity="0.45"
+          />
+        </motion.g>
+
+        {/* Right tip */}
+        <motion.g
+          className="lazo__tip lazo__tip--right"
+          style={{ transformOrigin: "132px 72px" }}
+          initial={false}
+          animate={
+            released
+              ? {
+                  x: [0, 6, 14, 22, 28],
+                  y: [0, 16, 46, 92, 132],
+                  rotate: [0, 10, 20, 30, 36],
+                  opacity: [1, 1, 1, 0.9, 0.2],
+                }
+              : { x: 0, y: 0, rotate: 0, opacity: 1 }
+          }
+          transition={{
+            ...tipFall,
+            delay: reduceMotion ? 0 : 0.04,
+          }}
+        >
+          <path
+            d="M132 70 C152 82 176 108 192 138 L168 146 C156 118 142 90 128 76 Z"
+            fill="url(#lazoTipEdge)"
+            opacity="0.85"
+          />
+          <path
+            d="M130 68 C154 78 182 102 198 134 L194 142 L170 132 C158 106 142 84 126 72 Z"
+            fill="url(#lazoTip)"
+            filter="url(#lazoSoft)"
+          />
+          <path d="M198 134 L186 128 L194 142 Z" fill="#9a9eaa" />
+          <path
+            d="M138 74 C154 86 172 108 186 128"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            opacity="0.45"
+          />
+        </motion.g>
+
+        {/* Left loop — soft collapse outward/down */}
+        <motion.g
+          className="lazo__loop lazo__loop--left"
+          style={{ transformOrigin: "104px 58px" }}
+          initial={false}
+          animate={
+            loopsFalling
+              ? {
+                  x: [0, -10, -22, -30],
+                  y: [0, 6, 28, 52],
+                  rotate: [0, -8, -18, -26],
+                  scale: [1, 0.98, 0.94, 0.9],
+                  opacity: [1, 1, 0.95, 0.25],
+                }
+              : { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
+          }
+          transition={loopFall}
+        >
+          <path
+            d="M112 58 C86 22 42 24 28 48 C16 70 48 86 100 68 Z"
+            fill="#8a8e98"
+            opacity="0.35"
+          />
+          <path
+            d="M114 56 C84 16 36 18 24 44 C12 68 46 84 102 66 Z"
+            fill="url(#lazoSatin)"
+            filter="url(#lazoSoft)"
+          />
+          <path
+            d="M100 58 C78 42 52 40 36 50"
+            fill="none"
+            stroke="#6e727c"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.22"
+          />
+          <path
+            d="M88 40 C70 30 50 32 38 42"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.55"
+          />
+        </motion.g>
+
+        {/* Right loop */}
+        <motion.g
+          className="lazo__loop lazo__loop--right"
+          style={{ transformOrigin: "136px 58px" }}
+          initial={false}
+          animate={
+            loopsFalling
+              ? {
+                  x: [0, 10, 22, 30],
+                  y: [0, 8, 30, 54],
+                  rotate: [0, 8, 18, 26],
+                  scale: [1, 0.98, 0.94, 0.9],
+                  opacity: [1, 1, 0.95, 0.25],
+                }
+              : { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
+          }
+          transition={{
+            ...loopFall,
+            delay: reduceMotion ? 0 : 0.24,
+          }}
+        >
+          <path
+            d="M128 58 C154 22 198 24 212 48 C224 70 192 86 140 68 Z"
+            fill="#8a8e98"
+            opacity="0.35"
+          />
+          <path
+            d="M126 56 C156 16 204 18 216 44 C228 68 194 84 138 66 Z"
+            fill="url(#lazoSatin)"
+            filter="url(#lazoSoft)"
+          />
+          <path
+            d="M140 58 C162 42 188 40 204 50"
+            fill="none"
+            stroke="#6e727c"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.22"
+          />
+          <path
+            d="M152 40 C170 30 190 32 202 42"
+            fill="none"
+            stroke="#fff"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            opacity="0.55"
+          />
+        </motion.g>
+
+        {/* Knot — tension then loosen; fall last */}
+        <motion.g
+          className="lazo__knot"
+          style={{ transformOrigin: "120px 60px" }}
+          initial={false}
+          animate={
+            released
+              ? {
+                  y: [0, 10, 36, 72],
+                  x: [0, 2, 4, 6],
+                  rotate: [0, 6, 14, 18],
+                  scale: [1, 0.96, 0.88, 0.82],
+                  opacity: [1, 1, 0.85, 0.18],
+                }
+              : knotActive
+                ? {
+                    scale: [1, 1.1, 0.96, 1.02, 1],
+                    y: [0, -1, 1, 0, 0],
+                    opacity: 1,
+                    rotate: 0,
+                    x: 0,
+                  }
+                : { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 }
+          }
+          transition={released ? knotFall : knotTension}
+        >
+          <ellipse
+            cx="120"
+            cy="62"
+            rx="20"
+            ry="15"
+            fill="url(#lazoSatinSide)"
+            opacity="0.9"
+          />
+          <ellipse cx="120" cy="58" rx="18" ry="14" fill="url(#lazoSatin)" />
+          <ellipse
+            cx="120"
+            cy="58"
+            rx="18"
+            ry="14"
+            fill="url(#lazoKnotShade)"
+          />
+          <path
+            d="M108 52 C114 48 126 48 132 52 C128 56 112 56 108 52"
+            fill="#fff"
+            opacity="0.35"
+          />
+          <ellipse cx="114" cy="54" rx="5" ry="3.2" fill="#fff" opacity="0.5" />
+          <path
+            d="M112 64 C118 68 122 68 128 64"
+            fill="none"
+            stroke="#5c606a"
+            strokeWidth="1.2"
+            opacity="0.3"
           />
         </motion.g>
       </svg>
@@ -264,17 +440,14 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const releaseBow = useCallback(async () => {
     setPhase("bow");
     setBowReleased(true);
-    // Bow motion runs 300–900; we return after full bow window from call site
   }, []);
 
   const releaseRibbon = useCallback(async () => {
     setPhase("ribbon");
     setRibbonReleased(true);
-    // Ribbon motion runs 700–1200; wait handled by sequence
   }, []);
 
   const openCard = useCallback(async () => {
-    // HARD RULE: only called after ribbon cleared + pause
     setPhase("opening");
     setLeavesOpen(true);
     await wait(T.openEnd - T.pauseEnd);
@@ -305,32 +478,26 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       return;
     }
 
-    // 0–300: knot tension
     await animateKnot();
     if (!alive()) return;
 
-    // 300: start bow fall
     await releaseBow();
     if (!alive()) return;
 
-    // 300→700: bow falling alone
+    // Tips falling; wait until ribbon start (tips clear center)
     await wait(T.ribbonStart - T.bowStart);
     if (!alive()) return;
 
-    // 700: ribbon physical release (overlaps remaining bow to 900)
     await releaseRibbon();
     if (!alive()) return;
 
-    // 700→1200: ribbon slides/falls clear of center
     await wait(T.ribbonEnd - T.ribbonStart);
     if (!alive()) return;
 
-    // 1200–1400: pause — center clear before openCard
     setPhase("pause");
     await wait(T.pauseEnd - T.ribbonEnd);
     if (!alive()) return;
 
-    // 1400–2400: leaves open in 3D (NEVER before this gate)
     await openCard();
     if (!alive()) return;
 
@@ -377,7 +544,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
   const ribbonTransition: Transition = reduceMotion
     ? { duration: 0.12 }
-    : { duration: 0.5, ease: EASE_FALL };
+    : {
+        duration: 0.55,
+        ease: EASE_GRAVITY,
+        times: [0, 0.35, 0.7, 1],
+      };
 
   return (
     <motion.div
@@ -463,15 +634,19 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             <div className="card-leaf__face card-leaf__face--emboss" />
           </motion.div>
 
-          {/* Independent ribbon — physical slide/fall */}
           <div className="ribbon-slot" aria-hidden>
             <motion.div
               className="ribbon-wrap"
               initial={false}
               animate={
                 ribbonReleased
-                  ? { x: "78%", y: 56, rotate: 16, opacity: 0.18 }
-                  : { x: 0, y: 0, rotate: 0, opacity: 1 }
+                  ? {
+                      x: ["0%", "28%", "62%", "82%"],
+                      y: [0, 18, 48, 72],
+                      rotate: [0, 6, 14, 18],
+                      opacity: [1, 1, 0.7, 0.15],
+                    }
+                  : { x: "0%", y: 0, rotate: 0, opacity: 1 }
               }
               transition={ribbonTransition}
             >
