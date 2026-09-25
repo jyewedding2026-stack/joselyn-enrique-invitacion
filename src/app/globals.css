@@ -251,8 +251,6 @@
   aspect-ratio: 3 / 4;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  perspective: 1400px;
-  -webkit-perspective: 1400px;
   overflow: visible;
   border-radius: 0.2rem;
   background:
@@ -468,6 +466,7 @@
   flex-direction: column;
   align-items: center;
   pointer-events: none;
+  transform: translateZ(12px);
 }
 
 .envelope-closed-names {
@@ -513,7 +512,7 @@
   z-index: 12;
   width: clamp(5.25rem, 28vw, 6.5rem);
   height: clamp(5.25rem, 28vw, 6.5rem);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) translateZ(24px);
   pointer-events: none;
   filter: drop-shadow(0 8px 14px rgba(90, 60, 15, 0.32));
 }
@@ -544,6 +543,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  transform: translateZ(30px);
 }
 
 .envelope-tap-hint {
@@ -560,6 +560,7 @@
   text-align: center;
   color: #9a9288;
   pointer-events: none;
+  transform: translateZ(14px);
 }
 
 .envelope-hint {
