@@ -266,54 +266,45 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           style={{ transformOrigin: "right center", ...flapStyle }}
           aria-hidden
         />
-
-        <div className="petal-seal" aria-hidden>
-          <motion.div
-            className="petal-seal__half petal-seal__half--left"
-            initial={false}
-            animate={
-              sealSplit || (flapsOpen && reduceMotion)
-                ? { x: "-58vw", opacity: 0, rotate: -18 }
-                : { x: 0, opacity: 1, rotate: 0 }
-            }
-            transition={sealHalfTransition}
-          >
-            <div className="petal-seal__clip petal-seal__clip--left">
-              <SealFace />
-            </div>
-          </motion.div>
-          <motion.div
-            className="petal-seal__half petal-seal__half--right"
-            initial={false}
-            animate={
-              sealSplit || (flapsOpen && reduceMotion)
-                ? { x: "58vw", opacity: 0, rotate: 18 }
-                : { x: 0, opacity: 1, rotate: 0 }
-            }
-            transition={sealHalfTransition}
-          >
-            <div className="petal-seal__clip petal-seal__clip--right">
-              <SealFace />
-            </div>
-          </motion.div>
-        </div>
-
-        {isIdle && (
-          <button
-            type="button"
-            className="petal-hit"
-            onPointerUp={onTap}
-            onClick={onTap}
-            aria-label={`${cover.ctaLabel} para abrir la invitación`}
-          />
-        )}
-
-        {isIdle && (
-          <p className="petal-hint" aria-hidden>
-            {cover.ctaLabel}
-          </p>
-        )}
       </div>
+
+      {/* Seal + hit sit outside the flap 3D stage so perspective never warps the wax. */}
+      <div className="petal-seal" aria-hidden>
+        <motion.div
+          className="petal-seal__piece petal-seal__piece--left"
+          initial={false}
+          animate={
+            sealSplit || (flapsOpen && reduceMotion)
+              ? { x: "-42vw", opacity: 0, rotate: -12 }
+              : { x: 0, opacity: 1, rotate: 0 }
+          }
+          transition={sealHalfTransition}
+        >
+          <SealFace />
+        </motion.div>
+        <motion.div
+          className="petal-seal__piece petal-seal__piece--right"
+          initial={false}
+          animate={
+            sealSplit || (flapsOpen && reduceMotion)
+              ? { x: "42vw", opacity: 0, rotate: 12 }
+              : { x: 0, opacity: 1, rotate: 0 }
+          }
+          transition={sealHalfTransition}
+        >
+          <SealFace />
+        </motion.div>
+      </div>
+
+      {isIdle && (
+        <button
+          type="button"
+          className="petal-hit"
+          onPointerUp={onTap}
+          onClick={onTap}
+          aria-label="Abrir la invitación"
+        />
+      )}
     </motion.div>
   );
 }

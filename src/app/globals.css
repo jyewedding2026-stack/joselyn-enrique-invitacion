@@ -283,50 +283,48 @@
   left: 50%;
   top: 50%;
   z-index: 8;
-  width: clamp(6.5rem, 34vw, 9rem);
-  height: clamp(6.5rem, 34vw, 9rem);
-  transform: translate(-50%, -50%);
+  width: clamp(6.75rem, 32vw, 9.25rem);
+  height: clamp(6.75rem, 32vw, 9.25rem);
+  aspect-ratio: 1 / 1;
+  /* translate3d keeps a flat layer above the flap preserve-3d stack */
+  transform: translate3d(-50%, -50%, 48px);
+  transform-style: flat;
+  -webkit-transform-style: flat;
   filter: drop-shadow(0 14px 22px rgba(30, 22, 8, 0.45))
     drop-shadow(0 3px 6px rgba(70, 50, 15, 0.3));
   pointer-events: none;
+  isolation: isolate;
 }
 
-.petal-seal__half {
+/* Full-size twin faces; clip-path shows left/right half without stretching */
+.petal-seal__piece {
   position: absolute;
-  top: 0;
-  width: 50%;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  overflow: hidden;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
-.petal-seal__half--left {
-  left: 0;
+.petal-seal__piece--left {
+  clip-path: inset(0 50% 0 0);
+  -webkit-clip-path: inset(0 50% 0 0);
 }
 
-.petal-seal__half--right {
-  right: 0;
-}
-
-.petal-seal__clip {
-  position: absolute;
-  top: 0;
-  width: 200%;
-  height: 100%;
-}
-
-.petal-seal__clip--left {
-  left: 0;
-}
-
-.petal-seal__clip--right {
-  right: 0;
+.petal-seal__piece--right {
+  clip-path: inset(0 0 0 50%);
+  -webkit-clip-path: inset(0 0 0 50%);
 }
 
 .petal-seal__img {
   display: block;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
+  object-position: center;
+  aspect-ratio: 1 / 1;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
@@ -337,9 +335,10 @@
   left: 50%;
   top: 50%;
   z-index: 10;
-  width: clamp(7.5rem, 40vw, 10.5rem);
-  height: clamp(7.5rem, 40vw, 10.5rem);
-  transform: translate(-50%, -50%);
+  width: clamp(7.5rem, 38vw, 10.5rem);
+  height: clamp(7.5rem, 38vw, 10.5rem);
+  aspect-ratio: 1 / 1;
+  transform: translate3d(-50%, -50%, 56px);
   margin: 0;
   padding: 0;
   border: 0;
@@ -348,35 +347,6 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-}
-
-.petal-hint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: max(1.85rem, env(safe-area-inset-bottom));
-  z-index: 9;
-  margin: 0;
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  text-align: center;
-  color: #c4b07a;
-  text-shadow: 0 1px 2px rgba(20, 25, 12, 0.35);
-  pointer-events: none;
-  animation: petal-hint-pulse 2.8s ease-in-out infinite;
-}
-
-@keyframes petal-hint-pulse {
-  0%,
-  100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 1;
-  }
 }
 
 .petal-reveal {
@@ -436,13 +406,6 @@
   .petal-hit {
     width: 11.5rem;
     height: 11.5rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .petal-hint {
-    animation: none;
-    opacity: 0.85;
   }
 }
 
