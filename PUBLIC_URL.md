@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/kyklfPdSE9s4NCpl6pTndM01RhgbkZ93H_smg1zK2qw
+https://turbo-gateway.com/ocYckPwZYMI7jKl2Ft9G7V-jmTji2pZb2Zu81fDqz2o
 
 Mirrors:
-- https://ar-io.dev/kyklfPdSE9s4NCpl6pTndM01RhgbkZ93H_smg1zK2qw
-- https://arweave.net/kyklfPdSE9s4NCpl6pTndM01RhgbkZ93H_smg1zK2qw
+- https://ar-io.dev/ocYckPwZYMI7jKl2Ft9G7V-jmTji2pZb2Zu81fDqz2o
+- https://arweave.net/ocYckPwZYMI7jKl2Ft9G7V-jmTji2pZb2Zu81fDqz2o
 
-Portada elegante staggered (frase → nombres → fecha → sello J&E → CTA) → bifold lento → presentación.
+Portada Ewedlab: sobre pétalo sage 4 solapas + sello dorado J&E → apertura TB luego LR → crema → invitación.
 
 Republicar: `npm run publish:permanent`
