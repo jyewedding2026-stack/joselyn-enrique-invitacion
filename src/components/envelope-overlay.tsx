@@ -236,127 +236,116 @@ function GoldSealMark({
       </defs>
 
       <g filter={`url(#${depth})`}>
+        {/* Irregular molten-wax silhouette */}
         <path
-          d="M60 8
-             C72 9 84 14 92 24
-             C98 32 104 38 106 48
-             C108 58 106 68 102 78
-             C96 92 84 102 70 108
-             C62 111 52 112 42 108
-             C28 102 16 92 12 78
-             C8 66 8 54 12 44
-             C18 28 32 14 48 10
-             C52 9 56 8 60 8 Z"
+          d="M58 7
+             C66 6.5 74 9 81 14
+             C89 20 97 27 102 37
+             C107 47 109 55 107 65
+             C105 76 100 86 92 94
+             C84 102 74 109 62 111
+             C52 112.5 42 110 33 104
+             C23 97 15 88 11 76
+             C7 65 6.5 54 10 44
+             C14 32 22 22 33 15
+             C42 10 50 7.5 58 7 Z"
           fill={`url(#${wax})`}
         />
-        {[
-          [60, 12],
-          [78, 18],
-          [94, 32],
-          [102, 50],
-          [98, 70],
-          [86, 88],
-          [68, 100],
-          [48, 102],
-          [30, 94],
-          [16, 78],
-          [12, 58],
-          [18, 38],
-          [32, 22],
-          [48, 14],
-        ].map(([cx, cy], i) => (
-          <circle
-            key={i}
-            cx={cx}
-            cy={cy}
-            r={5.8 + (i % 3) * 0.6}
-            fill={`url(#${wax})`}
-            opacity="0.95"
-          />
-        ))}
+        {/* Asymmetric drip lobes */}
+        <ellipse cx="72" cy="14" rx="7" ry="5.5" fill={`url(#${wax})`} transform="rotate(18 72 14)" />
+        <ellipse cx="94" cy="28" rx="6.5" ry="5.2" fill={`url(#${wax})`} transform="rotate(42 94 28)" />
+        <ellipse cx="105" cy="52" rx="5.8" ry="7" fill={`url(#${wax})`} transform="rotate(8 105 52)" />
+        <ellipse cx="100" cy="78" rx="6.2" ry="5.5" fill={`url(#${wax})`} transform="rotate(-25 100 78)" />
+        <ellipse cx="78" cy="102" rx="7.2" ry="5.2" fill={`url(#${wax})`} transform="rotate(-8 78 102)" />
+        <ellipse cx="48" cy="106" rx="6.8" ry="5" fill={`url(#${wax})`} transform="rotate(12 48 106)" />
+        <ellipse cx="22" cy="90" rx="6" ry="5.8" fill={`url(#${wax})`} transform="rotate(35 22 90)" />
+        <ellipse cx="12" cy="62" rx="5.5" ry="7.2" fill={`url(#${wax})`} transform="rotate(-5 12 62)" />
+        <ellipse cx="16" cy="36" rx="6.4" ry="5.4" fill={`url(#${wax})`} transform="rotate(-30 16 36)" />
+        <ellipse cx="38" cy="16" rx="6.6" ry="5.2" fill={`url(#${wax})`} transform="rotate(22 38 16)" />
         <path
-          d="M60 16
-             C70 17 80 22 86 30
-             C94 40 98 50 96 62
-             C94 76 84 88 70 94
-             C62 97 52 97 44 92
-             C30 84 22 72 20 58
-             C18 46 24 34 34 26
-             C42 20 52 16 60 16 Z"
+          d="M60 18
+             C69 18.5 78 23 84 31
+             C92 41 95 52 93 64
+             C91 77 81 88 68 93
+             C60 96 50 95 42 90
+             C30 82 23 70 22 56
+             C21 45 28 34 38 27
+             C46 21 54 18 60 18 Z"
           fill={`url(#${wax})`}
         />
         <path
-          d="M60 16
-             C70 17 80 22 86 30
-             C94 40 98 50 96 62
-             C94 76 84 88 70 94
-             C62 97 52 97 44 92
-             C30 84 22 72 20 58
-             C18 46 24 34 34 26
-             C42 20 52 16 60 16 Z"
+          d="M60 18
+             C69 18.5 78 23 84 31
+             C92 41 95 52 93 64
+             C91 77 81 88 68 93
+             C60 96 50 95 42 90
+             C30 82 23 70 22 56
+             C21 45 28 34 38 27
+             C46 21 54 18 60 18 Z"
           fill={`url(#${rim})`}
         />
         <path
-          d="M60 22
-             C68 23 76 27 82 34
-             C88 42 90 52 88 62
-             C86 74 76 84 64 88
-             C56 90 48 89 42 84
-             C32 76 26 66 26 54
-             C26 44 32 34 42 28
-             C48 24 54 22 60 22 Z"
+          d="M60 24
+             C68 24.5 75 28 80 35
+             C86 43 88 53 86 63
+             C84 74 75 83 64 87
+             C56 89 48 88 42 83
+             C33 76 27 66 27 55
+             C27 45 33 35 42 30
+             C48 26 54 24 60 24 Z"
           fill={`url(#${sheen})`}
         />
         <circle
           cx="60"
           cy="60"
-          r="30"
+          r="29"
           fill="none"
           stroke="#5c400c"
-          strokeWidth="1.4"
-          opacity="0.35"
+          strokeWidth="1.5"
+          opacity="0.4"
         />
         <circle
           cx="60"
           cy="60"
-          r="28.5"
+          r="27.2"
           fill="none"
           stroke="#f0d878"
-          strokeWidth="0.7"
-          opacity="0.35"
+          strokeWidth="0.65"
+          opacity="0.32"
         />
 
+        {/* Letterpress — deep sink */}
         <text
-          x="60.4"
-          y="69.5"
+          x="60.6"
+          y="70.2"
           textAnchor="middle"
           fontFamily="'Great Vibes', cursive"
-          fontSize="34"
-          fill="#2a1e06"
-          opacity="0.55"
-          filter={`url(#${press})`}
+          fontSize="36"
+          fill="#1a1406"
+          opacity="0.45"
         >
           {initials}
         </text>
         <text
           x="60"
-          y="68"
+          y="68.2"
           textAnchor="middle"
           fontFamily="'Great Vibes', cursive"
-          fontSize="34"
-          fill="#6b4a10"
-          opacity="0.92"
+          fontSize="36"
+          fill="#5a4010"
+          opacity="0.95"
+          filter={`url(#${press})`}
         >
           {initials}
         </text>
         <text
-          x="59.6"
-          y="67.2"
+          x="59.4"
+          y="66.8"
           textAnchor="middle"
           fontFamily="'Great Vibes', cursive"
-          fontSize="34"
-          fill="#c9a050"
-          opacity="0.35"
+          fontSize="36"
+          fill="#e8d090"
+          opacity="0.28"
         >
           {initials}
         </text>
