@@ -307,13 +307,14 @@
 }
 
 .petal-seal__piece--left {
-  clip-path: inset(0 50% 0 0);
-  -webkit-clip-path: inset(0 50% 0 0);
+  /* slight overlap hides the half seam at rest */
+  clip-path: inset(0 calc(50% - 1px) 0 0);
+  -webkit-clip-path: inset(0 calc(50% - 1px) 0 0);
 }
 
 .petal-seal__piece--right {
-  clip-path: inset(0 0 0 50%);
-  -webkit-clip-path: inset(0 0 0 50%);
+  clip-path: inset(0 0 0 calc(50% - 1px));
+  -webkit-clip-path: inset(0 0 0 calc(50% - 1px));
 }
 
 .petal-seal__img {
