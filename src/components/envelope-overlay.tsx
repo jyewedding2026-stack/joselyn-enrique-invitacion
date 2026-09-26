@@ -302,8 +302,14 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           className="petal-hit"
           onPointerUp={onTap}
           onClick={onTap}
-          aria-label="Abrir la invitación"
+          aria-label={`${cover.ctaLabel} para abrir la invitación`}
         />
+      )}
+
+      {isIdle && (
+        <p className="petal-hint" aria-hidden>
+          {cover.ctaLabel}
+        </p>
       )}
     </motion.div>
   );
