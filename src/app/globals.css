@@ -212,7 +212,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #6b735f;
+  background: #3a4128;
   touch-action: manipulation;
   outline: none;
   -webkit-tap-highlight-color: transparent;
@@ -222,13 +222,6 @@
 
 .petal-overlay--exit {
   pointer-events: none;
-}
-
-.petal-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
 }
 
 .petal-stage {
@@ -241,141 +234,48 @@
 .petal-flap {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      155deg,
-      #7a836c 0%,
-      #6b735f 42%,
-      #5a6250 100%
-    );
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  background-color: #4a5230;
+  background-size: 100% 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
   will-change: transform, opacity;
   overflow: hidden;
-}
-
-.petal-flap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.07;
-  pointer-events: none;
 }
 
 .petal-flap--top {
   z-index: 4;
   clip-path: polygon(0 0, 100% 0, 50% 50%);
   -webkit-clip-path: polygon(0 0, 100% 0, 50% 50%);
-  background:
-    linear-gradient(
-      180deg,
-      #828a74 0%,
-      #6f7763 55%,
-      #616956 100%
-    );
   box-shadow:
-    inset 0 -1px 0 rgba(40, 45, 30, 0.22),
-    0 8px 22px rgba(30, 35, 20, 0.16);
+    inset 0 -1px 0 rgba(25, 30, 15, 0.28),
+    0 10px 28px rgba(20, 25, 12, 0.22);
 }
 
 .petal-flap--bottom {
   z-index: 4;
   clip-path: polygon(0 100%, 100% 100%, 50% 50%);
   -webkit-clip-path: polygon(0 100%, 100% 100%, 50% 50%);
-  background:
-    linear-gradient(
-      0deg,
-      #7a826c 0%,
-      #6b735f 55%,
-      #5e6654 100%
-    );
   box-shadow:
-    inset 0 1px 0 rgba(40, 45, 30, 0.2),
-    0 -6px 18px rgba(30, 35, 20, 0.14);
+    inset 0 1px 0 rgba(25, 30, 15, 0.24),
+    0 -8px 22px rgba(20, 25, 12, 0.18);
 }
 
 .petal-flap--left {
   z-index: 5;
   clip-path: polygon(0 0, 50% 50%, 0 100%);
   -webkit-clip-path: polygon(0 0, 50% 50%, 0 100%);
-  background:
-    linear-gradient(
-      90deg,
-      #757d69 0%,
-      #646c58 55%,
-      #555d4b 100%
-    );
   box-shadow:
-    inset -1px 0 0 rgba(40, 45, 30, 0.28),
-    6px 0 24px rgba(25, 30, 18, 0.22);
+    inset -1px 0 0 rgba(20, 25, 12, 0.32),
+    8px 0 28px rgba(15, 20, 10, 0.28);
 }
 
 .petal-flap--right {
   z-index: 5;
   clip-path: polygon(100% 0, 100% 100%, 50% 50%);
   -webkit-clip-path: polygon(100% 0, 100% 100%, 50% 50%);
-  background:
-    linear-gradient(
-      270deg,
-      #757d69 0%,
-      #646c58 55%,
-      #555d4b 100%
-    );
   box-shadow:
-    inset 1px 0 0 rgba(40, 45, 30, 0.28),
-    -6px 0 24px rgba(25, 30, 18, 0.22);
-}
-
-/* Embossed floral relief (sage-on-sage alto relieve) */
-.petal-emboss {
-  position: absolute;
-  width: 74%;
-  height: 74%;
-  pointer-events: none;
-  opacity: 1;
-  mix-blend-mode: normal;
-  filter: contrast(1.08);
-}
-
-.petal-flap--top .petal-emboss:nth-child(1) {
-  top: 2%;
-  left: 2%;
-}
-.petal-flap--top .petal-emboss:nth-child(2) {
-  top: 2%;
-  right: 2%;
-  left: auto;
-}
-.petal-flap--bottom .petal-emboss:nth-child(1) {
-  bottom: 2%;
-  left: 2%;
-  top: auto;
-}
-.petal-flap--bottom .petal-emboss:nth-child(2) {
-  bottom: 2%;
-  right: 2%;
-  top: auto;
-  left: auto;
-}
-.petal-flap--left .petal-emboss:nth-child(1) {
-  top: 4%;
-  left: 1%;
-}
-.petal-flap--left .petal-emboss:nth-child(2) {
-  bottom: 4%;
-  left: 1%;
-  top: auto;
-}
-.petal-flap--right .petal-emboss:nth-child(1) {
-  top: 4%;
-  right: 1%;
-  left: auto;
-}
-.petal-flap--right .petal-emboss:nth-child(2) {
-  bottom: 4%;
-  right: 1%;
-  top: auto;
-  left: auto;
+    inset 1px 0 0 rgba(20, 25, 12, 0.32),
+    -8px 0 28px rgba(15, 20, 10, 0.28);
 }
 
 .petal-seal {
@@ -383,11 +283,11 @@
   left: 50%;
   top: 50%;
   z-index: 8;
-  width: clamp(6rem, 30vw, 7.75rem);
-  height: clamp(6rem, 30vw, 7.75rem);
+  width: clamp(6.5rem, 34vw, 9rem);
+  height: clamp(6.5rem, 34vw, 9rem);
   transform: translate(-50%, -50%);
-  filter: drop-shadow(0 12px 20px rgba(40, 28, 8, 0.42))
-    drop-shadow(0 2px 4px rgba(90, 60, 15, 0.28));
+  filter: drop-shadow(0 14px 22px rgba(30, 22, 8, 0.45))
+    drop-shadow(0 3px 6px rgba(70, 50, 15, 0.3));
   pointer-events: none;
 }
 
@@ -422,11 +322,14 @@
   right: 0;
 }
 
-.petal-seal__svg {
+.petal-seal__img {
   display: block;
   width: 100%;
   height: 100%;
-  overflow: visible;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .petal-hit {
@@ -434,8 +337,8 @@
   left: 50%;
   top: 50%;
   z-index: 10;
-  width: clamp(7rem, 36vw, 9rem);
-  height: clamp(7rem, 36vw, 9rem);
+  width: clamp(7.5rem, 40vw, 10.5rem);
+  height: clamp(7.5rem, 40vw, 10.5rem);
   transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
@@ -451,16 +354,17 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: max(1.75rem, env(safe-area-inset-bottom));
+  bottom: max(1.85rem, env(safe-area-inset-bottom));
   z-index: 9;
   margin: 0;
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   text-align: center;
-  color: rgba(253, 251, 247, 0.72);
+  color: #c4b07a;
+  text-shadow: 0 1px 2px rgba(20, 25, 12, 0.35);
   pointer-events: none;
   animation: petal-hint-pulse 2.8s ease-in-out infinite;
 }
@@ -525,13 +429,13 @@
 
 @media (min-width: 768px) {
   .petal-seal {
-    width: 7.75rem;
-    height: 7.75rem;
+    width: 9.5rem;
+    height: 9.5rem;
   }
 
   .petal-hit {
-    width: 10rem;
-    height: 10rem;
+    width: 11.5rem;
+    height: 11.5rem;
   }
 }
 

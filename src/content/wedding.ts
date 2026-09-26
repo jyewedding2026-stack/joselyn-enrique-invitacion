@@ -16,7 +16,7 @@ export const wedding = {
     welcomePhrase: "Nuestra Boda",
     invitedLine: "Están cordialmente invitados",
     initials: "J & E",
-    ctaLabel: "Toca el sello",
+    ctaLabel: "TOCA EL SELLO",
     placeLine: "Ica · Perú",
     colors: {
       cream: "#FDFBF7",
