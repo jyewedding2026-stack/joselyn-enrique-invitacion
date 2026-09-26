@@ -41,10 +41,10 @@ function wait(ms: number) {
   });
 }
 
-/** Gold botanical vine for flap corners */
+/** Gold botanical vine for flap corners — denser Ewedlab-style sprigs */
 function FoilVines({ variant }: { variant: "tl" | "tr" | "bl" | "br" }) {
   const transforms: Record<typeof variant, string> = {
-    tl: "rotate(0 50 50)",
+    tl: "",
     tr: "scale(-1 1) translate(-100 0)",
     bl: "scale(1 -1) translate(0 -100)",
     br: "scale(-1 -1) translate(-100 -100)",
@@ -60,18 +60,23 @@ function FoilVines({ variant }: { variant: "tl" | "tr" | "bl" | "br" }) {
         transform={transforms[variant]}
         fill="none"
         stroke="url(#foilGrad)"
-        strokeWidth="0.9"
+        strokeWidth="0.85"
         strokeLinecap="round"
-        opacity="0.72"
+        opacity="0.78"
       >
-        <path d="M8 18 C22 28 28 42 26 58 C24 72 18 82 12 90" />
-        <path d="M18 22 C32 30 40 44 42 60" />
-        <path d="M26 26 C34 22 42 24 46 32" />
-        <path d="M22 40 C30 36 38 38 42 46" />
-        <path d="M20 54 C28 50 34 54 36 62" />
-        <ellipse cx="46" cy="30" rx="2.2" ry="3.4" fill="#c9a227" opacity="0.55" />
-        <ellipse cx="41" cy="44" rx="2" ry="3.1" fill="#c9a227" opacity="0.5" />
-        <ellipse cx="35" cy="58" rx="1.8" ry="2.8" fill="#c9a227" opacity="0.45" />
+        <path d="M6 14 C20 24 28 40 26 58 C24 74 16 86 8 94" />
+        <path d="M14 16 C30 26 38 44 40 62 C41 74 36 84 30 92" />
+        <path d="M22 18 C36 22 48 34 52 48" />
+        <path d="M18 34 C32 32 44 40 48 52" />
+        <path d="M16 48 C28 46 38 54 40 66" />
+        <path d="M14 62 C24 60 32 68 34 78" />
+        <path d="M28 20 C36 14 46 16 52 24" />
+        <path d="M26 36 C34 30 44 34 48 42" />
+        <ellipse cx="52" cy="22" rx="2.1" ry="3.3" fill="#d4ad3a" opacity="0.65" />
+        <ellipse cx="48" cy="40" rx="2" ry="3" fill="#c9a227" opacity="0.55" />
+        <ellipse cx="42" cy="54" rx="1.9" ry="2.9" fill="#c9a227" opacity="0.5" />
+        <ellipse cx="36" cy="68" rx="1.7" ry="2.6" fill="#b8891f" opacity="0.45" />
+        <ellipse cx="30" cy="28" rx="1.6" ry="2.4" fill="#d4ad3a" opacity="0.5" />
       </g>
     </svg>
   );

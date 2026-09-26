@@ -266,44 +266,72 @@
   z-index: 4;
   clip-path: polygon(0 0, 100% 0, 50% 50%);
   -webkit-clip-path: polygon(0 0, 100% 0, 50% 50%);
+  background:
+    linear-gradient(
+      180deg,
+      #828a74 0%,
+      #6f7763 55%,
+      #616956 100%
+    );
   box-shadow:
-    inset 0 -1px 0 rgba(40, 45, 30, 0.18),
-    0 6px 18px rgba(30, 35, 20, 0.12);
+    inset 0 -1px 0 rgba(40, 45, 30, 0.22),
+    0 8px 22px rgba(30, 35, 20, 0.16);
 }
 
 .petal-flap--bottom {
   z-index: 4;
   clip-path: polygon(0 100%, 100% 100%, 50% 50%);
   -webkit-clip-path: polygon(0 100%, 100% 100%, 50% 50%);
+  background:
+    linear-gradient(
+      0deg,
+      #7a826c 0%,
+      #6b735f 55%,
+      #5e6654 100%
+    );
   box-shadow:
-    inset 0 1px 0 rgba(40, 45, 30, 0.16),
-    0 -4px 14px rgba(30, 35, 20, 0.1);
+    inset 0 1px 0 rgba(40, 45, 30, 0.2),
+    0 -6px 18px rgba(30, 35, 20, 0.14);
 }
 
 .petal-flap--left {
   z-index: 5;
   clip-path: polygon(0 0, 50% 50%, 0 100%);
   -webkit-clip-path: polygon(0 0, 50% 50%, 0 100%);
+  background:
+    linear-gradient(
+      90deg,
+      #757d69 0%,
+      #646c58 55%,
+      #555d4b 100%
+    );
   box-shadow:
-    inset -1px 0 0 rgba(40, 45, 30, 0.2),
-    4px 0 20px rgba(30, 35, 20, 0.14);
+    inset -1px 0 0 rgba(40, 45, 30, 0.28),
+    6px 0 24px rgba(25, 30, 18, 0.22);
 }
 
 .petal-flap--right {
   z-index: 5;
   clip-path: polygon(100% 0, 100% 100%, 50% 50%);
   -webkit-clip-path: polygon(100% 0, 100% 100%, 50% 50%);
+  background:
+    linear-gradient(
+      270deg,
+      #757d69 0%,
+      #646c58 55%,
+      #555d4b 100%
+    );
   box-shadow:
-    inset 1px 0 0 rgba(40, 45, 30, 0.2),
-    -4px 0 20px rgba(30, 35, 20, 0.14);
+    inset 1px 0 0 rgba(40, 45, 30, 0.28),
+    -6px 0 24px rgba(25, 30, 18, 0.22);
 }
 
 .petal-foil {
   position: absolute;
-  width: 52%;
-  height: 52%;
+  width: 68%;
+  height: 68%;
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.92;
 }
 
 .petal-flap--top .petal-foil:nth-child(1) {
