@@ -35,7 +35,7 @@ const T = {
 
 /** Reference-matched assets (static export paths) */
 const FLAP_TEXTURE = "./images/portada-flaps-texture.jpg";
-const SEAL_TEXTURE = "./images/wax-seal-ref.png";
+const SEAL_TEXTURE = "./images/wax-seal-ref.webp";
 
 function wait(ms: number) {
   return new Promise<void>((resolve) => {
