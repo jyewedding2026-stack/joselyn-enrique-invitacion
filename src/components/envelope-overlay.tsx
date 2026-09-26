@@ -17,27 +17,22 @@ type EnvelopeOverlayProps = {
 };
 
 /**
- * Elegant cover: staggered reveal → gold J&E seal → slow bifold L/R → onOpen().
+ * Ewedlab-style petal envelope: sage 4-flap + gold J&E seal.
+ * Tap seal → TB flaps → LR flaps + seal split → cream reveal → onOpen().
  */
-type Phase = "idle" | "sealing" | "opening" | "revealed" | "exiting";
+type Phase = "idle" | "opening" | "revealed" | "exiting";
 
 const EASE_SOFT: [number, number, number, number] = [0.22, 0.8, 0.28, 1];
-const EASE_OPEN: [number, number, number, number] = [0.33, 0.05, 0.25, 1];
-const EXIT_MS = 480;
+const EASE_FLAP: [number, number, number, number] = [0.4, 0.02, 0.2, 1];
+const EXIT_MS = 520;
 
+/** Open timeline (ms) — matches Ewedlab soft petal unboxing */
 const T = {
-  sealPress: 380,
-  openDuration: 1800,
-  settle: 280,
-} as const;
-
-/** Stagger delays (s) for cover entrance */
-const STAGGER = {
-  phrase: 0.12,
-  names: 0.32,
-  meta: 0.52,
-  seal: 0.78,
-  cta: 1.05,
+  press: 220,
+  topBottom: 520,
+  leftRightDelay: 280,
+  leftRight: 780,
+  revealHold: 720,
 } as const;
 
 function wait(ms: number) {
@@ -46,42 +41,66 @@ function wait(ms: number) {
   });
 }
 
-function GoldSeal({
-  pressed,
-  initials,
-}: {
-  pressed: boolean;
-  initials: string;
-}) {
+/** Gold botanical vine for flap corners */
+function FoilVines({ variant }: { variant: "tl" | "tr" | "bl" | "br" }) {
+  const transforms: Record<typeof variant, string> = {
+    tl: "rotate(0 50 50)",
+    tr: "scale(-1 1) translate(-100 0)",
+    bl: "scale(1 -1) translate(0 -100)",
+    br: "scale(-1 -1) translate(-100 -100)",
+  };
   return (
     <svg
-      className="gold-seal__svg"
+      className="petal-foil"
+      viewBox="0 0 100 100"
+      aria-hidden
+      focusable="false"
+    >
+      <g
+        transform={transforms[variant]}
+        fill="none"
+        stroke="url(#foilGrad)"
+        strokeWidth="0.9"
+        strokeLinecap="round"
+        opacity="0.72"
+      >
+        <path d="M8 18 C22 28 28 42 26 58 C24 72 18 82 12 90" />
+        <path d="M18 22 C32 30 40 44 42 60" />
+        <path d="M26 26 C34 22 42 24 46 32" />
+        <path d="M22 40 C30 36 38 38 42 46" />
+        <path d="M20 54 C28 50 34 54 36 62" />
+        <ellipse cx="46" cy="30" rx="2.2" ry="3.4" fill="#c9a227" opacity="0.55" />
+        <ellipse cx="41" cy="44" rx="2" ry="3.1" fill="#c9a227" opacity="0.5" />
+        <ellipse cx="35" cy="58" rx="1.8" ry="2.8" fill="#c9a227" opacity="0.45" />
+      </g>
+    </svg>
+  );
+}
+
+function GoldSealMark({ initials }: { initials: string }) {
+  return (
+    <svg
+      className="petal-seal__svg"
       viewBox="0 0 120 120"
       aria-hidden
       focusable="false"
     >
       <defs>
-        <radialGradient id="goldWax" cx="38%" cy="32%" r="68%">
-          <stop offset="0%" stopColor="#f5e6b8" />
-          <stop offset="28%" stopColor="#e0c56a" />
-          <stop offset="55%" stopColor="#c9a227" />
-          <stop offset="78%" stopColor="#a67c1a" />
-          <stop offset="100%" stopColor="#7a5810" />
+        <radialGradient id="petalWax" cx="36%" cy="30%" r="70%">
+          <stop offset="0%" stopColor="#f3e0a0" />
+          <stop offset="35%" stopColor="#d4ad3a" />
+          <stop offset="70%" stopColor="#a67c1a" />
+          <stop offset="100%" stopColor="#6e4e0e" />
         </radialGradient>
-        <radialGradient id="goldRim" cx="50%" cy="50%" r="50%">
-          <stop offset="72%" stopColor="#b8891f" stopOpacity="0" />
-          <stop offset="88%" stopColor="#8a6414" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#5c420c" stopOpacity="0.75" />
-        </radialGradient>
-        <linearGradient id="goldSheen" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#fff8e0" stopOpacity="0.55" />
-          <stop offset="40%" stopColor="#fff" stopOpacity="0" />
-          <stop offset="100%" stopColor="#6b4a0c" stopOpacity="0.25" />
+        <linearGradient id="foilGradSeal" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#e8d48a" />
+          <stop offset="50%" stopColor="#c9a227" />
+          <stop offset="100%" stopColor="#8a6414" />
         </linearGradient>
-        <filter id="goldSoft" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="1.4" result="b" />
-          <feOffset dy="1.2" result="o" />
-          <feFlood floodColor="#4a3208" floodOpacity="0.35" />
+        <filter id="sealDepth" x="-25%" y="-25%" width="150%" height="150%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1.6" result="b" />
+          <feOffset dy="1.4" result="o" />
+          <feFlood floodColor="#3a2a08" floodOpacity="0.4" />
           <feComposite in2="o" operator="in" />
           <feMerge>
             <feMergeNode />
@@ -89,90 +108,57 @@ function GoldSeal({
           </feMerge>
         </filter>
       </defs>
-
-      <motion.g
-        filter="url(#goldSoft)"
-        animate={
-          pressed
-            ? { scale: 0.92, opacity: 0.4 }
-            : { scale: 1, opacity: 1 }
-        }
-        style={{ transformOrigin: "60px 60px" }}
-        transition={{ duration: 0.38, ease: EASE_SOFT }}
-      >
-        <circle cx="60" cy="60" r="52" fill="url(#goldWax)" />
-        <circle
-          cx="60"
-          cy="60"
-          r="52"
-          fill="none"
-          stroke="#8a6414"
-          strokeWidth="1.2"
-          opacity="0.45"
-        />
+      <g filter="url(#sealDepth)">
+        <circle cx="60" cy="60" r="50" fill="url(#petalWax)" />
         {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
           const rad = (deg * Math.PI) / 180;
-          const x = 60 + Math.cos(rad) * 50;
-          const y = 60 + Math.sin(rad) * 50;
           return (
             <circle
               key={deg}
-              cx={x}
-              cy={y}
-              r="6.5"
-              fill="url(#goldWax)"
-              opacity="0.95"
+              cx={60 + Math.cos(rad) * 48}
+              cy={60 + Math.sin(rad) * 48}
+              r="7"
+              fill="url(#petalWax)"
             />
           );
         })}
-        <circle cx="60" cy="60" r="52" fill="url(#goldRim)" />
-        <circle cx="60" cy="60" r="44" fill="url(#goldWax)" />
-        <circle cx="60" cy="60" r="44" fill="url(#goldSheen)" />
+        <circle cx="60" cy="60" r="42" fill="url(#petalWax)" />
         <circle
           cx="60"
           cy="60"
-          r="36"
+          r="34"
           fill="none"
           stroke="#f0d878"
           strokeWidth="1.1"
-          opacity="0.55"
-        />
-        <circle
-          cx="60"
-          cy="60"
-          r="33"
-          fill="none"
-          stroke="#8a6414"
-          strokeWidth="0.8"
-          opacity="0.35"
+          opacity="0.5"
         />
         <text
           x="60"
           y="67"
           textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="22"
+          fontSize="23"
           fontWeight="600"
-          letterSpacing="0.06em"
+          letterSpacing="0.05em"
           fill="#3d2a08"
-          opacity="0.55"
+          opacity="0.5"
         >
           {initials}
         </text>
         <text
           x="60"
-          y="64.5"
+          y="65"
           textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="22"
+          fontSize="23"
           fontWeight="600"
-          letterSpacing="0.06em"
+          letterSpacing="0.05em"
           fill="#fff1c2"
-          opacity="0.92"
+          opacity="0.9"
         >
           {initials}
         </text>
-      </motion.g>
+      </g>
     </svg>
   );
 }
@@ -181,22 +167,19 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const reduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(open);
   const [phase, setPhase] = useState<Phase>("idle");
-  const [sealPressed, setSealPressed] = useState(false);
-  const [leavesOpen, setLeavesOpen] = useState(false);
-  const [coverReady, setCoverReady] = useState(false);
+  const [flapsOpen, setFlapsOpen] = useState(false);
+  const [sealSplit, setSealSplit] = useState(false);
+  const [showReveal, setShowReveal] = useState(false);
   const lockRef = useRef(false);
   const runIdRef = useRef(0);
   const abortRef = useRef(false);
 
   const cover = wedding.cover;
-  const placeLine =
-    cover.placeLine ||
-    `${wedding.ceremony.city} · ${wedding.ceremony.place}`;
 
   const resetMotion = useCallback(() => {
-    setSealPressed(false);
-    setLeavesOpen(false);
-    setCoverReady(false);
+    setFlapsOpen(false);
+    setSealSplit(false);
+    setShowReveal(false);
   }, []);
 
   useEffect(() => {
@@ -206,11 +189,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       lockRef.current = false;
       abortRef.current = false;
       resetMotion();
-      const t = window.setTimeout(
-        () => setCoverReady(true),
-        reduceMotion ? 0 : 40,
-      );
-      return () => window.clearTimeout(t);
+      return;
     }
     if (!mounted) return;
     abortRef.current = true;
@@ -221,7 +200,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       resetMotion();
     }, EXIT_MS);
     return () => window.clearTimeout(t);
-  }, [open, mounted, resetMotion, reduceMotion]);
+  }, [open, mounted, resetMotion]);
 
   useEffect(() => {
     if (!mounted || phase === "exiting") return;
@@ -240,15 +219,15 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
     lockRef.current = true;
     abortRef.current = false;
     const runId = ++runIdRef.current;
-
     const alive = () =>
       !abortRef.current && runIdRef.current === runId && open;
 
     if (reduceMotion) {
-      setSealPressed(true);
-      setLeavesOpen(true);
+      setFlapsOpen(true);
+      setSealSplit(true);
+      setShowReveal(true);
       setPhase("opening");
-      await wait(180);
+      await wait(200);
       if (!alive()) return;
       setPhase("revealed");
       await wait(160);
@@ -258,18 +237,21 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       return;
     }
 
-    setPhase("sealing");
-    setSealPressed(true);
-    await wait(T.sealPress);
-    if (!alive()) return;
-
     setPhase("opening");
-    setLeavesOpen(true);
-    await wait(T.openDuration);
+    await wait(T.press);
     if (!alive()) return;
 
+    // Top + bottom first, then L/R + seal split (Ewedlab order)
+    setFlapsOpen(true);
+    await wait(T.leftRightDelay);
+    if (!alive()) return;
+    setSealSplit(true);
+    await wait(T.leftRight);
+    if (!alive()) return;
+
+    setShowReveal(true);
     setPhase("revealed");
-    await wait(T.settle);
+    await wait(T.revealHold);
     if (!alive()) return;
 
     window.scrollTo(0, 0);
@@ -291,36 +273,29 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   if (!mounted) return null;
 
   const isExiting = phase === "exiting";
-  const showCover = !leavesOpen;
-  const cardShown = leavesOpen || (reduceMotion && phase !== "idle");
-  const showSeal =
-    phase === "idle" || phase === "sealing" || phase === "opening";
   const isIdle = phase === "idle";
 
-  const leafTransition: Transition = reduceMotion
-    ? { duration: 0.15 }
-    : { duration: T.openDuration / 1000, ease: EASE_OPEN };
-
-  const sealExit: Transition = reduceMotion
+  const tbTransition: Transition = reduceMotion
     ? { duration: 0.12 }
-    : { duration: 0.85, ease: EASE_SOFT, delay: 0.12 };
+    : { duration: T.topBottom / 1000, ease: EASE_FLAP };
 
-  const itemHidden = { opacity: 0, y: 26 };
-  const itemShown = { opacity: 1, y: 0 };
-  const itemTransition = (delay: number): Transition =>
-    reduceMotion
-      ? { duration: 0.01 }
-      : { duration: 0.85, ease: EASE_SOFT, delay };
+  const lrTransition: Transition = reduceMotion
+    ? { duration: 0.12 }
+    : {
+        duration: T.leftRight / 1000,
+        ease: EASE_FLAP,
+        delay: reduceMotion ? 0 : T.leftRightDelay / 1000,
+      };
 
-  const sealEntrance = reduceMotion
-    ? { opacity: 1, scale: 1, rotate: 0 }
-    : coverReady
-      ? { opacity: 1, scale: 1, rotate: 0 }
-      : { opacity: 0, scale: 0.82, rotate: -8 };
+  const sealHalfTransition: Transition = reduceMotion
+    ? { duration: 0.12 }
+    : { duration: T.leftRight / 1000, ease: EASE_FLAP };
 
   return (
     <motion.div
-      className={`envelope-overlay ${isExiting ? "envelope-overlay--exit" : ""}`}
+      className={`petal-overlay ${isExiting ? "petal-overlay--exit" : ""} ${
+        flapsOpen ? "petal-overlay--open" : ""
+      }`}
       role="dialog"
       aria-modal="true"
       aria-label="Abrir invitación"
@@ -330,182 +305,148 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: EXIT_MS / 1000, ease: "easeOut" }}
     >
-      <div className="envelope-scene">
-        <div
-          className={`envelope ${leavesOpen ? "envelope--open" : ""} ${
-            phase !== "idle" ? "envelope--sequencing" : ""
-          }`}
-        >
-          <div className="envelope-glow" aria-hidden />
-
-          <div className="invitation-card" aria-hidden={!cardShown}>
-            <motion.div
-              className="invitation-card__inner"
-              initial={false}
-              animate={{ opacity: cardShown ? 1 : 0 }}
-              transition={
-                reduceMotion
-                  ? { duration: 0.12 }
-                  : { duration: 0.7, ease: EASE_SOFT, delay: 0.45 }
-              }
-            >
-              <p className="invitation-card__eyebrow">{cover.welcomePhrase}</p>
-              <h2 className="invitation-card__names">
-                {wedding.couple.displayName}
-              </h2>
-              <span className="invitation-card__rule" aria-hidden />
-              <p className="invitation-card__date">{wedding.date.display}</p>
-              <p className="invitation-card__place">{cover.placeLine}</p>
-            </motion.div>
-          </div>
-
-          {/* Elegant staggered cover (idle face) */}
-          <motion.div
-            className="cover-face"
-            initial={false}
-            animate={{ opacity: showCover ? 1 : 0 }}
-            transition={{ duration: reduceMotion ? 0.08 : 0.22 }}
-            aria-hidden={!showCover}
-          >
-            <motion.p
-              className="cover-face__phrase"
-              initial={itemHidden}
-              animate={coverReady ? itemShown : itemHidden}
-              transition={itemTransition(STAGGER.phrase)}
-            >
-              {cover.welcomePhrase}
-            </motion.p>
-
-            <motion.h1
-              className="cover-face__names"
-              initial={itemHidden}
-              animate={coverReady ? itemShown : itemHidden}
-              transition={itemTransition(STAGGER.names)}
-            >
-              {wedding.couple.displayName}
-            </motion.h1>
-
-            <motion.p
-              className="cover-face__meta"
-              initial={itemHidden}
-              animate={coverReady ? itemShown : itemHidden}
-              transition={itemTransition(STAGGER.meta)}
-            >
-              <span>{wedding.date.display}</span>
-              <span className="cover-face__meta-dot" aria-hidden>
-                ·
-              </span>
-              <span>{placeLine}</span>
-            </motion.p>
-
-            {showSeal && (
-              <motion.div
-                className="cover-face__seal"
-                initial={sealEntrance}
-                animate={
-                  leavesOpen
-                    ? { opacity: 0, scale: 0.85, y: 8, rotate: 0 }
-                    : coverReady
-                      ? { opacity: 1, scale: 1, rotate: 0, y: 0 }
-                      : sealEntrance
-                }
-                transition={
-                  leavesOpen
-                    ? sealExit
-                    : reduceMotion
-                      ? { duration: 0.01 }
-                      : {
-                          duration: 0.85,
-                          ease: EASE_SOFT,
-                          delay: STAGGER.seal,
-                        }
-                }
-              >
-                <motion.div
-                  className={`gold-seal__pulse ${
-                    isIdle && !reduceMotion ? "gold-seal__pulse--live" : ""
-                  }`}
-                  whileHover={
-                    isIdle && !reduceMotion ? { scale: 1.06 } : undefined
-                  }
-                  whileTap={
-                    isIdle && !reduceMotion ? { scale: 0.96 } : undefined
-                  }
-                >
-                  <GoldSeal
-                    pressed={sealPressed}
-                    initials={cover.initials}
-                  />
-                </motion.div>
-              </motion.div>
-            )}
-
-            {isIdle && (
-              <motion.div
-                className="cover-face__cta-wrap"
-                initial={itemHidden}
-                animate={coverReady ? itemShown : itemHidden}
-                transition={itemTransition(STAGGER.cta)}
-              >
-                <button
-                  type="button"
-                  className="cover-cta"
-                  onPointerUp={onTap}
-                  onClick={onTap}
-                  aria-label={cover.ctaLabel}
-                >
-                  <span className="cover-cta__label">{cover.ctaLabel}</span>
-                  <span className="cover-cta__shimmer" aria-hidden />
-                </button>
-              </motion.div>
-            )}
-          </motion.div>
-
-          {/* Left leaf — hinge on center */}
-          <motion.div
-            className="card-leaf card-leaf--left"
-            initial={false}
-            animate={{ rotateY: leavesOpen ? -102 : 0 }}
-            transition={leafTransition}
-            style={{
-              transformOrigin: "right center",
-              transformStyle: "preserve-3d",
-              WebkitTransformStyle: "preserve-3d",
-              transformPerspective: 1100,
-            }}
-            aria-hidden
-          >
-            <div className="card-leaf__face" />
-          </motion.div>
-
-          {/* Right leaf */}
-          <motion.div
-            className="card-leaf card-leaf--right"
-            initial={false}
-            animate={{ rotateY: leavesOpen ? 102 : 0 }}
-            transition={leafTransition}
-            style={{
-              transformOrigin: "left center",
-              transformStyle: "preserve-3d",
-              WebkitTransformStyle: "preserve-3d",
-              transformPerspective: 1100,
-            }}
-            aria-hidden
-          >
-            <div className="card-leaf__face card-leaf__face--emboss" />
-          </motion.div>
-
-          {isIdle && (
-            <button
-              type="button"
-              className="envelope-hit"
-              onPointerUp={onTap}
-              onClick={onTap}
-              aria-label="Toca el sello para abrir la invitación"
-            />
-          )}
-        </div>
+      {/* Cream reveal under flaps */}
+      <div
+        className={`petal-reveal ${showReveal ? "petal-reveal--visible" : ""}`}
+        aria-hidden={!showReveal}
+      >
+        <p className="petal-reveal__eyebrow">{cover.invitedLine}</p>
+        <h2 className="petal-reveal__names">{wedding.couple.displayName}</h2>
+        <p className="petal-reveal__meta">
+          {wedding.date.display}
+          <span aria-hidden> · </span>
+          {cover.placeLine}
+        </p>
       </div>
+
+      <div className="petal-stage">
+        {/* Top flap */}
+        <motion.div
+          className="petal-flap petal-flap--top"
+          initial={false}
+          animate={
+            flapsOpen
+              ? { y: "-108%", opacity: 0.15, rotateX: -28 }
+              : { y: "0%", opacity: 1, rotateX: 0 }
+          }
+          transition={tbTransition}
+          style={{ transformOrigin: "center top" }}
+          aria-hidden
+        >
+          <FoilVines variant="tl" />
+          <FoilVines variant="tr" />
+        </motion.div>
+
+        {/* Bottom flap */}
+        <motion.div
+          className="petal-flap petal-flap--bottom"
+          initial={false}
+          animate={
+            flapsOpen
+              ? { y: "108%", opacity: 0.15, rotateX: 28 }
+              : { y: "0%", opacity: 1, rotateX: 0 }
+          }
+          transition={tbTransition}
+          style={{ transformOrigin: "center bottom" }}
+          aria-hidden
+        >
+          <FoilVines variant="bl" />
+          <FoilVines variant="br" />
+        </motion.div>
+
+        {/* Left flap */}
+        <motion.div
+          className="petal-flap petal-flap--left"
+          initial={false}
+          animate={
+            flapsOpen
+              ? { x: "-112%", opacity: 0.1, rotateY: 42 }
+              : { x: "0%", opacity: 1, rotateY: 0 }
+          }
+          transition={lrTransition}
+          style={{ transformOrigin: "left center" }}
+          aria-hidden
+        >
+          <FoilVines variant="tl" />
+          <FoilVines variant="bl" />
+        </motion.div>
+
+        {/* Right flap */}
+        <motion.div
+          className="petal-flap petal-flap--right"
+          initial={false}
+          animate={
+            flapsOpen
+              ? { x: "112%", opacity: 0.1, rotateY: -42 }
+              : { x: "0%", opacity: 1, rotateY: 0 }
+          }
+          transition={lrTransition}
+          style={{ transformOrigin: "right center" }}
+          aria-hidden
+        >
+          <FoilVines variant="tr" />
+          <FoilVines variant="br" />
+        </motion.div>
+
+        {/* Seal — two halves that split with L/R flaps */}
+        <div className="petal-seal" aria-hidden>
+          <motion.div
+            className="petal-seal__half petal-seal__half--left"
+            initial={false}
+            animate={
+              sealSplit || (flapsOpen && reduceMotion)
+                ? { x: "-58vw", opacity: 0, rotate: -18 }
+                : { x: 0, opacity: 1, rotate: 0 }
+            }
+            transition={sealHalfTransition}
+          >
+            <div className="petal-seal__clip petal-seal__clip--left">
+              <GoldSealMark initials={cover.initials} />
+            </div>
+          </motion.div>
+          <motion.div
+            className="petal-seal__half petal-seal__half--right"
+            initial={false}
+            animate={
+              sealSplit || (flapsOpen && reduceMotion)
+                ? { x: "58vw", opacity: 0, rotate: 18 }
+                : { x: 0, opacity: 1, rotate: 0 }
+            }
+            transition={sealHalfTransition}
+          >
+            <div className="petal-seal__clip petal-seal__clip--right">
+              <GoldSealMark initials={cover.initials} />
+            </div>
+          </motion.div>
+        </div>
+
+        {isIdle && (
+          <button
+            type="button"
+            className="petal-hit"
+            onPointerUp={onTap}
+            onClick={onTap}
+            aria-label={`${cover.ctaLabel} para abrir la invitación`}
+          />
+        )}
+
+        {isIdle && (
+          <p className="petal-hint" aria-hidden>
+            {cover.ctaLabel}
+          </p>
+        )}
+      </div>
+
+      {/* Hidden SVG defs for foil stroke used by FoilVines */}
+      <svg width="0" height="0" aria-hidden className="petal-defs">
+        <defs>
+          <linearGradient id="foilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#e8d48a" />
+            <stop offset="50%" stopColor="#c9a227" />
+            <stop offset="100%" stopColor="#8a6414" />
+          </linearGradient>
+        </defs>
+      </svg>
     </motion.div>
   );
 }

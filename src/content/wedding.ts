@@ -14,12 +14,15 @@ export const wedding = {
   /** Portada de bienvenida (overlay) — textos y acentos editables */
   cover: {
     welcomePhrase: "Nuestra Boda",
+    invitedLine: "Están cordialmente invitados",
     initials: "J & E",
-    ctaLabel: "Abrir invitación",
+    ctaLabel: "Toca el sello",
     placeLine: "Ica · Perú",
     colors: {
       cream: "#FDFBF7",
       creamDeep: "#F3EEE4",
+      sage: "#6B735F",
+      sageDeep: "#5A6250",
       gold: "#C9A227",
       goldDeep: "#8A6414",
       ink: "#3A342C",
