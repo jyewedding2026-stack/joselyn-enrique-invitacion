@@ -297,8 +297,8 @@
   transform: translate3d(-50%, -50%, 48px);
   transform-style: flat;
   -webkit-transform-style: flat;
-  filter: drop-shadow(0 14px 22px rgba(30, 22, 8, 0.45))
-    drop-shadow(0 3px 6px rgba(70, 50, 15, 0.3));
+  filter: drop-shadow(0 10px 18px rgba(30, 22, 8, 0.42))
+    drop-shadow(0 2px 4px rgba(70, 50, 15, 0.28));
   pointer-events: none;
   isolation: isolate;
 }
