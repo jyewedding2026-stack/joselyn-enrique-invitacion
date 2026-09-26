@@ -11,6 +11,22 @@ export const wedding = {
     shortLine: "Celebramos nuestro sí en Ica, bajo el sol del desierto.",
   },
 
+  /** Portada de bienvenida (overlay) — textos y acentos editables */
+  cover: {
+    welcomePhrase: "Nuestra Boda",
+    initials: "J & E",
+    ctaLabel: "Abrir invitación",
+    placeLine: "Ica · Perú",
+    colors: {
+      cream: "#FDFBF7",
+      creamDeep: "#F3EEE4",
+      gold: "#C9A227",
+      goldDeep: "#8A6414",
+      ink: "#3A342C",
+      muted: "#8A8074",
+    },
+  },
+
   date: {
     iso: "2026-12-05",
     display: "5 de diciembre de 2026",

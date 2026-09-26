@@ -17,8 +17,7 @@ type EnvelopeOverlayProps = {
 };
 
 /**
- * Welcome: closed bifold + golden J&E seal.
- * Tap seal → seal softens → leaves open slowly L/R → onOpen() to main invite.
+ * Elegant cover: staggered reveal → gold J&E seal → slow bifold L/R → onOpen().
  */
 type Phase = "idle" | "sealing" | "opening" | "revealed" | "exiting";
 
@@ -26,11 +25,19 @@ const EASE_SOFT: [number, number, number, number] = [0.22, 0.8, 0.28, 1];
 const EASE_OPEN: [number, number, number, number] = [0.33, 0.05, 0.25, 1];
 const EXIT_MS = 480;
 
-/** Timeline from tap (ms) */
 const T = {
   sealPress: 380,
   openDuration: 1800,
   settle: 280,
+} as const;
+
+/** Stagger delays (s) for cover entrance */
+const STAGGER = {
+  phrase: 0.08,
+  names: 0.22,
+  meta: 0.36,
+  seal: 0.5,
+  cta: 0.72,
 } as const;
 
 function wait(ms: number) {
@@ -39,8 +46,13 @@ function wait(ms: number) {
   });
 }
 
-/** Golden wax-style seal with J & E */
-function GoldSeal({ pressed }: { pressed: boolean }) {
+function GoldSeal({
+  pressed,
+  initials,
+}: {
+  pressed: boolean;
+  initials: string;
+}) {
   return (
     <svg
       className="gold-seal__svg"
@@ -78,12 +90,11 @@ function GoldSeal({ pressed }: { pressed: boolean }) {
         </filter>
       </defs>
 
-      {/* Scalloped wax edge */}
       <motion.g
         filter="url(#goldSoft)"
         animate={
           pressed
-            ? { scale: 0.92, opacity: 0.35 }
+            ? { scale: 0.92, opacity: 0.4 }
             : { scale: 1, opacity: 1 }
         }
         style={{ transformOrigin: "60px 60px" }}
@@ -99,7 +110,6 @@ function GoldSeal({ pressed }: { pressed: boolean }) {
           strokeWidth="1.2"
           opacity="0.45"
         />
-        {/* soft scallop nubs */}
         {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
           const rad = (deg * Math.PI) / 180;
           const x = 60 + Math.cos(rad) * 50;
@@ -118,7 +128,6 @@ function GoldSeal({ pressed }: { pressed: boolean }) {
         <circle cx="60" cy="60" r="52" fill="url(#goldRim)" />
         <circle cx="60" cy="60" r="44" fill="url(#goldWax)" />
         <circle cx="60" cy="60" r="44" fill="url(#goldSheen)" />
-        {/* inner ring */}
         <circle
           cx="60"
           cy="60"
@@ -137,32 +146,31 @@ function GoldSeal({ pressed }: { pressed: boolean }) {
           strokeWidth="0.8"
           opacity="0.35"
         />
-        {/* Initials — deep stamp + light highlight for readable J & E */}
         <text
           x="60"
           y="67"
           textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="24"
+          fontSize="22"
           fontWeight="600"
           letterSpacing="0.06em"
           fill="#3d2a08"
           opacity="0.55"
         >
-          J &amp; E
+          {initials}
         </text>
         <text
           x="60"
           y="64.5"
           textAnchor="middle"
           fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="24"
+          fontSize="22"
           fontWeight="600"
           letterSpacing="0.06em"
           fill="#fff1c2"
           opacity="0.92"
         >
-          J &amp; E
+          {initials}
         </text>
       </motion.g>
     </svg>
@@ -175,13 +183,20 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [sealPressed, setSealPressed] = useState(false);
   const [leavesOpen, setLeavesOpen] = useState(false);
+  const [coverReady, setCoverReady] = useState(false);
   const lockRef = useRef(false);
   const runIdRef = useRef(0);
   const abortRef = useRef(false);
 
+  const cover = wedding.cover;
+  const placeLine =
+    cover.placeLine ||
+    `${wedding.ceremony.city} · ${wedding.ceremony.place}`;
+
   const resetMotion = useCallback(() => {
     setSealPressed(false);
     setLeavesOpen(false);
+    setCoverReady(false);
   }, []);
 
   useEffect(() => {
@@ -191,7 +206,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       lockRef.current = false;
       abortRef.current = false;
       resetMotion();
-      return;
+      const t = window.setTimeout(
+        () => setCoverReady(true),
+        reduceMotion ? 0 : 40,
+      );
+      return () => window.clearTimeout(t);
     }
     if (!mounted) return;
     abortRef.current = true;
@@ -202,7 +221,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       resetMotion();
     }, EXIT_MS);
     return () => window.clearTimeout(t);
-  }, [open, mounted, resetMotion]);
+  }, [open, mounted, resetMotion, reduceMotion]);
 
   useEffect(() => {
     if (!mounted || phase === "exiting") return;
@@ -239,13 +258,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
       return;
     }
 
-    // Soft seal press
     setPhase("sealing");
     setSealPressed(true);
     await wait(T.sealPress);
     if (!alive()) return;
 
-    // Slow realistic bifold open
     setPhase("opening");
     setLeavesOpen(true);
     await wait(T.openDuration);
@@ -274,9 +291,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   if (!mounted) return null;
 
   const isExiting = phase === "exiting";
-  const showClosedCopy = !leavesOpen;
+  const showCover = !leavesOpen;
   const cardShown = leavesOpen || (reduceMotion && phase !== "idle");
-  const showSeal = phase === "idle" || phase === "sealing" || phase === "opening";
+  const showSeal =
+    phase === "idle" || phase === "sealing" || phase === "opening";
+  const isIdle = phase === "idle";
 
   const leafTransition: Transition = reduceMotion
     ? { duration: 0.15 }
@@ -285,6 +304,19 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const sealExit: Transition = reduceMotion
     ? { duration: 0.12 }
     : { duration: 0.85, ease: EASE_SOFT, delay: 0.12 };
+
+  const itemHidden = { opacity: 0, y: 18 };
+  const itemShown = { opacity: 1, y: 0 };
+  const itemTransition = (delay: number): Transition =>
+    reduceMotion
+      ? { duration: 0.01 }
+      : { duration: 0.7, ease: EASE_SOFT, delay };
+
+  const sealEntrance = reduceMotion
+    ? { opacity: 1, scale: 1, rotate: 0 }
+    : coverReady
+      ? { opacity: 1, scale: 1, rotate: 0 }
+      : { opacity: 0, scale: 0.82, rotate: -8 };
 
   return (
     <motion.div
@@ -317,26 +349,116 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
                   : { duration: 0.7, ease: EASE_SOFT, delay: 0.45 }
               }
             >
-              <p className="invitation-card__eyebrow">Nuestra boda</p>
+              <p className="invitation-card__eyebrow">{cover.welcomePhrase}</p>
               <h2 className="invitation-card__names">
                 {wedding.couple.displayName}
               </h2>
               <span className="invitation-card__rule" aria-hidden />
               <p className="invitation-card__date">{wedding.date.display}</p>
-              <p className="invitation-card__place">Ica · Perú</p>
+              <p className="invitation-card__place">{cover.placeLine}</p>
             </motion.div>
           </div>
 
+          {/* Elegant staggered cover (idle face) */}
           <motion.div
-            className="envelope-closed-face"
+            className="cover-face"
             initial={false}
-            animate={{ opacity: showClosedCopy ? 1 : 0 }}
+            animate={{ opacity: showCover ? 1 : 0 }}
             transition={{ duration: reduceMotion ? 0.08 : 0.22 }}
-            aria-hidden
+            aria-hidden={!showCover}
           >
-            <p className="envelope-closed-names">
+            <motion.p
+              className="cover-face__phrase"
+              initial={itemHidden}
+              animate={coverReady ? itemShown : itemHidden}
+              transition={itemTransition(STAGGER.phrase)}
+            >
+              {cover.welcomePhrase}
+            </motion.p>
+
+            <motion.h1
+              className="cover-face__names"
+              initial={itemHidden}
+              animate={coverReady ? itemShown : itemHidden}
+              transition={itemTransition(STAGGER.names)}
+            >
               {wedding.couple.displayName}
-            </p>
+            </motion.h1>
+
+            <motion.p
+              className="cover-face__meta"
+              initial={itemHidden}
+              animate={coverReady ? itemShown : itemHidden}
+              transition={itemTransition(STAGGER.meta)}
+            >
+              <span>{wedding.date.display}</span>
+              <span className="cover-face__meta-dot" aria-hidden>
+                ·
+              </span>
+              <span>{placeLine}</span>
+            </motion.p>
+
+            {showSeal && (
+              <motion.div
+                className="cover-face__seal"
+                initial={sealEntrance}
+                animate={
+                  leavesOpen
+                    ? { opacity: 0, scale: 0.85, y: 8, rotate: 0 }
+                    : coverReady
+                      ? { opacity: 1, scale: 1, rotate: 0, y: 0 }
+                      : sealEntrance
+                }
+                transition={
+                  leavesOpen
+                    ? sealExit
+                    : reduceMotion
+                      ? { duration: 0.01 }
+                      : {
+                          duration: 0.85,
+                          ease: EASE_SOFT,
+                          delay: STAGGER.seal,
+                        }
+                }
+              >
+                <motion.div
+                  className={`gold-seal__pulse ${
+                    isIdle && !reduceMotion ? "gold-seal__pulse--live" : ""
+                  }`}
+                  whileHover={
+                    isIdle && !reduceMotion ? { scale: 1.06 } : undefined
+                  }
+                  whileTap={
+                    isIdle && !reduceMotion ? { scale: 0.96 } : undefined
+                  }
+                >
+                  <GoldSeal
+                    pressed={sealPressed}
+                    initials={cover.initials}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+
+            {isIdle && (
+              <motion.div
+                className="cover-face__cta-wrap"
+                initial={itemHidden}
+                animate={coverReady ? itemShown : itemHidden}
+                transition={itemTransition(STAGGER.cta)}
+              >
+                <button
+                  type="button"
+                  className="cover-cta"
+                  onPointerUp={onTap}
+                  onClick={onTap}
+                  aria-label={cover.ctaLabel}
+                >
+                  <span className="cover-cta__label">{cover.ctaLabel}</span>
+                  <span className="cover-cta__shimmer" aria-hidden />
+                </button>
+              </motion.div>
+            )}
           </motion.div>
 
           {/* Left leaf — hinge on center */}
@@ -373,29 +495,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             <div className="card-leaf__face card-leaf__face--emboss" />
           </motion.div>
 
-          {/* Golden J & E seal — above leaves while closed; fades as they open */}
-          {showSeal && (
-            <div
-              className="gold-seal"
-              style={{ zIndex: leavesOpen ? 7 : 12 }}
-              aria-hidden
-            >
-              <motion.div
-                className="gold-seal__motion"
-                initial={false}
-                animate={
-                  leavesOpen
-                    ? { opacity: 0, scale: 0.85, y: 8 }
-                    : { opacity: 1, scale: 1, y: 0 }
-                }
-                transition={sealExit}
-              >
-                <GoldSeal pressed={sealPressed} />
-              </motion.div>
-            </div>
-          )}
-
-          {phase === "idle" && (
+          {isIdle && (
             <button
               type="button"
               className="envelope-hit"
@@ -404,17 +504,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
               aria-label="Toca el sello para abrir la invitación"
             />
           )}
-
-          {phase === "idle" && (
-            <p className="envelope-tap-hint" aria-hidden>
-              Toca el sello para abrir
-            </p>
-          )}
         </div>
-
-        {phase === "idle" && (
-          <p className="envelope-hint">Toca el sello para abrir</p>
-        )}
       </div>
     </motion.div>
   );
