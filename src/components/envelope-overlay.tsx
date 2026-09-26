@@ -22,7 +22,6 @@ type EnvelopeOverlayProps = {
  */
 type Phase = "idle" | "opening" | "revealed" | "exiting";
 
-const EASE_SOFT: [number, number, number, number] = [0.22, 0.8, 0.28, 1];
 const EASE_FLAP: [number, number, number, number] = [0.4, 0.02, 0.2, 1];
 const EXIT_MS = 520;
 
@@ -41,48 +40,148 @@ function wait(ms: number) {
   });
 }
 
-/** Gold botanical vine for flap corners — denser Ewedlab-style sprigs */
-function FoilVines({ variant }: { variant: "tl" | "tr" | "bl" | "br" }) {
+/** Embossed floral/leaf relief — same sage tone, pressed-paper alto relieve */
+function EmbossedFlorals({
+  variant,
+  uid,
+}: {
+  variant: "tl" | "tr" | "bl" | "br";
+  uid: string;
+}) {
   const transforms: Record<typeof variant, string> = {
     tl: "",
     tr: "scale(-1 1) translate(-100 0)",
     bl: "scale(1 -1) translate(0 -100)",
     br: "scale(-1 -1) translate(-100 -100)",
   };
+  const filterId = `embossRelief-${uid}`;
   return (
     <svg
-      className="petal-foil"
+      className="petal-emboss"
       viewBox="0 0 100 100"
       aria-hidden
       focusable="false"
     >
-      <g
-        transform={transforms[variant]}
-        fill="none"
-        stroke="url(#foilGrad)"
-        strokeWidth="0.85"
-        strokeLinecap="round"
-        opacity="0.78"
-      >
-        <path d="M6 14 C20 24 28 40 26 58 C24 74 16 86 8 94" />
-        <path d="M14 16 C30 26 38 44 40 62 C41 74 36 84 30 92" />
-        <path d="M22 18 C36 22 48 34 52 48" />
-        <path d="M18 34 C32 32 44 40 48 52" />
-        <path d="M16 48 C28 46 38 54 40 66" />
-        <path d="M14 62 C24 60 32 68 34 78" />
-        <path d="M28 20 C36 14 46 16 52 24" />
-        <path d="M26 36 C34 30 44 34 48 42" />
-        <ellipse cx="52" cy="22" rx="2.1" ry="3.3" fill="#d4ad3a" opacity="0.65" />
-        <ellipse cx="48" cy="40" rx="2" ry="3" fill="#c9a227" opacity="0.55" />
-        <ellipse cx="42" cy="54" rx="1.9" ry="2.9" fill="#c9a227" opacity="0.5" />
-        <ellipse cx="36" cy="68" rx="1.7" ry="2.6" fill="#b8891f" opacity="0.45" />
-        <ellipse cx="30" cy="28" rx="1.6" ry="2.4" fill="#d4ad3a" opacity="0.5" />
+      <defs>
+        <filter id={filterId} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="0.6" result="blur" />
+          <feSpecularLighting
+            in="blur"
+            surfaceScale="2.4"
+            specularConstant="0.85"
+            specularExponent="18"
+            lightingColor="#d8e0c8"
+            result="spec"
+          >
+            <fePointLight x="-20" y="-40" z="48" />
+          </feSpecularLighting>
+          <feComposite in="spec" in2="SourceAlpha" operator="in" result="lit" />
+          <feComposite
+            in="SourceGraphic"
+            in2="lit"
+            operator="arithmetic"
+            k1="0"
+            k2="1"
+            k3="0.55"
+            k4="0"
+          />
+        </filter>
+      </defs>
+      <g transform={transforms[variant]} filter={`url(#${filterId})`}>
+        <g
+          fill="none"
+          stroke="#8a937a"
+          strokeWidth="1.15"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.55"
+        >
+          <path d="M8 16 C22 26 30 42 28 60 C26 76 18 88 10 96" />
+          <path d="M16 18 C32 28 40 46 42 64 C43 76 38 86 32 94" />
+          <path d="M24 20 C38 24 50 36 54 50" />
+          <path d="M20 36 C34 34 46 42 50 54" />
+          <path d="M18 50 C30 48 40 56 42 68" />
+          <path d="M30 22 C38 16 48 18 54 26" />
+          <path d="M28 38 C36 32 46 36 50 44" />
+        </g>
+        <g
+          fill="none"
+          stroke="#4a5240"
+          strokeWidth="0.95"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.42"
+          transform="translate(0.55 0.7)"
+        >
+          <path d="M8 16 C22 26 30 42 28 60 C26 76 18 88 10 96" />
+          <path d="M16 18 C32 28 40 46 42 64 C43 76 38 86 32 94" />
+          <path d="M24 20 C38 24 50 36 54 50" />
+          <path d="M20 36 C34 34 46 42 50 54" />
+          <path d="M18 50 C30 48 40 56 42 68" />
+          <path d="M30 22 C38 16 48 18 54 26" />
+          <path d="M28 38 C36 32 46 36 50 44" />
+        </g>
+        <g opacity="0.5">
+          <ellipse
+            cx="54"
+            cy="24"
+            rx="3.2"
+            ry="4.6"
+            fill="#7a846c"
+            stroke="#9aa488"
+            strokeWidth="0.4"
+          />
+          <ellipse
+            cx="50"
+            cy="42"
+            rx="2.8"
+            ry="4.1"
+            fill="#6e7860"
+            stroke="#8e9880"
+            strokeWidth="0.35"
+          />
+          <ellipse
+            cx="44"
+            cy="56"
+            rx="2.5"
+            ry="3.7"
+            fill="#687258"
+            stroke="#88927a"
+            strokeWidth="0.35"
+          />
+          <ellipse
+            cx="38"
+            cy="70"
+            rx="2.2"
+            ry="3.3"
+            fill="#626c52"
+            stroke="#828c74"
+            strokeWidth="0.3"
+          />
+          <circle cx="54" cy="24" r="1.1" fill="#5a6450" opacity="0.55" />
+          <circle cx="50" cy="42" r="0.95" fill="#545e4a" opacity="0.5" />
+          <circle cx="34" cy="30" r="2.4" fill="#74806a" opacity="0.45" />
+          <circle cx="37" cy="28" r="1.8" fill="#7e8a72" opacity="0.4" />
+          <circle cx="32" cy="28" r="1.6" fill="#6a7460" opacity="0.4" />
+        </g>
       </g>
     </svg>
   );
 }
 
-function GoldSealMark({ initials }: { initials: string }) {
+/** Realistic gold wax seal with letterpress cursive J & E */
+function GoldSealMark({
+  initials,
+  uid,
+}: {
+  initials: string;
+  uid: string;
+}) {
+  const wax = `petalWax-${uid}`;
+  const rim = `waxRimShade-${uid}`;
+  const sheen = `waxSheen-${uid}`;
+  const depth = `sealDepth-${uid}`;
+  const press = `letterpress-${uid}`;
   return (
     <svg
       className="petal-seal__svg"
@@ -91,75 +190,172 @@ function GoldSealMark({ initials }: { initials: string }) {
       focusable="false"
     >
       <defs>
-        <radialGradient id="petalWax" cx="36%" cy="30%" r="70%">
-          <stop offset="0%" stopColor="#f3e0a0" />
-          <stop offset="35%" stopColor="#d4ad3a" />
-          <stop offset="70%" stopColor="#a67c1a" />
-          <stop offset="100%" stopColor="#6e4e0e" />
+        <radialGradient id={wax} cx="34%" cy="28%" r="72%">
+          <stop offset="0%" stopColor="#f7e9b4" />
+          <stop offset="22%" stopColor="#e4c45e" />
+          <stop offset="48%" stopColor="#c9a227" />
+          <stop offset="72%" stopColor="#9a7018" />
+          <stop offset="100%" stopColor="#5c400c" />
         </radialGradient>
-        <linearGradient id="foilGradSeal" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#e8d48a" />
-          <stop offset="50%" stopColor="#c9a227" />
-          <stop offset="100%" stopColor="#8a6414" />
+        <radialGradient id={rim} cx="50%" cy="50%" r="50%">
+          <stop offset="70%" stopColor="#8a6414" stopOpacity="0" />
+          <stop offset="88%" stopColor="#5c400c" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#3a2808" stopOpacity="0.7" />
+        </radialGradient>
+        <linearGradient id={sheen} x1="15%" y1="10%" x2="85%" y2="90%">
+          <stop offset="0%" stopColor="#fff8e0" stopOpacity="0.55" />
+          <stop offset="35%" stopColor="#fff" stopOpacity="0" />
+          <stop offset="100%" stopColor="#4a3208" stopOpacity="0.28" />
         </linearGradient>
-        <filter id="sealDepth" x="-25%" y="-25%" width="150%" height="150%">
-          <feGaussianBlur in="SourceAlpha" stdDeviation="1.6" result="b" />
-          <feOffset dy="1.4" result="o" />
-          <feFlood floodColor="#3a2a08" floodOpacity="0.4" />
-          <feComposite in2="o" operator="in" />
+        <filter id={depth} x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="1.8" result="b" />
+          <feOffset dy="2" dx="0.5" result="o" />
+          <feFlood floodColor="#2a1e06" floodOpacity="0.45" />
+          <feComposite in2="o" operator="in" result="shadow" />
           <feMerge>
-            <feMergeNode />
+            <feMergeNode in="shadow" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <filter id={press} x="-10%" y="-10%" width="120%" height="120%">
+          <feOffset dx="0" dy="0.8" result="off" />
+          <feGaussianBlur in="off" stdDeviation="0.35" result="blur" />
+          <feFlood floodColor="#fff6d0" floodOpacity="0.55" result="light" />
+          <feComposite in="light" in2="blur" operator="in" result="hi" />
+          <feOffset dx="0" dy="-0.6" result="off2" />
+          <feGaussianBlur in="off2" stdDeviation="0.3" result="blur2" />
+          <feFlood floodColor="#3a2808" floodOpacity="0.65" result="dark" />
+          <feComposite in="dark" in2="blur2" operator="in" result="sh" />
+          <feMerge>
+            <feMergeNode in="sh" />
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="hi" />
+          </feMerge>
+        </filter>
       </defs>
-      <g filter="url(#sealDepth)">
-        <circle cx="60" cy="60" r="50" fill="url(#petalWax)" />
-        {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
-          const rad = (deg * Math.PI) / 180;
-          return (
-            <circle
-              key={deg}
-              cx={60 + Math.cos(rad) * 48}
-              cy={60 + Math.sin(rad) * 48}
-              r="7"
-              fill="url(#petalWax)"
-            />
-          );
-        })}
-        <circle cx="60" cy="60" r="42" fill="url(#petalWax)" />
+
+      <g filter={`url(#${depth})`}>
+        <path
+          d="M60 8
+             C72 9 84 14 92 24
+             C98 32 104 38 106 48
+             C108 58 106 68 102 78
+             C96 92 84 102 70 108
+             C62 111 52 112 42 108
+             C28 102 16 92 12 78
+             C8 66 8 54 12 44
+             C18 28 32 14 48 10
+             C52 9 56 8 60 8 Z"
+          fill={`url(#${wax})`}
+        />
+        {[
+          [60, 12],
+          [78, 18],
+          [94, 32],
+          [102, 50],
+          [98, 70],
+          [86, 88],
+          [68, 100],
+          [48, 102],
+          [30, 94],
+          [16, 78],
+          [12, 58],
+          [18, 38],
+          [32, 22],
+          [48, 14],
+        ].map(([cx, cy], i) => (
+          <circle
+            key={i}
+            cx={cx}
+            cy={cy}
+            r={5.8 + (i % 3) * 0.6}
+            fill={`url(#${wax})`}
+            opacity="0.95"
+          />
+        ))}
+        <path
+          d="M60 16
+             C70 17 80 22 86 30
+             C94 40 98 50 96 62
+             C94 76 84 88 70 94
+             C62 97 52 97 44 92
+             C30 84 22 72 20 58
+             C18 46 24 34 34 26
+             C42 20 52 16 60 16 Z"
+          fill={`url(#${wax})`}
+        />
+        <path
+          d="M60 16
+             C70 17 80 22 86 30
+             C94 40 98 50 96 62
+             C94 76 84 88 70 94
+             C62 97 52 97 44 92
+             C30 84 22 72 20 58
+             C18 46 24 34 34 26
+             C42 20 52 16 60 16 Z"
+          fill={`url(#${rim})`}
+        />
+        <path
+          d="M60 22
+             C68 23 76 27 82 34
+             C88 42 90 52 88 62
+             C86 74 76 84 64 88
+             C56 90 48 89 42 84
+             C32 76 26 66 26 54
+             C26 44 32 34 42 28
+             C48 24 54 22 60 22 Z"
+          fill={`url(#${sheen})`}
+        />
         <circle
           cx="60"
           cy="60"
-          r="34"
+          r="30"
+          fill="none"
+          stroke="#5c400c"
+          strokeWidth="1.4"
+          opacity="0.35"
+        />
+        <circle
+          cx="60"
+          cy="60"
+          r="28.5"
           fill="none"
           stroke="#f0d878"
-          strokeWidth="1.1"
-          opacity="0.5"
+          strokeWidth="0.7"
+          opacity="0.35"
         />
+
         <text
-          x="60"
-          y="67"
+          x="60.4"
+          y="69.5"
           textAnchor="middle"
-          fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="23"
-          fontWeight="600"
-          letterSpacing="0.05em"
-          fill="#3d2a08"
-          opacity="0.5"
+          fontFamily="'Great Vibes', cursive"
+          fontSize="34"
+          fill="#2a1e06"
+          opacity="0.55"
+          filter={`url(#${press})`}
         >
           {initials}
         </text>
         <text
           x="60"
-          y="65"
+          y="68"
           textAnchor="middle"
-          fontFamily="Georgia, 'Times New Roman', serif"
-          fontSize="23"
-          fontWeight="600"
-          letterSpacing="0.05em"
-          fill="#fff1c2"
-          opacity="0.9"
+          fontFamily="'Great Vibes', cursive"
+          fontSize="34"
+          fill="#6b4a10"
+          opacity="0.92"
+        >
+          {initials}
+        </text>
+        <text
+          x="59.6"
+          y="67.2"
+          textAnchor="middle"
+          fontFamily="'Great Vibes', cursive"
+          fontSize="34"
+          fill="#c9a050"
+          opacity="0.35"
         >
           {initials}
         </text>
@@ -338,8 +534,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           style={{ transformOrigin: "center top" }}
           aria-hidden
         >
-          <FoilVines variant="tl" />
-          <FoilVines variant="tr" />
+          <EmbossedFlorals variant="tl" uid="top-tl" />
+          <EmbossedFlorals variant="tr" uid="top-tr" />
         </motion.div>
 
         {/* Bottom flap */}
@@ -355,8 +551,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           style={{ transformOrigin: "center bottom" }}
           aria-hidden
         >
-          <FoilVines variant="bl" />
-          <FoilVines variant="br" />
+          <EmbossedFlorals variant="bl" uid="bot-bl" />
+          <EmbossedFlorals variant="br" uid="bot-br" />
         </motion.div>
 
         {/* Left flap */}
@@ -372,8 +568,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           style={{ transformOrigin: "left center" }}
           aria-hidden
         >
-          <FoilVines variant="tl" />
-          <FoilVines variant="bl" />
+          <EmbossedFlorals variant="tl" uid="left-tl" />
+          <EmbossedFlorals variant="bl" uid="left-bl" />
         </motion.div>
 
         {/* Right flap */}
@@ -389,8 +585,8 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           style={{ transformOrigin: "right center" }}
           aria-hidden
         >
-          <FoilVines variant="tr" />
-          <FoilVines variant="br" />
+          <EmbossedFlorals variant="tr" uid="right-tr" />
+          <EmbossedFlorals variant="br" uid="right-br" />
         </motion.div>
 
         {/* Seal — two halves that split with L/R flaps */}
@@ -406,7 +602,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             transition={sealHalfTransition}
           >
             <div className="petal-seal__clip petal-seal__clip--left">
-              <GoldSealMark initials={cover.initials} />
+              <GoldSealMark initials={cover.initials} uid="L" />
             </div>
           </motion.div>
           <motion.div
@@ -420,7 +616,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
             transition={sealHalfTransition}
           >
             <div className="petal-seal__clip petal-seal__clip--right">
-              <GoldSealMark initials={cover.initials} />
+              <GoldSealMark initials={cover.initials} uid="R" />
             </div>
           </motion.div>
         </div>
@@ -441,17 +637,6 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           </p>
         )}
       </div>
-
-      {/* Hidden SVG defs for foil stroke used by FoilVines */}
-      <svg width="0" height="0" aria-hidden className="petal-defs">
-        <defs>
-          <linearGradient id="foilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#e8d48a" />
-            <stop offset="50%" stopColor="#c9a227" />
-            <stop offset="100%" stopColor="#8a6414" />
-          </linearGradient>
-        </defs>
-      </svg>
     </motion.div>
   );
 }
