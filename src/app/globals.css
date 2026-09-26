@@ -590,7 +590,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  animation: cover-cta-bounce 2.6s ease-in-out infinite;
+  animation: cover-cta-glow 2.6s ease-in-out infinite;
 }
 
 .cover-cta__label {
@@ -629,13 +629,17 @@
   }
 }
 
-@keyframes cover-cta-bounce {
+@keyframes cover-cta-glow {
   0%,
   100% {
-    transform: translateY(0);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.8) inset,
+      0 8px 18px rgba(90, 70, 30, 0.08);
   }
   50% {
-    transform: translateY(-3px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.9) inset,
+      0 10px 22px rgba(160, 120, 40, 0.16);
   }
 }
 

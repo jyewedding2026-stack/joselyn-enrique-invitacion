@@ -33,11 +33,11 @@ const T = {
 
 /** Stagger delays (s) for cover entrance */
 const STAGGER = {
-  phrase: 0.08,
-  names: 0.22,
-  meta: 0.36,
-  seal: 0.5,
-  cta: 0.72,
+  phrase: 0.12,
+  names: 0.32,
+  meta: 0.52,
+  seal: 0.78,
+  cta: 1.05,
 } as const;
 
 function wait(ms: number) {
@@ -305,12 +305,12 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
     ? { duration: 0.12 }
     : { duration: 0.85, ease: EASE_SOFT, delay: 0.12 };
 
-  const itemHidden = { opacity: 0, y: 18 };
+  const itemHidden = { opacity: 0, y: 26 };
   const itemShown = { opacity: 1, y: 0 };
   const itemTransition = (delay: number): Transition =>
     reduceMotion
       ? { duration: 0.01 }
-      : { duration: 0.7, ease: EASE_SOFT, delay };
+      : { duration: 0.85, ease: EASE_SOFT, delay };
 
   const sealEntrance = reduceMotion
     ? { opacity: 1, scale: 1, rotate: 0 }
