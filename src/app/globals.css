@@ -329,11 +329,12 @@
 /* Embossed floral relief (sage-on-sage alto relieve) */
 .petal-emboss {
   position: absolute;
-  width: 72%;
-  height: 72%;
+  width: 74%;
+  height: 74%;
   pointer-events: none;
-  opacity: 0.95;
-  mix-blend-mode: soft-light;
+  opacity: 1;
+  mix-blend-mode: normal;
+  filter: contrast(1.08);
 }
 
 .petal-flap--top .petal-emboss:nth-child(1) {

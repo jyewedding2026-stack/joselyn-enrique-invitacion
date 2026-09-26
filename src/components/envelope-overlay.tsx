@@ -90,11 +90,11 @@ function EmbossedFlorals({
       <g transform={transforms[variant]} filter={`url(#${filterId})`}>
         <g
           fill="none"
-          stroke="#8a937a"
-          strokeWidth="1.15"
+          stroke="#9aa688"
+          strokeWidth="1.35"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.55"
+          opacity="0.72"
         >
           <path d="M8 16 C22 26 30 42 28 60 C26 76 18 88 10 96" />
           <path d="M16 18 C32 28 40 46 42 64 C43 76 38 86 32 94" />
@@ -106,12 +106,12 @@ function EmbossedFlorals({
         </g>
         <g
           fill="none"
-          stroke="#4a5240"
-          strokeWidth="0.95"
+          stroke="#3e4636"
+          strokeWidth="1.1"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.42"
-          transform="translate(0.55 0.7)"
+          opacity="0.55"
+          transform="translate(0.7 0.85)"
         >
           <path d="M8 16 C22 26 30 42 28 60 C26 76 18 88 10 96" />
           <path d="M16 18 C32 28 40 46 42 64 C43 76 38 86 32 94" />
@@ -121,48 +121,49 @@ function EmbossedFlorals({
           <path d="M30 22 C38 16 48 18 54 26" />
           <path d="M28 38 C36 32 46 36 50 44" />
         </g>
-        <g opacity="0.5">
+        <g opacity="0.72">
           <ellipse
             cx="54"
             cy="24"
-            rx="3.2"
-            ry="4.6"
-            fill="#7a846c"
-            stroke="#9aa488"
-            strokeWidth="0.4"
+            rx="3.4"
+            ry="4.8"
+            fill="#7e8870"
+            stroke="#a8b298"
+            strokeWidth="0.55"
           />
           <ellipse
             cx="50"
             cy="42"
-            rx="2.8"
-            ry="4.1"
-            fill="#6e7860"
-            stroke="#8e9880"
-            strokeWidth="0.35"
+            rx="3"
+            ry="4.3"
+            fill="#727c64"
+            stroke="#9aa688"
+            strokeWidth="0.5"
           />
           <ellipse
             cx="44"
             cy="56"
-            rx="2.5"
-            ry="3.7"
-            fill="#687258"
-            stroke="#88927a"
-            strokeWidth="0.35"
+            rx="2.7"
+            ry="3.9"
+            fill="#6a7460"
+            stroke="#92a080"
+            strokeWidth="0.45"
           />
           <ellipse
             cx="38"
             cy="70"
-            rx="2.2"
-            ry="3.3"
-            fill="#626c52"
-            stroke="#828c74"
-            strokeWidth="0.3"
+            rx="2.4"
+            ry="3.5"
+            fill="#646e58"
+            stroke="#8a947c"
+            strokeWidth="0.4"
           />
-          <circle cx="54" cy="24" r="1.1" fill="#5a6450" opacity="0.55" />
-          <circle cx="50" cy="42" r="0.95" fill="#545e4a" opacity="0.5" />
-          <circle cx="34" cy="30" r="2.4" fill="#74806a" opacity="0.45" />
-          <circle cx="37" cy="28" r="1.8" fill="#7e8a72" opacity="0.4" />
-          <circle cx="32" cy="28" r="1.6" fill="#6a7460" opacity="0.4" />
+          <circle cx="54" cy="24" r="1.2" fill="#4e5844" opacity="0.65" />
+          <circle cx="50" cy="42" r="1.05" fill="#485242" opacity="0.6" />
+          <circle cx="34" cy="30" r="2.6" fill="#78846c" opacity="0.55" />
+          <circle cx="37.5" cy="27.5" r="2" fill="#849076" opacity="0.5" />
+          <circle cx="31.5" cy="27.5" r="1.8" fill="#6c7660" opacity="0.5" />
+          <circle cx="34" cy="32.5" r="1.5" fill="#5e6854" opacity="0.45" />
         </g>
       </g>
     </svg>
