@@ -4,12 +4,12 @@
 
 ## Invitación
 
-https://turbo-gateway.com/GgxRzeme4w-82WOmaoStIqER_CSzrW5YI41SJyvm-Hg
+https://turbo-gateway.com/kyklfPdSE9s4NCpl6pTndM01RhgbkZ93H_smg1zK2qw
 
 Mirrors:
-- https://ar-io.dev/GgxRzeme4w-82WOmaoStIqER_CSzrW5YI41SJyvm-Hg
-- https://arweave.net/GgxRzeme4w-82WOmaoStIqER_CSzrW5YI41SJyvm-Hg
+- https://ar-io.dev/kyklfPdSE9s4NCpl6pTndM01RhgbkZ93H_smg1zK2qw
+- https://arweave.net/kyklfPdSE9s4NCpl6pTndM01RhgbkZ93H_smg1zK2qw
 
-Sello dorado J & E → carta bifold se abre lento a los lados → presentación.
+Portada elegante staggered (frase → nombres → fecha → sello J&E → CTA) → bifold lento → presentación.
 
 Republicar: `npm run publish:permanent`
