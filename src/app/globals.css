@@ -217,7 +217,8 @@
   outline: none;
   -webkit-tap-highlight-color: transparent;
   overflow: hidden;
-  perspective: 1400px;
+  /* Mild perspective only — heavy 3D was shearing seam cuts vs peel motion */
+  perspective: 1800px;
 }
 
 .petal-overlay--exit {
@@ -229,6 +230,8 @@
   inset: 0;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
+  /* Keep flap plane flat enough that clip edges = painted seams while peeling */
+  perspective: none;
 }
 
 .petal-flap {
@@ -240,42 +243,46 @@
   background-repeat: no-repeat;
   will-change: transform, opacity;
   overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
+/* Slight overlap past 50% so diagonal cuts stay sealed at rest (no hairline gap).
+   Diagonals meet at geometric center — texture seams are drawn to match. */
 .petal-flap--top {
   z-index: 4;
-  clip-path: polygon(0 0, 100% 0, 50% 50%);
-  -webkit-clip-path: polygon(0 0, 100% 0, 50% 50%);
+  clip-path: polygon(0 0, 100% 0, 50% 50.4%);
+  -webkit-clip-path: polygon(0 0, 100% 0, 50% 50.4%);
   box-shadow:
-    inset 0 -1px 0 rgba(25, 30, 15, 0.28),
-    0 10px 28px rgba(20, 25, 12, 0.22);
+    inset 0 -1px 0 rgba(25, 30, 15, 0.22),
+    0 8px 20px rgba(20, 25, 12, 0.18);
 }
 
 .petal-flap--bottom {
   z-index: 4;
-  clip-path: polygon(0 100%, 100% 100%, 50% 50%);
-  -webkit-clip-path: polygon(0 100%, 100% 100%, 50% 50%);
+  clip-path: polygon(0 100%, 100% 100%, 50% 49.6%);
+  -webkit-clip-path: polygon(0 100%, 100% 100%, 50% 49.6%);
   box-shadow:
-    inset 0 1px 0 rgba(25, 30, 15, 0.24),
-    0 -8px 22px rgba(20, 25, 12, 0.18);
+    inset 0 1px 0 rgba(25, 30, 15, 0.2),
+    0 -6px 16px rgba(20, 25, 12, 0.14);
 }
 
 .petal-flap--left {
   z-index: 5;
-  clip-path: polygon(0 0, 50% 50%, 0 100%);
-  -webkit-clip-path: polygon(0 0, 50% 50%, 0 100%);
+  clip-path: polygon(0 0, 50.4% 50%, 0 100%);
+  -webkit-clip-path: polygon(0 0, 50.4% 50%, 0 100%);
   box-shadow:
-    inset -1px 0 0 rgba(20, 25, 12, 0.32),
-    8px 0 28px rgba(15, 20, 10, 0.28);
+    inset -1px 0 0 rgba(20, 25, 12, 0.28),
+    6px 0 20px rgba(15, 20, 10, 0.22);
 }
 
 .petal-flap--right {
   z-index: 5;
-  clip-path: polygon(100% 0, 100% 100%, 50% 50%);
-  -webkit-clip-path: polygon(100% 0, 100% 100%, 50% 50%);
+  clip-path: polygon(100% 0, 100% 100%, 49.6% 50%);
+  -webkit-clip-path: polygon(100% 0, 100% 100%, 49.6% 50%);
   box-shadow:
-    inset 1px 0 0 rgba(20, 25, 12, 0.32),
-    -8px 0 28px rgba(15, 20, 10, 0.28);
+    inset 1px 0 0 rgba(20, 25, 12, 0.28),
+    -6px 0 20px rgba(15, 20, 10, 0.22);
 }
 
 .petal-seal {

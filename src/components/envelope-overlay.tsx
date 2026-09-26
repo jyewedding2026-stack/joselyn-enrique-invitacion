@@ -220,11 +220,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           initial={false}
           animate={
             flapsOpen
-              ? { y: "-108%", opacity: 0.15, rotateX: -28 }
+              ? { y: "-105%", opacity: 0.12, rotateX: -18 }
               : { y: "0%", opacity: 1, rotateX: 0 }
           }
           transition={tbTransition}
-          style={{ transformOrigin: "center top", ...flapStyle }}
+          style={{ transformOrigin: "50% 0%", ...flapStyle }}
           aria-hidden
         />
 
@@ -233,11 +233,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           initial={false}
           animate={
             flapsOpen
-              ? { y: "108%", opacity: 0.15, rotateX: 28 }
+              ? { y: "105%", opacity: 0.12, rotateX: 18 }
               : { y: "0%", opacity: 1, rotateX: 0 }
           }
           transition={tbTransition}
-          style={{ transformOrigin: "center bottom", ...flapStyle }}
+          style={{ transformOrigin: "50% 100%", ...flapStyle }}
           aria-hidden
         />
 
@@ -246,11 +246,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           initial={false}
           animate={
             flapsOpen
-              ? { x: "-112%", opacity: 0.1, rotateY: 42 }
+              ? { x: "-105%", opacity: 0.1, rotateY: 22 }
               : { x: "0%", opacity: 1, rotateY: 0 }
           }
           transition={lrTransition}
-          style={{ transformOrigin: "left center", ...flapStyle }}
+          style={{ transformOrigin: "0% 50%", ...flapStyle }}
           aria-hidden
         />
 
@@ -259,11 +259,11 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
           initial={false}
           animate={
             flapsOpen
-              ? { x: "112%", opacity: 0.1, rotateY: -42 }
+              ? { x: "105%", opacity: 0.1, rotateY: -22 }
               : { x: "0%", opacity: 1, rotateY: 0 }
           }
           transition={lrTransition}
-          style={{ transformOrigin: "right center", ...flapStyle }}
+          style={{ transformOrigin: "100% 50%", ...flapStyle }}
           aria-hidden
         />
       </div>
