@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { wedding } from "@/content/wedding";
 import { FadeIn } from "@/components/motion";
@@ -23,6 +23,11 @@ type Step = "search" | "pick" | "confirm" | "done";
 
 type AttendanceChoice = "Asistirá" | "No asistirá";
 
+/** Collapse spaces; keeps accents. Accepts 1–2 given names + 1–2 surnames. */
+function normalizeSearchName(raw: string): string {
+  return raw.trim().replace(/\s+/g, " ");
+}
+
 function estadoToChoice(estado: RsvpEstado): AttendanceChoice | "" {
   if (estado === "Asistirá") return "Asistirá";
   if (estado === "No asistirá") return "No asistirá";
@@ -39,8 +44,7 @@ function initialChoices(personas: RsvpPersona[]): Record<string, AttendanceChoic
 
 export function RsvpSection() {
   const [step, setStep] = useState<Step>("search");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullNameInput, setFullNameInput] = useState("");
   const [candidates, setCandidates] = useState<RsvpGrupo[]>([]);
   const [selectedGrupo, setSelectedGrupo] = useState<RsvpGrupo | null>(null);
   const [choices, setChoices] = useState<Record<string, AttendanceChoice | "">>(
@@ -48,11 +52,6 @@ export function RsvpSection() {
   );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fullName = useMemo(
-    () => `${firstName.trim()} ${lastName.trim()}`.replace(/\s+/g, " ").trim(),
-    [firstName, lastName],
-  );
 
   function resetToSearch() {
     setStep("search");
@@ -73,8 +72,10 @@ export function RsvpSection() {
   async function onSearch(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!firstName.trim() || !lastName.trim()) {
-      setError("Completa tu nombre y apellido.");
+    const fullName = normalizeSearchName(fullNameInput);
+    const tokens = fullName.split(" ").filter(Boolean);
+    if (tokens.length < 2) {
+      setError("Escribe al menos tu nombre y apellido.");
       return;
     }
     setBusy(true);
@@ -153,8 +154,7 @@ export function RsvpSection() {
         return;
       }
       setStep("done");
-      setFirstName("");
-      setLastName("");
+      setFullNameInput("");
       setCandidates([]);
       setSelectedGrupo(null);
       setChoices({});
@@ -187,10 +187,10 @@ export function RsvpSection() {
               {/* Relative path for Arweave / path-hosted static export */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="./images/rsvp-floral.png"
+                src="./images/rsvp-copas.jpg"
                 alt=""
-                width={437}
-                height={132}
+                width={547}
+                height={315}
                 className="h-auto w-full select-none"
                 loading="lazy"
                 decoding="async"
@@ -226,43 +226,23 @@ export function RsvpSection() {
               <p className="mb-5 text-center text-sm text-[#7a7268]">
                 Escribe tu nombre y apellido para encontrar tu invitación.
               </p>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:gap-x-5 sm:gap-y-5">
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="rsvp-first"
-                    className="block text-[0.8rem] text-[#a3988c]"
-                  >
-                    Nombre:
-                  </label>
-                  <input
-                    id="rsvp-first"
-                    name="firstName"
-                    className={pillField}
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Nombre"
-                    autoComplete="given-name"
-                    disabled={busy}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="rsvp-last"
-                    className="block text-[0.8rem] text-[#a3988c]"
-                  >
-                    Apellido:
-                  </label>
-                  <input
-                    id="rsvp-last"
-                    name="lastName"
-                    className={pillField}
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Apellido"
-                    autoComplete="family-name"
-                    disabled={busy}
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="rsvp-fullname"
+                  className="block text-[0.8rem] text-[#a3988c]"
+                >
+                  Nombre y apellido
+                </label>
+                <input
+                  id="rsvp-fullname"
+                  name="fullName"
+                  className={pillField}
+                  value={fullNameInput}
+                  onChange={(e) => setFullNameInput(e.target.value)}
+                  placeholder="Nombre y apellido"
+                  autoComplete="name"
+                  disabled={busy}
+                />
               </div>
 
               {error && (
