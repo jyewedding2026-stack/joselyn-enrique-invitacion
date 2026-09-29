@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { wedding } from "@/content/wedding";
 import { FadeIn } from "@/components/motion";
-import { saveRsvp } from "@/lib/storage";
+import {
+  buscarPorNombre,
+  confirmarAsistencia,
+  describeGrupo,
+  type RsvpEstado,
+  type RsvpGrupo,
+  type RsvpPersona,
+} from "@/lib/rsvp-api";
 
 const pillField =
   "h-11 w-full rounded-full border border-[#d8d4cf] bg-white px-4 text-[0.95rem] text-[#3a3a3a] outline-none transition placeholder:text-[#b0aaa3] focus-visible:border-[#c4a070] focus-visible:ring-2 focus-visible:ring-[#c4a070]/30";
@@ -12,57 +19,151 @@ const pillField =
 const pillSelect =
   `${pillField} appearance-none bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22%3E%3Cpath fill=%22%23a3988c%22 d=%22M1 1.5 6 6.5 11 1.5%22/%3E%3C/svg%3E')] bg-[length:12px_8px] bg-[right_1rem_center] bg-no-repeat pr-9`;
 
+type Step = "search" | "pick" | "confirm" | "done";
+
+type AttendanceChoice = "Asistirá" | "No asistirá";
+
+function estadoToChoice(estado: RsvpEstado): AttendanceChoice | "" {
+  if (estado === "Asistirá") return "Asistirá";
+  if (estado === "No asistirá") return "No asistirá";
+  return "";
+}
+
+function initialChoices(personas: RsvpPersona[]): Record<string, AttendanceChoice | ""> {
+  const next: Record<string, AttendanceChoice | ""> = {};
+  for (const p of personas) {
+    next[p.idPersona] = estadoToChoice(p.estado);
+  }
+  return next;
+}
+
 export function RsvpSection() {
+  const [step, setStep] = useState<Step>("search");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [attending, setAttending] = useState<"yes" | "no">("yes");
-  const [companion, setCompanion] = useState<"yes" | "no">("no");
-  const [submitted, setSubmitted] = useState(false);
+  const [candidates, setCandidates] = useState<RsvpGrupo[]>([]);
+  const [selectedGrupo, setSelectedGrupo] = useState<RsvpGrupo | null>(null);
+  const [choices, setChoices] = useState<Record<string, AttendanceChoice | "">>(
+    {},
+  );
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function submitRsvp() {
+  const fullName = useMemo(
+    () => `${firstName.trim()} ${lastName.trim()}`.replace(/\s+/g, " ").trim(),
+    [firstName, lastName],
+  );
+
+  function resetToSearch() {
+    setStep("search");
+    setCandidates([]);
+    setSelectedGrupo(null);
+    setChoices({});
     setError(null);
-    const fn = firstName.trim();
-    const ln = lastName.trim();
-    if (!fn || !ln) {
+    setBusy(false);
+  }
+
+  function openConfirm(grupo: RsvpGrupo) {
+    setSelectedGrupo(grupo);
+    setChoices(initialChoices(grupo.personas));
+    setStep("confirm");
+    setError(null);
+  }
+
+  async function onSearch(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!firstName.trim() || !lastName.trim()) {
       setError("Completa tu nombre y apellido.");
       return;
     }
-    if (!email.trim() || !email.includes("@")) {
-      setError("Ingresa un email válido.");
-      return;
-    }
-    if (!phone.trim()) {
-      setError("Ingresa tu teléfono.");
-      return;
-    }
-
-    const isAttending = attending === "yes";
-    const hasCompanion = isAttending && companion === "yes";
-
+    setBusy(true);
     try {
-      saveRsvp({
-        firstName: fn,
-        lastName: ln,
-        email: email.trim(),
-        phone: phone.trim(),
-        attending: isAttending,
-        companion: hasCompanion,
-        guestCount: isAttending ? (hasCompanion ? 2 : 1) : 0,
+      const result = await buscarPorNombre(fullName);
+      if (result.kind === "none") {
+        setError(result.message);
+        toast.error("No encontramos tu nombre.");
+        return;
+      }
+      if (result.kind === "multiple") {
+        setCandidates(result.grupos);
+        setStep("pick");
+        return;
+      }
+      openConfirm(result.grupo);
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "No pudimos buscar tu nombre. Intenta de nuevo.";
+      setError(message);
+      toast.error("Error al buscar.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function onPickContinue(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const chosen =
+      candidates.find((g) => g.idGrupo === selectedGrupo?.idGrupo) ?? null;
+    if (!chosen) {
+      setError("Elige tu grupo de la lista.");
+      return;
+    }
+    openConfirm(chosen);
+  }
+
+  async function onConfirmSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!selectedGrupo) {
+      setError("Vuelve a buscar tu nombre.");
+      return;
+    }
+
+    const confirmaciones: Array<{
+      idPersona: string;
+      estado: AttendanceChoice;
+    }> = [];
+
+    for (const persona of selectedGrupo.personas) {
+      const choice = choices[persona.idPersona];
+      if (choice !== "Asistirá" && choice !== "No asistirá") {
+        setError(`Indica la asistencia de ${persona.nombre}.`);
+        return;
+      }
+      confirmaciones.push({ idPersona: persona.idPersona, estado: choice });
+    }
+
+    setBusy(true);
+    try {
+      const result = await confirmarAsistencia({
+        idGrupo: selectedGrupo.idGrupo,
+        confirmaciones,
       });
-      setSubmitted(true);
+      if (!result.success) {
+        setError(result.message);
+        toast.error("Error al guardar la confirmación.");
+        return;
+      }
+      setStep("done");
       setFirstName("");
       setLastName("");
-      setEmail("");
-      setPhone("");
-      setAttending("yes");
-      setCompanion("no");
+      setCandidates([]);
+      setSelectedGrupo(null);
+      setChoices({});
       toast.success("¡Gracias! Tu confirmación quedó guardada.");
-    } catch {
-      setError("No pudimos guardar tu respuesta en este navegador.");
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "No pudimos guardar tu confirmación.";
+      setError(message);
       toast.error("Error al guardar la confirmación.");
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -91,7 +192,7 @@ export function RsvpSection() {
         </FadeIn>
 
         <FadeIn delay={0.06}>
-          {submitted ? (
+          {step === "done" ? (
             <div className="mt-2 rounded-[1.75rem] bg-white px-6 py-10 text-center shadow-[0_12px_40px_rgba(60,50,40,0.08)]">
               <h3 className="font-[family-name:var(--font-display)] text-2xl text-[#5c4033]">
                 Confirmación recibida
@@ -103,20 +204,20 @@ export function RsvpSection() {
               <button
                 type="button"
                 className="mt-6 inline-flex h-12 w-full max-w-xs items-center justify-center rounded-full bg-[#7a3f32] px-8 text-base font-medium text-white hover:bg-[#6a3529]"
-                onClick={() => setSubmitted(false)}
+                onClick={resetToSearch}
               >
                 Enviar otra respuesta
               </button>
             </div>
-          ) : (
+          ) : step === "search" ? (
             <form
               className="mt-2 rounded-[1.75rem] bg-white px-4 py-7 shadow-[0_12px_40px_rgba(60,50,40,0.08)] sm:px-7 sm:py-9"
-              onSubmit={(e) => {
-                e.preventDefault();
-                submitRsvp();
-              }}
+              onSubmit={onSearch}
               noValidate
             >
+              <p className="mb-5 text-center text-sm text-[#7a7268]">
+                Escribe tu nombre y apellido para encontrar tu invitación.
+              </p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:gap-x-5 sm:gap-y-5">
                 <div className="space-y-1.5">
                   <label
@@ -133,6 +234,7 @@ export function RsvpSection() {
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Nombre"
                     autoComplete="given-name"
+                    disabled={busy}
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -150,84 +252,8 @@ export function RsvpSection() {
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Apellido"
                     autoComplete="family-name"
+                    disabled={busy}
                   />
-                </div>
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="rsvp-email"
-                    className="block text-[0.8rem] text-[#a3988c]"
-                  >
-                    Email:
-                  </label>
-                  <input
-                    id="rsvp-email"
-                    name="email"
-                    type="email"
-                    className={pillField}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    autoComplete="email"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="rsvp-phone"
-                    className="block text-[0.8rem] text-[#a3988c]"
-                  >
-                    Teléfono:
-                  </label>
-                  <input
-                    id="rsvp-phone"
-                    name="phone"
-                    type="tel"
-                    className={pillField}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="Teléfono"
-                    autoComplete="tel"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="rsvp-attending"
-                    className="block text-[0.8rem] text-[#a3988c]"
-                  >
-                    Asistencia:
-                  </label>
-                  <select
-                    id="rsvp-attending"
-                    name="attending"
-                    className={pillSelect}
-                    value={attending}
-                    onChange={(e) =>
-                      setAttending(e.target.value === "no" ? "no" : "yes")
-                    }
-                  >
-                    <option value="yes">Sí</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="rsvp-companion"
-                    className="block text-[0.8rem] text-[#a3988c]"
-                  >
-                    Acompañante:
-                  </label>
-                  <select
-                    id="rsvp-companion"
-                    name="companion"
-                    className={pillSelect}
-                    value={companion}
-                    disabled={attending === "no"}
-                    onChange={(e) =>
-                      setCompanion(e.target.value === "yes" ? "yes" : "no")
-                    }
-                  >
-                    <option value="no">No</option>
-                    <option value="yes">Sí</option>
-                  </select>
                 </div>
               </div>
 
@@ -240,9 +266,168 @@ export function RsvpSection() {
               <div className="mt-7">
                 <button
                   type="submit"
-                  className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#7a3f32] text-base font-medium tracking-wide text-white transition hover:bg-[#6a3529]"
+                  disabled={busy}
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#7a3f32] text-base font-medium tracking-wide text-white transition hover:bg-[#6a3529] disabled:opacity-60"
                 >
-                  {wedding.rsvp.submitLabel}
+                  {busy ? "Buscando…" : "Buscar mi invitación"}
+                </button>
+              </div>
+            </form>
+          ) : step === "pick" ? (
+            <form
+              className="mt-2 rounded-[1.75rem] bg-white px-4 py-7 shadow-[0_12px_40px_rgba(60,50,40,0.08)] sm:px-7 sm:py-9"
+              onSubmit={onPickContinue}
+              noValidate
+            >
+              <p className="mb-5 text-center text-sm text-[#7a7268]">
+                Encontramos más de un grupo. Elige el tuyo para continuar.
+              </p>
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="rsvp-group"
+                  className="block text-[0.8rem] text-[#a3988c]"
+                >
+                  Tu grupo:
+                </label>
+                <select
+                  id="rsvp-group"
+                  name="group"
+                  className={pillSelect}
+                  value={selectedGrupo?.idGrupo ?? ""}
+                  onChange={(e) => {
+                    const g =
+                      candidates.find((c) => c.idGrupo === e.target.value) ??
+                      null;
+                    setSelectedGrupo(g);
+                  }}
+                  disabled={busy}
+                >
+                  <option value="">Selecciona…</option>
+                  {candidates.map((g) => (
+                    <option key={g.idGrupo} value={g.idGrupo}>
+                      {describeGrupo(g)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedGrupo && (
+                <ul className="mt-4 space-y-2 rounded-[1.25rem] border border-[#ebe6e0] bg-[#faf8f6] px-4 py-3 text-sm text-[#5c4033]">
+                  {selectedGrupo.personas.map((p) => (
+                    <li key={p.idPersona} className="flex justify-between gap-3">
+                      <span>{p.nombre}</span>
+                      <span className="text-[#a3988c]">{p.tipo}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {error && (
+                <p className="mt-4 text-center text-sm text-red-700" role="alert">
+                  {error}
+                </p>
+              )}
+
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[#d8d4cf] bg-white text-base font-medium text-[#5c4033] hover:bg-[#faf8f6]"
+                  onClick={resetToSearch}
+                  disabled={busy}
+                >
+                  Volver
+                </button>
+                <button
+                  type="submit"
+                  disabled={busy || !selectedGrupo}
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#7a3f32] text-base font-medium tracking-wide text-white transition hover:bg-[#6a3529] disabled:opacity-60"
+                >
+                  Continuar
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form
+              className="mt-2 rounded-[1.75rem] bg-white px-4 py-7 shadow-[0_12px_40px_rgba(60,50,40,0.08)] sm:px-7 sm:py-9"
+              onSubmit={onConfirmSubmit}
+              noValidate
+            >
+              <p className="mb-5 text-center text-sm text-[#7a7268]">
+                Confirma la asistencia de cada persona de tu grupo.
+              </p>
+
+              <div className="space-y-4">
+                {selectedGrupo?.personas.map((persona) => (
+                  <div
+                    key={persona.idPersona}
+                    className="rounded-[1.25rem] border border-[#ebe6e0] bg-[#faf8f6] px-4 py-4"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <p className="font-medium text-[#5c4033]">
+                        {persona.nombre}
+                      </p>
+                      <p className="text-[0.75rem] uppercase tracking-wide text-[#a3988c]">
+                        {persona.tipo}
+                      </p>
+                    </div>
+                    <div className="mt-3 space-y-1.5">
+                      <label
+                        htmlFor={`rsvp-att-${persona.idPersona}`}
+                        className="block text-[0.8rem] text-[#a3988c]"
+                      >
+                        Asistencia:
+                      </label>
+                      <select
+                        id={`rsvp-att-${persona.idPersona}`}
+                        className={pillSelect}
+                        value={choices[persona.idPersona] ?? ""}
+                        disabled={busy}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          setChoices((prev) => ({
+                            ...prev,
+                            [persona.idPersona]:
+                              v === "Asistirá" || v === "No asistirá" ? v : "",
+                          }));
+                        }}
+                      >
+                        <option value="">Selecciona…</option>
+                        <option value="Asistirá">Sí, asistiré</option>
+                        <option value="No asistirá">No podré asistir</option>
+                      </select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {error && (
+                <p className="mt-4 text-center text-sm text-red-700" role="alert">
+                  {error}
+                </p>
+              )}
+
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[#d8d4cf] bg-white text-base font-medium text-[#5c4033] hover:bg-[#faf8f6]"
+                  onClick={() => {
+                    if (candidates.length > 1) {
+                      setStep("pick");
+                      setError(null);
+                    } else {
+                      resetToSearch();
+                    }
+                  }}
+                  disabled={busy}
+                >
+                  Volver
+                </button>
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#7a3f32] text-base font-medium tracking-wide text-white transition hover:bg-[#6a3529] disabled:opacity-60"
+                >
+                  {busy ? "Guardando…" : wedding.rsvp.submitLabel}
                 </button>
               </div>
             </form>
