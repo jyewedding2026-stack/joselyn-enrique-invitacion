@@ -2,8 +2,8 @@
 
 **No caduca. No hay que reclamar.**
 
-- https://ar-io.dev/9aePrIee95L45pnELO73N_UXthGb9HRrOQuLAtfX1c0
-- https://turbo-gateway.com/9aePrIee95L45pnELO73N_UXthGb9HRrOQuLAtfX1c0
-- https://arweave.net/9aePrIee95L45pnELO73N_UXthGb9HRrOQuLAtfX1c0 (puede tardar unos minutos en propagar)
+- https://ar-io.dev/hVX1f2wWLYFTotbyfYw270Z0QGVpzjeiDk7WInU8q_k
+- https://turbo-gateway.com/hVX1f2wWLYFTotbyfYw270Z0QGVpzjeiDk7WInU8q_k
+- https://arweave.net/hVX1f2wWLYFTotbyfYw270Z0QGVpzjeiDk7WInU8q_k (puede tardar unos minutos en propagar)
 
-Publicado en Arweave el 2026-09-26T06:22:32.614Z.
+Publicado en Arweave el 2026-09-29T05:37:10.703Z.
