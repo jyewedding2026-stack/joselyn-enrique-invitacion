@@ -59,8 +59,16 @@ function normalizePersona(raw: Record<string, unknown>): RsvpPersona | null {
   const idPersona = asString(
     raw.idPersona ?? raw.ID_PERSONA ?? raw.id_persona ?? raw.id,
   );
+  const fromParts = [asString(raw.NOMBRES), asString(raw.APELLIDOS)]
+    .filter(Boolean)
+    .join(" ");
   const nombre = asString(
-    raw.nombre ?? raw.NOMBRE ?? raw.name ?? raw.NombreCompleto,
+    raw.nombreCompleto ??
+      raw.NombreCompleto ??
+      raw.nombre ??
+      raw.NOMBRE ??
+      raw.name ??
+      fromParts,
   );
   if (!idPersona || !nombre) return null;
   const tipo = asString(raw.tipo ?? raw.TIPO ?? raw.rol ?? "Invitado") || "Invitado";
