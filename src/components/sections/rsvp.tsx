@@ -92,10 +92,14 @@ export function RsvpSection() {
       }
       openConfirm(result.grupo);
     } catch (err) {
+      const raw = err instanceof Error ? err.message : "";
       const message =
-        err instanceof Error
-          ? err.message
-          : "No pudimos buscar tu nombre. Intenta de nuevo.";
+        !raw ||
+        /failed to fetch|networkerror|load failed|network request failed/i.test(
+          raw,
+        )
+          ? "No pudimos conectar con la lista de invitados. Intenta de nuevo más tarde."
+          : raw;
       setError(message);
       toast.error("Error al buscar.");
     } finally {
@@ -156,10 +160,14 @@ export function RsvpSection() {
       setChoices({});
       toast.success("¡Gracias! Tu confirmación quedó guardada.");
     } catch (err) {
+      const raw = err instanceof Error ? err.message : "";
       const message =
-        err instanceof Error
-          ? err.message
-          : "No pudimos guardar tu confirmación.";
+        !raw ||
+        /failed to fetch|networkerror|load failed|network request failed/i.test(
+          raw,
+        )
+          ? "No pudimos guardar tu confirmación. Intenta de nuevo."
+          : raw;
       setError(message);
       toast.error("Error al guardar la confirmación.");
     } finally {
