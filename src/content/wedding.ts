@@ -37,25 +37,25 @@ export const wedding = {
   },
 
   ceremony: {
-    time: "5:00 pm",
-    place: "Santuario Nacional del Señor de Luren",
+    time: "05:00 pm",
+    place: "Santuario del Señor de Luren",
     city: "Ica",
-    address: "Santuario Nacional del Señor de Luren, Ica, Perú",
-    lat: -14.0678,
-    lng: -75.7286,
+    address: "Calle Piura 700, Ica",
+    lat: -14.070598,
+    lng: -75.725617,
     mapsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Santuario+Nacional+del+Se%C3%B1or+de+Luren+Ica",
+      "https://www.google.com/maps/search/?api=1&query=Santuario+del+Se%C3%B1or+de+Luren%2C+Calle+Piura+700%2C+Ica",
   },
 
   reception: {
-    time: "7:00 pm",
+    time: "06:30 pm",
     place: "Hacienda Hotel Macacona",
     city: "Ica",
-    address: "Hacienda Hotel Macacona, Ica, Perú",
-    lat: -14.0185,
-    lng: -75.752,
+    address: "Urb. La Florida 4ta Etapa Sector Macacona, Ica",
+    lat: -14.030912,
+    lng: -75.772326,
     mapsUrl:
-      "https://www.google.com/maps/search/?api=1&query=Hacienda+Hotel+Macacona+Ica",
+      "https://www.google.com/maps/search/?api=1&query=Hacienda+Hotel+Macacona%2C+Urb.+La+Florida+4ta+Etapa+Sector+Macacona%2C+Ica",
   },
 
   dressCode: {
