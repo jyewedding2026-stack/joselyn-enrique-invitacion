@@ -59,21 +59,14 @@ export const wedding = {
   },
 
   dressCode: {
-    label: "Formal",
-    description:
-      "Te esperamos con elegancia: trajes, vestidos largos o cocktail sofisticado. Evita blanco y crema.",
-    inspirationImages: [
+    label: "Elegante",
+    illustration: "./images/dress-code-couple.jpg",
+    lines: [
+      { lead: "Hombres", text: "terno y corbata" },
+      { lead: "Mujeres", text: "vestido largo o cocktail sofisticado" },
       {
-        src: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=480&q=55",
-        alt: "Inspiración vestido formal",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=480&q=55",
-        alt: "Inspiración traje formal",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=480&q=55",
-        alt: "Inspiración look cocktail",
+        lead: "Nota",
+        text: "Reservamos los colores blanco, beige y marfil exclusivamente para la novia. ¡Gracias por tu comprensión!",
       },
     ],
   },
