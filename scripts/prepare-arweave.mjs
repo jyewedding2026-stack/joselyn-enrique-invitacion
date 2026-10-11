@@ -5,7 +5,9 @@
  * - split oversized JS into part files + a sync loader (webpack-compatible)
  * - prefetch part files so sync XHR hits cache (much faster on Arweave)
  */
+import { execFileSync } from "node:child_process";
 import {
+  copyFileSync,
   existsSync,
   readdirSync,
   readFileSync,
@@ -13,6 +15,7 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, relative } from "node:path";
 
 const ROOT = join(process.cwd(), "out");
@@ -94,6 +97,47 @@ function injectPrefetch(partHrefs) {
   }
 }
 
+function squeezeOversizedJpegs() {
+  for (const file of walk(ROOT)) {
+    if (!/\.jpe?g$/i.test(file)) continue;
+    if (statSync(file).size <= LIMIT) continue;
+
+    const tmp = join(tmpdir(), `arweave-jpeg-${process.pid}.jpg`);
+    let fitted = false;
+    let scale = 1;
+    for (let pass = 0; pass < 5 && !fitted; pass++) {
+      for (let q = 2; q <= 20; q++) {
+        const args = ["-y", "-loglevel", "error", "-i", file];
+        if (scale < 1) {
+          args.push("-vf", `scale=trunc(iw*${scale}/2)*2:trunc(ih*${scale}/2)*2`);
+        }
+        args.push("-q:v", String(q), tmp);
+        execFileSync("ffmpeg", args);
+        if (statSync(tmp).size <= LIMIT) {
+          copyFileSync(tmp, file);
+          console.log(
+            "squeezed",
+            relative(ROOT, file),
+            "q",
+            q,
+            "scale",
+            scale,
+            statSync(file).size,
+          );
+          fitted = true;
+          break;
+        }
+      }
+      scale *= 0.85;
+    }
+    if (existsSync(tmp)) unlinkSync(tmp);
+    if (!fitted) {
+      console.error("Could not fit JPEG under limit:", file);
+      process.exit(1);
+    }
+  }
+}
+
 if (!existsSync(ROOT)) {
   console.error("out/ missing — run npm run build first");
   process.exit(1);
@@ -101,6 +145,7 @@ if (!existsSync(ROOT)) {
 stripPolyfills();
 const parts = splitLargeJs();
 injectPrefetch(parts);
+squeezeOversizedJpegs();
 
 const overs = walk(ROOT).filter((f) => statSync(f).size > LIMIT);
 if (overs.length) {

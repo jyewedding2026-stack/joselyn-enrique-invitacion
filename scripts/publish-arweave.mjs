@@ -27,6 +27,10 @@ function contentType(file) {
     return "application/javascript; charset=utf-8";
   if (file.endsWith(".css")) return "text/css; charset=utf-8";
   if (file.endsWith(".svg")) return "image/svg+xml";
+  if (file.endsWith(".jpg") || file.endsWith(".jpeg")) return "image/jpeg";
+  if (file.endsWith(".png")) return "image/png";
+  if (file.endsWith(".webp")) return "image/webp";
+  if (file.endsWith(".gif")) return "image/gif";
   if (file.endsWith(".ico")) return "image/x-icon";
   if (file.endsWith(".txt")) return "text/plain; charset=utf-8";
   if (file.endsWith(".woff2")) return "font/woff2";
