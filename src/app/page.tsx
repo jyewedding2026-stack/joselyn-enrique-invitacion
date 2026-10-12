@@ -56,13 +56,6 @@ const AlbumCtaSection = dynamic(
     })),
   { loading: () => null },
 );
-const PhotoBreak = dynamic(
-  () =>
-    import("@/components/photo-break").then((m) => ({
-      default: m.PhotoBreak,
-    })),
-  { loading: () => null },
-);
 
 export default function HomePage() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -81,16 +74,8 @@ export default function HomePage() {
           <HeroSection />
           <StorySection />
           <LogisticsSection />
-          <PhotoBreak
-            src={wedding.story.chapters[1].image}
-            alt={wedding.story.chapters[1].title}
-          />
           <DressCodeSection />
           <LodgingSection />
-          <PhotoBreak
-            src={wedding.story.chapters[2].image}
-            alt={wedding.story.chapters[2].title}
-          />
           <GiftsSection />
           <RsvpSection />
           <AlbumCtaSection />

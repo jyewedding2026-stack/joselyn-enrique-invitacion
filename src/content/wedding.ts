@@ -71,29 +71,28 @@ export const wedding = {
     ],
   },
 
-  /** PLACEHOLDER — reemplaza con tu historia real y fotos */
   story: {
     welcomeTitle: "Nuestra historia",
-    welcome:
-      "PLACEHOLDER: Escribe aquí el mensaje de bienvenida para tus invitados. Cómo se conocieron, el momento en que dijeron sí, y lo que significa compartir este día juntos.",
+    openingImage: {
+      src: "./images/historia-mundo.jpg",
+      alt: "Joselyn y Enrique frente al mundo",
+    },
+    closingImage: {
+      src: "./images/historia-pedida.jpg",
+      alt: "La pedida de mano",
+    },
     chapters: [
       {
-        title: "El comienzo",
-        body: "PLACEHOLDER: Primer encuentro, primera cita, o cómo empezó todo.",
-        image:
-          "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=720&q=55",
+        title: "El Comienzo",
+        body: "Nos conocimos en la universidad en 2012 y, tras dos años de conocernos, comenzamos una hermosa relación en 2014. Nos enamoramos desde el primer momento y supimos desde ese instante que no solo coincidíamos en la misma carrera y la misma pasión, sino que estábamos destinados a estar juntos.",
       },
       {
-        title: "El camino juntos",
-        body: "PLACEHOLDER: Viajes, risas y momentos que sellaron su historia.",
-        image:
-          "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=720&q=55",
+        title: "El Camino Juntos",
+        body: "A lo largo de estos 12 años, hemos construido una historia llena de complicidad, risas y momentos inolvidables. Juntos nos aventuramos a cruzar fronteras, explorar ciudades lejanas y crear recuerdos que jamás olvidaremos. ¡Quién diría que nuestro amor terminaría dándole la vuelta al mundo!",
       },
       {
-        title: "El sí",
-        body: "PLACEHOLDER: La propuesta y el comienzo de esta nueva etapa.",
-        image:
-          "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=720&q=55",
+        title: "El Sí",
+        body: 'Jamás imaginamos que sellaríamos este compromiso a 15,512 km de distancia: desde nuestra ciudad del eterno sol hasta el país del sol naciente, en el lugar exacto donde la infancia sueña y la magia cobra vida. Allí dijimos el "sí" más esperado, listos para iniciar una nueva etapa juntos.',
       },
     ],
   },
