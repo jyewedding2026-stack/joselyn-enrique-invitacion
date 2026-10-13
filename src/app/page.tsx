@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { EnvelopeOverlay } from "@/components/envelope-overlay";
 import { HeroSection } from "@/components/sections/hero";
+import { SaveTheDateSection } from "@/components/sections/save-the-date";
 import { wedding } from "@/content/wedding";
 
 const StorySection = dynamic(
@@ -72,6 +73,7 @@ export default function HomePage() {
         <SiteHeader />
         <main className="relative">
           <HeroSection />
+          <SaveTheDateSection />
           <StorySection />
           <LogisticsSection />
           <DressCodeSection />
