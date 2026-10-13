@@ -4,6 +4,27 @@ import { wedding } from "@/content/wedding";
 import { HeroMotion } from "@/components/motion";
 import { Countdown } from "@/components/countdown";
 
+const phraseParts = wedding.couple.shortLine
+  .split("♡")
+  .map((part) => part.trim())
+  .filter(Boolean);
+
+function FilledHeart() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-[0.78em] w-[0.78em] shrink-0 text-white"
+      fill="currentColor"
+    >
+      <path
+        fill="currentColor"
+        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+      />
+    </svg>
+  );
+}
+
 export function HeroSection() {
   return (
     <section id="inicio" className="relative z-0 h-[155svh] w-full md:h-[165svh]">
@@ -23,17 +44,27 @@ export function HeroSection() {
             <p className="mb-2 text-xs tracking-[0.28em] text-white/85 uppercase sm:mb-3 sm:text-sm">
               {wedding.date.shortDisplay}
             </p>
-            <h1 className="font-[family-name:var(--font-display)] text-[2.75rem] leading-[0.95] text-white sm:text-6xl md:text-7xl lg:text-8xl">
+            <h1
+              className="max-w-full text-balance text-white"
+              style={{
+                fontFamily: '"Great Vibes", cursive',
+                fontSize: "clamp(3.25rem, 12vw, 8rem)",
+                fontWeight: 400,
+                lineHeight: 1.2,
+              }}
+            >
               {wedding.couple.displayName}
             </h1>
             <p
-              style={{
-                fontFamily: '"Great Vibes", cursive',
-                fontSize: "clamp(0.95rem, 4.5vw, 2.4rem)",
-              }}
-              className="mt-3 max-w-full leading-[1.45] text-balance text-[var(--warm-white)] sm:mt-5"
+              style={{ fontFamily: "var(--font-display)" }}
+              className="mt-2 flex max-w-full flex-wrap items-center gap-x-[0.55em] gap-y-1.5 text-[0.72rem] leading-snug font-medium tracking-[0.18em] text-white uppercase sm:mt-3 sm:text-[0.8125rem] sm:tracking-[0.22em] md:text-sm"
             >
-              {wedding.couple.shortLine}
+              {phraseParts.map((part, index) => (
+                <span key={part} className="inline-flex items-center gap-[0.55em]">
+                  {index > 0 ? <FilledHeart /> : null}
+                  <span>{part}</span>
+                </span>
+              ))}
             </p>
             <Countdown />
             <div className="mt-5 flex flex-wrap gap-2.5 sm:mt-8 sm:gap-3">

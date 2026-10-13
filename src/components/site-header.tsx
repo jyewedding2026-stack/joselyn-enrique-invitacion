@@ -21,6 +21,10 @@ export function SiteHeader() {
             width={546}
             height={519}
             className="h-14 w-auto object-contain object-left md:h-16"
+            style={{
+              filter:
+                "brightness(0) invert(0.97) sepia(0.25) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45)) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.4))",
+            }}
           />
         </a>
         <nav className="hidden items-center gap-5 text-sm text-white/90 md:flex">
