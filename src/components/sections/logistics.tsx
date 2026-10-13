@@ -36,7 +36,7 @@ export function LogisticsSection() {
           <FadeIn>
             <article className="rounded-3xl border border-[#d8c7a8] bg-[var(--warm-white)] px-6 py-12 text-center shadow-none sm:px-10 sm:py-14 md:px-14 md:py-16">
               <Church
-                className="mx-auto size-6 text-[var(--olive)]"
+                className="mx-auto size-7 text-[var(--olive)]"
                 strokeWidth={1.25}
                 aria-hidden
               />
@@ -72,7 +72,7 @@ export function LogisticsSection() {
           <FadeIn delay={0.08}>
             <article className="rounded-3xl border border-[#d8c7a8] bg-[var(--warm-white)] px-6 py-12 text-center shadow-none sm:px-10 sm:py-14 md:px-14 md:py-16">
               <Wine
-                className="mx-auto size-6 text-[var(--olive)]"
+                className="mx-auto size-7 text-[var(--olive)]"
                 strokeWidth={1.25}
                 aria-hidden
               />

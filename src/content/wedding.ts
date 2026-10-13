@@ -8,7 +8,7 @@ export const wedding = {
     bride: "Joselyn",
     groom: "Enrique",
     displayName: "Joselyn & Enrique",
-    shortLine: "Celebramos nuestro sí en Ica, bajo el sol del desierto.",
+    shortLine: "TWO HEARTS ♡ ONE LOVE ♡ A LIFETIME TOGETHER",
   },
 
   /** Portada de bienvenida (overlay) — textos y acentos editables */
@@ -48,7 +48,7 @@ export const wedding = {
   },
 
   reception: {
-    time: "06:30 pm",
+    time: "7:00 pm",
     place: "Hacienda Hotel Macacona",
     city: "Ica",
     address: "Urb. La Florida 4ta Etapa Sector Macacona, Ica",

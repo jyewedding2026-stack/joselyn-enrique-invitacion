@@ -12,11 +12,16 @@ export function SiteHeader() {
   return (
     <header className="pointer-events-none absolute inset-x-0 top-0 z-40 [&_a]:pointer-events-auto">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 md:px-8">
-        <a
-          href="#inicio"
-          className="font-[family-name:var(--font-display)] text-lg tracking-wide text-white drop-shadow-sm md:text-xl"
-        >
-          {wedding.couple.displayName}
+        <a href="#inicio" className="inline-flex shrink-0 items-center">
+          {/* Relative path for the path-hosted static export */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="./images/logo-je.png"
+            alt={wedding.couple.displayName}
+            width={546}
+            height={519}
+            className="h-14 w-auto object-contain object-left md:h-16"
+          />
         </a>
         <nav className="hidden items-center gap-5 text-sm text-white/90 md:flex">
           {nav.map((item) => (

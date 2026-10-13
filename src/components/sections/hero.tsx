@@ -26,7 +26,13 @@ export function HeroSection() {
             <h1 className="font-[family-name:var(--font-display)] text-[2.75rem] leading-[0.95] text-white sm:text-6xl md:text-7xl lg:text-8xl">
               {wedding.couple.displayName}
             </h1>
-            <p className="mt-3 max-w-md text-sm text-white/90 sm:mt-5 sm:text-base md:text-lg">
+            <p
+              style={{
+                fontFamily: '"Great Vibes", cursive',
+                fontSize: "clamp(0.95rem, 4.5vw, 2.4rem)",
+              }}
+              className="mt-3 max-w-full leading-[1.45] text-balance text-[var(--warm-white)] sm:mt-5"
+            >
               {wedding.couple.shortLine}
             </p>
             <Countdown />
