@@ -97,6 +97,51 @@ function injectPrefetch(partHrefs) {
   }
 }
 
+function squeezeOversizedPngs() {
+  for (const file of walk(ROOT)) {
+    if (!/\.png$/i.test(file)) continue;
+    if (statSync(file).size <= LIMIT) continue;
+
+    const tmp = join(tmpdir(), `arweave-png-${process.pid}.png`);
+    let fitted = false;
+    let scale = 0.9;
+    for (let pass = 0; pass < 8 && !fitted; pass++) {
+      execFileSync("ffmpeg", [
+        "-y",
+        "-loglevel",
+        "error",
+        "-i",
+        file,
+        "-vf",
+        `scale=trunc(iw*${scale}/2)*2:trunc(ih*${scale}/2)*2`,
+        "-pred",
+        "mixed",
+        "-compression_level",
+        "100",
+        tmp,
+      ]);
+      if (statSync(tmp).size <= LIMIT) {
+        copyFileSync(tmp, file);
+        console.log(
+          "squeezed png",
+          relative(ROOT, file),
+          "scale",
+          scale,
+          statSync(file).size,
+        );
+        fitted = true;
+        break;
+      }
+      scale *= 0.85;
+    }
+    if (existsSync(tmp)) unlinkSync(tmp);
+    if (!fitted) {
+      console.error("Could not fit PNG under limit:", file);
+      process.exit(1);
+    }
+  }
+}
+
 function squeezeOversizedJpegs() {
   for (const file of walk(ROOT)) {
     if (!/\.jpe?g$/i.test(file)) continue;
@@ -146,6 +191,7 @@ stripPolyfills();
 const parts = splitLargeJs();
 injectPrefetch(parts);
 squeezeOversizedJpegs();
+squeezeOversizedPngs();
 
 const overs = walk(ROOT).filter((f) => statSync(f).size > LIMIT);
 if (overs.length) {
