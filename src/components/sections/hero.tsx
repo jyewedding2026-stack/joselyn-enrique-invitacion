@@ -54,18 +54,12 @@ export function HeroSection() {
               }}
             >
               <span className="inline-block">{wedding.couple.bride}</span>
+              {" "}
               <span className="sr-only">{" & "}</span>
               <span
                 aria-hidden="true"
-                className="mx-[0.06em] inline-block align-baseline text-white"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontStyle: "italic",
-                  fontWeight: 500,
-                  fontSize: "0.78em",
-                  lineHeight: 1,
-                  fontVariationSettings: '"opsz" 18',
-                }}
+                className="inline-block align-baseline text-white"
+                style={{ fontFamily: '"Great Vibes", cursive' }}
               >
                 &
               </span>

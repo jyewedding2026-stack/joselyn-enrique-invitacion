@@ -106,7 +106,7 @@ export function LogisticsSection() {
                 style={scriptStyle}
                 className="mt-10 text-[clamp(1.55rem,4vw,2rem)] leading-snug text-[var(--olive-muted)]"
               >
-                Los esperamos para celebrar toda la noche.
+                Una noche especial para disfrutar entre adultos, los esperamos para celebrar toda la noche. Gracias por comprendernos.
               </p>
             </article>
           </FadeIn>
