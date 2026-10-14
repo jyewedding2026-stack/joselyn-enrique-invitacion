@@ -97,25 +97,18 @@ export const wedding = {
     ],
   },
 
-  /** PLACEHOLDER — recomendaciones de hospedaje */
   lodging: [
     {
-      name: "PLACEHOLDER: Hotel Centro Ica",
-      zone: "Centro de Ica",
-      note: "Cerca del santuario. Ideal para huéspedes que llegan la mañana del evento.",
-      link: "https://www.google.com/maps/search/?api=1&query=hoteles+Ica+Peru",
+      name: "Hacienda Hotel Macacona",
+      location: "Misma sede de la recepción",
+      maps: "https://www.google.com/maps/search/?api=1&query=Hacienda+Hotel+Macacona%2C+Ica",
+      website: "https://haciendahotelmacacona.com.pe/",
     },
     {
-      name: "PLACEHOLDER: Hacienda Hotel Macacona",
-      zone: "Macacona",
-      note: "Misma sede de la recepción. Consulta disponibilidad con anticipación.",
-      link: "https://www.google.com/maps/search/?api=1&query=Hacienda+Hotel+Macacona+Ica",
-    },
-    {
-      name: "PLACEHOLDER: Hotel oasis / viñedo",
-      zone: "Alrededores de Ica",
-      note: "Ambiente más tranquilo, a 15–20 min del centro.",
-      link: "https://www.google.com/maps/search/?api=1&query=hoteles+viniedos+Ica",
+      name: "Hotel Las Dunas",
+      location: "Ica",
+      maps: "https://www.google.com/maps/search/?api=1&query=Hotel+Las+Dunas%2C+Av.+La+Angostura+400%2C+Ica",
+      website: "https://www.lasdunashotel.com/",
     },
   ],
 

@@ -12,20 +12,19 @@ const phraseParts = wedding.couple.shortLine
 function CalligraphicAmpersand() {
   return (
     <svg
-      viewBox="0 0 112 148"
+      viewBox="50 27 733 619"
       aria-hidden="true"
-      className="mx-[0.07em] inline-block h-[0.78em] w-auto shrink-0 align-baseline text-white"
+      className="mx-[0.04em] inline-block h-[0.9em] w-auto shrink-0 align-baseline text-white"
       fill="none"
     >
       <g
         stroke="currentColor"
-        strokeWidth="9"
+        strokeWidth="42"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M66 12C88 8 106 26 100 46C94 64 74 72 58 60C42 48 44 26 62 14C66 12 66 12 66 12" />
-        <path d="M50 68C72 62 94 80 90 104C86 128 60 144 38 132C16 120 12 92 32 78C40 70 46 68 50 72C54 76 52 70 50 68" />
-        <path d="M14 56C34 68 52 82 70 96C84 108 96 116 108 120" />
+        <path d="M408 160C438 176 472 166 494 142C514 118 508 88 478 66C446 46 400 46 362 64C322 84 292 118 278 156C268 190 278 220 300 242C250 262 190 285 145 340C105 395 72 455 74 515C76 565 115 605 175 618C245 632 330 610 395 555C445 512 472 455 468 400C464 355 420 345 360 358C300 372 245 400 210 445C185 480 195 520 240 525C285 530 325 500 318 465" />
+        <path d="M248 236C330 286 470 348 620 392C690 412 742 400 756 364C770 328 742 300 704 312" />
       </g>
     </svg>
   );
