@@ -58,17 +58,17 @@ export function HeroSection() {
               <span className="sr-only">{" & "}</span>
               <span
                 style={{
-                  fontSize: "0.75em",
+                  fontSize: "0.56em",
                   display: "inline-block",
-                  verticalAlign: "middle",
-                  transform: "translateY(3px)",
+                  verticalAlign: "baseline",
+                  lineHeight: 0,
                 }}
               >
                 <img
                   src="./images/ampersand.png"
                   alt=""
                   aria-hidden="true"
-                  className="inline-block h-[1em] w-auto"
+                  className="block h-[1em] w-auto"
                 />
               </span>
               <span className="inline-block">{wedding.couple.groom}</span>
