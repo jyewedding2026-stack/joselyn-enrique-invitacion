@@ -115,11 +115,31 @@ export const wedding = {
   /** PLACEHOLDER — datos bancarios / lista de regalos */
   gifts: {
     intro:
-      "PLACEHOLDER: Tu presencia es el mejor regalo. Si deseas obsequiarnos algo más, puedes usar estos datos.",
+      "Lo que más deseamos es compartir este día contigo. Si quieres obsequiarnos algo más, estas son las cosas que nos hacen ilusión",
+    ideas: [
+      {
+        title: "Viajes y Luna de Miel",
+        text: "Ayúdanos a llegar a nuestro destino soñado!",
+        image: "./images/regalo-viajes.jpg",
+        imageAlt: "Pareja de espaldas en una playa de acantilados",
+      },
+      {
+        title: "Cenas y Experiencias",
+        text: "Ayúdanos a crear nuevos recuerdos y experiencias",
+        image: "./images/regalo-cenas.jpg",
+        imageAlt: "Cena con luces frente al mar",
+      },
+      {
+        title: "Nuestro Hogar",
+        text: "Ayúdanos a mejorar nuestro espacio juntos",
+        image: "./images/regalo-hogar.jpg",
+        imageAlt: "Sala con chimenea, libros y cafetera",
+      },
+    ],
     accounts: [
       {
-        bank: "PLACEHOLDER: Banco de Crédito del Perú",
-        holder: "PLACEHOLDER: Joselyn / Enrique",
+        bank: "Banco de Crédito del Perú",
+        holder: "Joselyn / Enrique",
         account: "PLACEHOLDER: 191-XXXXXXX-0-XX",
         clabeOrCci: "PLACEHOLDER: CCI 002191XXXXXXXXXXXXXX",
         alias: "PLACEHOLDER: joselyn.enrique.boda",
