@@ -104,9 +104,9 @@ export function LogisticsSection() {
               </a>
               <p
                 style={scriptStyle}
-                className="mt-10 text-[clamp(1.55rem,4vw,2rem)] leading-snug text-[var(--olive-muted)]"
+                className="mx-auto mt-10 max-w-md text-center text-[clamp(1.05rem,2.4vw,1.3rem)] leading-[1.85] text-[var(--olive-muted)]"
               >
-                Una noche especial para disfrutar entre adultos, los esperamos para celebrar toda la noche. Gracias por comprendernos.
+                Celebraremos nuestra boda con una velada de amor, elegancia y encanto, en un ambiente íntimo y exclusivo, pensado para el disfrute de nuestros invitados adultos.
               </p>
             </article>
           </FadeIn>
