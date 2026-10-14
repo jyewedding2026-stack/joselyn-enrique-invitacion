@@ -9,27 +9,6 @@ const phraseParts = wedding.couple.shortLine
   .map((part) => part.trim())
   .filter(Boolean);
 
-function CalligraphicAmpersand() {
-  return (
-    <svg
-      viewBox="50 27 733 619"
-      aria-hidden="true"
-      className="mx-[0.04em] inline-block h-[0.9em] w-auto shrink-0 align-baseline text-white"
-      fill="none"
-    >
-      <g
-        stroke="currentColor"
-        strokeWidth="42"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M408 160C438 176 472 166 494 142C514 118 508 88 478 66C446 46 400 46 362 64C322 84 292 118 278 156C268 190 278 220 300 242C250 262 190 285 145 340C105 395 72 455 74 515C76 565 115 605 175 618C245 632 330 610 395 555C445 512 472 455 468 400C464 355 420 345 360 358C300 372 245 400 210 445C185 480 195 520 240 525C285 530 325 500 318 465" />
-        <path d="M248 236C330 286 470 348 620 392C690 412 742 400 756 364C770 328 742 300 704 312" />
-      </g>
-    </svg>
-  );
-}
-
 function FilledHeart() {
   return (
     <svg
@@ -76,7 +55,20 @@ export function HeroSection() {
             >
               <span className="inline-block">{wedding.couple.bride}</span>
               <span className="sr-only">{" & "}</span>
-              <CalligraphicAmpersand />
+              <span
+                aria-hidden="true"
+                className="mx-[0.06em] inline-block align-baseline text-white"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontStyle: "italic",
+                  fontWeight: 500,
+                  fontSize: "0.78em",
+                  lineHeight: 1,
+                  fontVariationSettings: '"opsz" 18',
+                }}
+              >
+                &
+              </span>
               <span className="inline-block">{wedding.couple.groom}</span>
             </h1>
             <p
