@@ -50,13 +50,6 @@ const RsvpSection = dynamic(
     })),
   { loading: () => null },
 );
-const AlbumCtaSection = dynamic(
-  () =>
-    import("@/components/sections/album-cta").then((m) => ({
-      default: m.AlbumCtaSection,
-    })),
-  { loading: () => null },
-);
 
 export default function HomePage() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -80,7 +73,6 @@ export default function HomePage() {
           <LodgingSection />
           <GiftsSection />
           <RsvpSection />
-          <AlbumCtaSection />
         </main>
         <footer className="relative z-10 border-t border-[var(--sand-border)] bg-[var(--warm-white)] py-10 text-center">
           <p className="font-[family-name:var(--font-display)] text-2xl text-[var(--olive-deep)]">

@@ -5,7 +5,6 @@ const nav = [
   { href: "#logistica", label: "Logística" },
   { href: "#dress-code", label: "Dress code" },
   { href: "#rsvp", label: "Confirmar" },
-  { href: "#album", label: "Álbum" },
 ];
 
 export function SiteHeader() {
