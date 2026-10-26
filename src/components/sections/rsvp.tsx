@@ -16,10 +16,17 @@ type Phase = "loading" | "missing" | "rejected" | "network" | "form" | "done";
 
 type AttendanceChoice = "Asistirá" | "No asistirá";
 
-const CHOICES: AttendanceChoice[] = ["Asistirá", "No asistirá"];
+const CHOICE_BUTTONS: Array<{ label: string; estado: AttendanceChoice }> = [
+  { label: "Sí, asistire", estado: "Asistirá" },
+  { label: "No podré asistir", estado: "No asistirá" },
+];
 
 const NETWORK_MESSAGE =
   "No pudimos conectar con la lista de invitados. Intenta de nuevo más tarde.";
+
+function labelForEstado(estado: RsvpEstado): string {
+  return CHOICE_BUTTONS.find((choice) => choice.estado === estado)?.label ?? estado;
+}
 
 function estadoToChoice(estado: RsvpEstado): AttendanceChoice | "" {
   if (estado === "Asistirá") return "Asistirá";
@@ -259,19 +266,20 @@ export function RsvpSection() {
                         </p>
                       </div>
 
-                      <fieldset
-                        disabled={locked || busy}
-                        className="mt-3 space-y-2 border-0 p-0"
+                      <div
+                        role="group"
+                        aria-label={`Asistencia de ${persona.nombre}`}
+                        className="mt-3 space-y-2"
                       >
-                        <legend className="sr-only">
-                          Asistencia de {persona.nombre}
-                        </legend>
-                        {CHOICES.map((option) => {
-                          const selected = recorded === option;
+                        {CHOICE_BUTTONS.map((choice) => {
+                          const selected = recorded === choice.estado;
                           return (
-                            <label
-                              key={option}
-                              className={`flex h-11 items-center justify-center rounded-full border text-sm transition ${
+                            <button
+                              key={choice.estado}
+                              type="button"
+                              disabled={locked || busy}
+                              aria-pressed={selected}
+                              className={`flex h-11 w-full items-center justify-center rounded-full border text-sm transition ${
                                 selected
                                   ? "border-[#7a3f32] bg-[#7a3f32] text-white"
                                   : "border-[#d8d4cf] bg-white text-[#5c4033]"
@@ -280,29 +288,22 @@ export function RsvpSection() {
                                   ? "cursor-not-allowed"
                                   : "cursor-pointer hover:border-[#c4a070]"
                               } ${!selected && (locked || busy) ? "opacity-60" : ""}`}
+                              onClick={() => {
+                                setChoices((prev) => ({
+                                  ...prev,
+                                  [persona.idPersona]: choice.estado,
+                                }));
+                              }}
                             >
-                              <input
-                                type="radio"
-                                name={`asistencia-${persona.idPersona}`}
-                                value={option}
-                                checked={selected}
-                                className="sr-only"
-                                onChange={() => {
-                                  setChoices((prev) => ({
-                                    ...prev,
-                                    [persona.idPersona]: option,
-                                  }));
-                                }}
-                              />
-                              {option}
-                            </label>
+                              {choice.label}
+                            </button>
                           );
                         })}
-                      </fieldset>
+                      </div>
 
                       {locked && (
                         <p className="mt-3 text-center text-sm text-[#7a3f32]">
-                          Estado registrado: {persona.estado}
+                          Estado registrado: {labelForEstado(persona.estado)}
                         </p>
                       )}
                     </div>
