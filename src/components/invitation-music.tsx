@@ -52,21 +52,24 @@ const MusicContext = createContext<MusicApi | null>(null);
 const bridge: {
   controller: EmbedController | null;
   playRequested: boolean;
+  playing: boolean;
   restarting: boolean;
 } = {
   controller: null,
   playRequested: false,
+  playing: false,
   restarting: false,
 };
 
-function playPerfectOnce() {
-  if (bridge.playRequested) return;
+function playPerfect() {
   bridge.playRequested = true;
+  if (bridge.playing) return;
   bridge.controller?.play();
 }
 
 function onPlayback(event: { data: Playback }) {
   const { isPaused, position = 0, duration = 0 } = event.data;
+  if (isPaused === false) bridge.playing = true;
   const ended = duration > 10_000 && position >= duration - 800 && isPaused === true;
   if (!ended || bridge.restarting) {
     if (position < 2_000) bridge.restarting = false;
@@ -90,12 +93,13 @@ const SpotifyFrame = memo(function SpotifyFrame() {
       if (bridge.controller) return;
       api.createController(
         element,
-        { uri: PERFECT_URI, width: 360, height: 152 },
+        { uri: PERFECT_URI, width: "100%", height: 152 },
         (controller) => {
           bridge.controller = controller;
           controller.addListener("playback_update", onPlayback);
           controller.addListener("playback_started", () => {
             bridge.restarting = false;
+            bridge.playing = true;
           });
           if (bridge.playRequested) controller.play();
         },
@@ -117,25 +121,15 @@ const SpotifyFrame = memo(function SpotifyFrame() {
     }
   }, []);
 
-  return <div ref={hostRef} />;
+  return <div ref={hostRef} className="h-[152px] w-full" />;
 });
 
 export function InvitationMusic({ children }: { children: ReactNode }) {
   const start = useCallback(() => {
-    playPerfectOnce();
+    playPerfect();
   }, []);
 
-  return (
-    <MusicContext.Provider value={{ start }}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed top-0 -left-[10000px] h-[152px] w-[360px] overflow-hidden"
-      >
-        <SpotifyFrame />
-      </div>
-      {children}
-    </MusicContext.Provider>
-  );
+  return <MusicContext.Provider value={{ start }}>{children}</MusicContext.Provider>;
 }
 
 export function useInvitationMusic(): MusicApi {
@@ -144,4 +138,22 @@ export function useInvitationMusic(): MusicApi {
     throw new Error("La música de la invitación no está disponible.");
   }
   return music;
+}
+
+/** Official compact embed. One controller for the page. */
+export function SpotifyEmbed({ parked = false }: { parked?: boolean }) {
+  return (
+    <div
+      className={
+        parked
+          ? "pointer-events-none fixed top-6 left-1/2 z-[1] w-[min(26rem,calc(100%-2.5rem))] -translate-x-1/2"
+          : "relative z-10 mx-auto mb-8 w-full max-w-md px-5"
+      }
+      aria-hidden={parked || undefined}
+    >
+      <div className="overflow-hidden rounded-2xl border border-[#7a3f32]/40 bg-[#f8f5ef] shadow-[0_8px_20px_rgba(122,63,50,0.08)]">
+        <SpotifyFrame />
+      </div>
+    </div>
+  );
 }
