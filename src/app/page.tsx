@@ -93,6 +93,7 @@ function InvitationHome() {
           <RsvpSection />
         </main>
         <footer className="relative z-10 border-t border-[var(--sand-border)] bg-[var(--warm-white)] py-10 text-center">
+          <MusicControl />
           <p className="font-[family-name:var(--font-display)] text-2xl text-[var(--olive-deep)]">
             {wedding.couple.displayName}
           </p>
@@ -100,7 +101,6 @@ function InvitationHome() {
             {wedding.date.display} · Ica
           </p>
         </footer>
-        <MusicControl />
       </div>
     </>
   );

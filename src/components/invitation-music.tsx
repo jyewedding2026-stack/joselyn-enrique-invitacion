@@ -70,16 +70,31 @@ export function useInvitationMusic(): MusicApi {
 
 export function MusicControl() {
   const { playing, toggle } = useInvitationMusic();
+  const label = playing ? "Pausar música" : "Reproducir música";
 
   return (
-    <div className="relative z-10 bg-[var(--warm-white)] px-5 pt-2 pb-16 text-center">
+    <div className="mb-5 flex justify-center">
       <button
         type="button"
         onClick={toggle}
         aria-pressed={playing}
-        className="inline-flex h-11 items-center justify-center rounded-full border border-[#d8d4cf] bg-[#faf8f6] px-6 text-sm text-[#7a3f32] transition hover:border-[#c4a070]"
+        className="flex flex-col items-center gap-2.5 border-0 bg-transparent p-0"
       >
-        {playing ? "Pausar música" : "Reproducir música"}
+        <span
+          aria-hidden="true"
+          className="relative block size-[4.25rem] rounded-full border-[3px] border-[#2c3424] shadow-[0_8px_16px_rgba(63,74,50,0.16)]"
+          style={{
+            background: [
+              "radial-gradient(circle at 35% 30%, rgba(248,245,239,0.28), transparent 42%)",
+              "repeating-radial-gradient(circle at 50% 50%, #3f4a32 0 1px, #2a3322 1.5px 3px, rgba(248,245,239,0.2) 3px 3.5px)",
+            ].join(","),
+          }}
+        >
+          <span className="absolute top-1/2 left-1/2 size-[1.65rem] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[#7a3f32] bg-[#f8f5ef]">
+            <span className="absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7a3f32]" />
+          </span>
+        </span>
+        <span className="text-[0.75rem] tracking-wide text-[#7a3f32]">{label}</span>
       </button>
     </div>
   );
