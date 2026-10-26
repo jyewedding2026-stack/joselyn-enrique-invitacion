@@ -140,7 +140,7 @@ export const wedding = {
     accounts: [
       {
         bank: "Banco de Crédito del Perú",
-        holder: "Enrique Mejia Chau",
+        holder: "Enrique Mejía Chau",
         account: "38020617447065",
         clabeOrCci: "00238012061744706540",
       },

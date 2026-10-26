@@ -54,7 +54,7 @@ export function StorySection() {
               <h3 className="font-[family-name:var(--font-display)] text-3xl text-[var(--olive-deep)] md:text-4xl">
                 {chapter.title}
               </h3>
-              <p className="mt-3 leading-relaxed text-[var(--ink-soft)]">
+              <p className="mt-3 text-justify leading-relaxed text-[var(--ink-soft)]">
                 {chapter.body}
               </p>
             </FadeIn>
