@@ -4,11 +4,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { EnvelopeOverlay } from "@/components/envelope-overlay";
-import {
-  InvitationMusic,
-  MusicControl,
-  useInvitationMusic,
-} from "@/components/invitation-music";
+import { InvitationMusic, useInvitationMusic } from "@/components/invitation-music";
 import { HeroSection } from "@/components/sections/hero";
 import { SaveTheDateSection } from "@/components/sections/save-the-date";
 import { wedding } from "@/content/wedding";
@@ -66,16 +62,15 @@ export default function HomePage() {
 
 function InvitationHome() {
   const [showWelcome, setShowWelcome] = useState(true);
-  const revealInvite = useCallback(() => setShowWelcome(false), []);
   const { start: startMusic } = useInvitationMusic();
+  const revealInvite = useCallback(() => {
+    setShowWelcome(false);
+    startMusic();
+  }, [startMusic]);
 
   return (
     <>
-      <EnvelopeOverlay
-        open={showWelcome}
-        onOpen={revealInvite}
-        onSealTap={startMusic}
-      />
+      <EnvelopeOverlay open={showWelcome} onOpen={revealInvite} />
       <div
         className={
           showWelcome ? "invite-shell invite-shell--veiled" : "invite-shell"
@@ -93,7 +88,6 @@ function InvitationHome() {
           <RsvpSection />
         </main>
         <footer className="relative z-10 border-t border-[var(--sand-border)] bg-[var(--warm-white)] py-10 text-center">
-          <MusicControl />
           <p className="font-[family-name:var(--font-display)] text-2xl text-[var(--olive-deep)]">
             {wedding.couple.displayName}
           </p>
