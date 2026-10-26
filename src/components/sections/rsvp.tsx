@@ -17,7 +17,7 @@ type Phase = "loading" | "missing" | "rejected" | "network" | "form" | "done";
 type AttendanceChoice = "Asistirá" | "No asistirá";
 
 const CHOICE_BUTTONS: Array<{ label: string; estado: AttendanceChoice }> = [
-  { label: "Sí, asistire", estado: "Asistirá" },
+  { label: "Sí, asistiré", estado: "Asistirá" },
   { label: "No podré asistir", estado: "No asistirá" },
 ];
 
