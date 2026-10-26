@@ -14,6 +14,7 @@ import { wedding } from "@/content/wedding";
 type EnvelopeOverlayProps = {
   open: boolean;
   onOpen: () => void;
+  onSealTap?: () => void;
 };
 
 /**
@@ -56,7 +57,7 @@ function SealFace() {
   );
 }
 
-export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
+export function EnvelopeOverlay({ open, onOpen, onSealTap }: EnvelopeOverlayProps) {
   const reduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(open);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -110,6 +111,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
   const startOpeningSequence = useCallback(async () => {
     if (phase !== "idle" || !open || lockRef.current) return;
     lockRef.current = true;
+    onSealTap?.();
     abortRef.current = false;
     const runId = ++runIdRef.current;
     const alive = () =>
@@ -148,7 +150,7 @@ export function EnvelopeOverlay({ open, onOpen }: EnvelopeOverlayProps) {
 
     window.scrollTo(0, 0);
     onOpen();
-  }, [open, onOpen, phase, reduceMotion]);
+  }, [open, onOpen, onSealTap, phase, reduceMotion]);
 
   const onTap = useCallback(
     (e: PointerEvent<HTMLButtonElement> | MouseEvent<HTMLButtonElement>) => {

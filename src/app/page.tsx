@@ -4,6 +4,11 @@ import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { EnvelopeOverlay } from "@/components/envelope-overlay";
+import {
+  InvitationMusic,
+  MusicControl,
+  useInvitationMusic,
+} from "@/components/invitation-music";
 import { HeroSection } from "@/components/sections/hero";
 import { SaveTheDateSection } from "@/components/sections/save-the-date";
 import { wedding } from "@/content/wedding";
@@ -52,12 +57,25 @@ const RsvpSection = dynamic(
 );
 
 export default function HomePage() {
+  return (
+    <InvitationMusic>
+      <InvitationHome />
+    </InvitationMusic>
+  );
+}
+
+function InvitationHome() {
   const [showWelcome, setShowWelcome] = useState(true);
   const revealInvite = useCallback(() => setShowWelcome(false), []);
+  const { start: startMusic } = useInvitationMusic();
 
   return (
     <>
-      <EnvelopeOverlay open={showWelcome} onOpen={revealInvite} />
+      <EnvelopeOverlay
+        open={showWelcome}
+        onOpen={revealInvite}
+        onSealTap={startMusic}
+      />
       <div
         className={
           showWelcome ? "invite-shell invite-shell--veiled" : "invite-shell"
@@ -82,6 +100,7 @@ export default function HomePage() {
             {wedding.date.display} · Ica
           </p>
         </footer>
+        <MusicControl />
       </div>
     </>
   );
