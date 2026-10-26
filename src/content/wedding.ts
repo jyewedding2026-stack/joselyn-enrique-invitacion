@@ -148,8 +148,7 @@ export const wedding = {
   },
 
   hero: {
-    image:
-      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&w=1080&q=55",
+    image: "./images/portada-dunas.jpg",
     imageAlt: "Dunas doradas al atardecer en el desierto",
   },
 
