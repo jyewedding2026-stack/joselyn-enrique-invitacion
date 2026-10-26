@@ -3,7 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
-  assetPrefix: ".",
+  // "." is required for the Arweave export. Dev needs the default prefix
+  // or the flight runtime never hydrates.
+  assetPrefix: process.env.NODE_ENV === "production" ? "." : undefined,
+  allowedDevOrigins: ["127.0.0.1"],
   images: {
     unoptimized: true,
     remotePatterns: [

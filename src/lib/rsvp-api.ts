@@ -1,10 +1,10 @@
 /**
  * Cliente del RSVP vía Google Apps Script (Sheets).
- * GET busca por nombre; POST guarda confirmaciones del grupo.
+ * GET ?id= carga el grupo del enlace; POST guarda confirmaciones.
  */
 
 export const RSVP_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbx43ehkv1kp1jF8Unj6HpKOFp0A8E5PbQheJZikgppEv-jBrm8uywECc1i_bosX8qIHKw/exec";
+  "https://script.google.com/macros/s/AKfycbzlaYn3-LBrS-3sJGiDJpxCVM_CgcnyDGP1BUCkExHgtp9RPOEhvH5zi5irz3KIKtPABw/exec";
 
 export type RsvpEstado = "Asistirá" | "No asistirá" | "Pendiente";
 
@@ -17,8 +17,13 @@ export type RsvpPersona = {
 
 export type RsvpGrupo = {
   idGrupo: string;
+  yaRespondio: boolean;
   personas: RsvpPersona[];
 };
+
+export type ObtenerPorIdResult =
+  | { success: true; grupo: RsvpGrupo }
+  | { success: false; message: string };
 
 export type BuscarResult =
   | { kind: "none"; message: string }
@@ -35,6 +40,12 @@ export type ConfirmarResult = { success: true } | { success: false; message: str
 function asString(value: unknown): string {
   if (value == null) return "";
   return String(value).trim();
+}
+
+function readYaRespondio(raw: Record<string, unknown>): boolean {
+  const value = raw.yaRespondio ?? raw.ya_respondio ?? raw.YA_RESPONDIO;
+  if (value === true) return true;
+  return asString(value).toLowerCase() === "true";
 }
 
 function normalizeEstado(raw: unknown): RsvpEstado {
@@ -89,7 +100,7 @@ function normalizeGrupo(raw: Record<string, unknown>): RsvpGrupo | null {
     )
     .filter((p): p is RsvpPersona => p != null);
   if (personas.length === 0) return null;
-  return { idGrupo, personas };
+  return { idGrupo, yaRespondio: readYaRespondio(raw), personas };
 }
 
 function collectGrupos(data: Record<string, unknown>): RsvpGrupo[] {
@@ -127,7 +138,9 @@ function collectGrupos(data: Record<string, unknown>): RsvpGrupo[] {
           : null,
       )
       .filter((p): p is RsvpPersona => p != null);
-    if (personas.length > 0) return [{ idGrupo, personas }];
+    if (personas.length > 0) {
+      return [{ idGrupo, yaRespondio: readYaRespondio(data), personas }];
+    }
   }
 
   return [];
@@ -149,6 +162,48 @@ async function parseJsonResponse(res: Response): Promise<Record<string, unknown>
   } catch {
     throw new Error("Respuesta inválida del servidor de confirmaciones.");
   }
+}
+
+/** GET ?id= — carga el grupo del enlace único. */
+export async function obtenerPorId(id: string): Promise<ObtenerPorIdResult> {
+  const query = id.trim();
+  if (!query) {
+    return { success: false, message: "Acción no válida." };
+  }
+
+  const url = new URL(RSVP_ENDPOINT);
+  url.searchParams.set("id", query);
+
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    redirect: "follow",
+  });
+
+  if (!res.ok) {
+    throw new Error("No pudimos cargar tu invitación. Intenta de nuevo.");
+  }
+
+  const data = await parseJsonResponse(res);
+  if (data.success === false) {
+    return {
+      success: false,
+      message:
+        asString(data.mensaje ?? data.message ?? data.error) ||
+        "Enlace de invitación no encontrado.",
+    };
+  }
+
+  const grupo = collectGrupos(data)[0];
+  if (!grupo) {
+    return {
+      success: false,
+      message:
+        asString(data.mensaje ?? data.message ?? data.error) ||
+        "No pudimos leer los datos de tu invitación.",
+    };
+  }
+
+  return { success: true, grupo };
 }
 
 /** GET ?action=buscar&nombre= — nunca carga la lista completa. */
