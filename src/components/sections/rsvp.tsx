@@ -24,7 +24,7 @@ const CHOICE_BUTTONS: Array<{ label: string; estado: AttendanceChoice }> = [
 const NETWORK_MESSAGE =
   "No pudimos conectar con la lista de invitados. Intenta de nuevo más tarde.";
 
-function labelForEstado(estado: RsvpEstado): string {
+function labelForEstado(estado: string): string {
   return CHOICE_BUTTONS.find((choice) => choice.estado === estado)?.label ?? estado;
 }
 
@@ -44,12 +44,25 @@ function initialChoices(
   return next;
 }
 
-function groupIsLocked(grupo: RsvpGrupo): boolean {
-  if (grupo.yaRespondio) return true;
-  return (
-    grupo.personas.length > 0 &&
-    grupo.personas.every((persona) => persona.estado !== "Pendiente")
-  );
+function personIsSaved(estado: string): boolean {
+  const value = estado.trim();
+  return value !== "" && value !== "Pendiente";
+}
+
+function pendingSelections(
+  personas: RsvpPersona[],
+  choices: Record<string, AttendanceChoice | "">,
+): Array<{ idPersona: string; estado: AttendanceChoice }> {
+  const confirmaciones: Array<{ idPersona: string; estado: AttendanceChoice }> =
+    [];
+  for (const persona of personas) {
+    if (personIsSaved(persona.estado)) continue;
+    const choice = choices[persona.idPersona];
+    if (choice === "Asistirá" || choice === "No asistirá") {
+      confirmaciones.push({ idPersona: persona.idPersona, estado: choice });
+    }
+  }
+  return confirmaciones;
 }
 
 function friendlyError(err: unknown, fallback: string): string {
@@ -122,26 +135,15 @@ export function RsvpSection() {
     };
   }, [attempt]);
 
-  const locked = grupo != null && groupIsLocked(grupo);
+  const personas = grupo?.personas ?? [];
+  const nonePending =
+    personas.length > 0 && personas.every((persona) => personIsSaved(persona.estado));
+  const confirmaciones = pendingSelections(personas, choices);
 
   async function onConfirmSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!grupo || locked) return;
-
-    const confirmaciones: Array<{
-      idPersona: string;
-      estado: AttendanceChoice;
-    }> = [];
-
-    for (const persona of grupo.personas) {
-      const choice = choices[persona.idPersona];
-      if (choice !== "Asistirá" && choice !== "No asistirá") {
-        setError(`Indica la asistencia de ${persona.nombre}.`);
-        return;
-      }
-      confirmaciones.push({ idPersona: persona.idPersona, estado: choice });
-    }
+    if (!grupo || confirmaciones.length === 0) return;
 
     setBusy(true);
     try {
@@ -244,7 +246,7 @@ export function RsvpSection() {
               noValidate
             >
               <p className="mb-5 text-center text-sm text-[#7a7268]">
-                {locked
+                {nonePending
                   ? "Ya recibimos la confirmación de este grupo."
                   : "Confirma la asistencia de cada persona de tu grupo."}
               </p>
@@ -252,6 +254,7 @@ export function RsvpSection() {
               <div className="space-y-4">
                 {grupo?.personas.map((persona) => {
                   const recorded = choices[persona.idPersona] ?? "";
+                  const saved = personIsSaved(persona.estado);
                   return (
                     <div
                       key={persona.idPersona}
@@ -277,17 +280,17 @@ export function RsvpSection() {
                             <button
                               key={choice.estado}
                               type="button"
-                              disabled={locked || busy}
+                              disabled={saved || busy}
                               aria-pressed={selected}
                               className={`flex h-11 w-full items-center justify-center rounded-full border text-sm transition ${
                                 selected
                                   ? "border-[#7a3f32] bg-[#7a3f32] text-white"
                                   : "border-[#d8d4cf] bg-white text-[#5c4033]"
                               } ${
-                                locked || busy
+                                saved || busy
                                   ? "cursor-not-allowed"
                                   : "cursor-pointer hover:border-[#c4a070]"
-                              } ${!selected && (locked || busy) ? "opacity-60" : ""}`}
+                              } ${!selected && (saved || busy) ? "opacity-60" : ""}`}
                               onClick={() => {
                                 setChoices((prev) => ({
                                   ...prev,
@@ -301,7 +304,7 @@ export function RsvpSection() {
                         })}
                       </div>
 
-                      {locked && (
+                      {saved && (
                         <p className="mt-3 text-center text-sm text-[#7a3f32]">
                           Estado registrado: {labelForEstado(persona.estado)}
                         </p>
@@ -317,15 +320,17 @@ export function RsvpSection() {
                 </p>
               )}
 
-              <div className="mt-7">
-                <button
-                  type="submit"
-                  disabled={busy || locked}
-                  className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#7a3f32] text-base font-medium tracking-wide text-white transition hover:bg-[#6a3529] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {busy ? "Guardando…" : wedding.rsvp.submitLabel}
-                </button>
-              </div>
+              {!nonePending && (
+                <div className="mt-7">
+                  <button
+                    type="submit"
+                    disabled={busy || confirmaciones.length === 0}
+                    className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#7a3f32] text-base font-medium tracking-wide text-white transition hover:bg-[#6a3529] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {busy ? "Guardando…" : wedding.rsvp.submitLabel}
+                  </button>
+                </div>
+              )}
             </form>
           )}
         </FadeIn>
