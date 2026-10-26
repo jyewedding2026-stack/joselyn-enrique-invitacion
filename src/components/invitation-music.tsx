@@ -2,62 +2,95 @@
 
 import {
   createContext,
+  memo,
   useCallback,
   useContext,
+  useEffect,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 
-const SRC = "./audio/valse-suave.mp3";
+/** Solo "Perfect" by Ed Sheeran. Not the Beyoncé duet. */
+const PERFECT_URI = "spotify:track:0tgVpDi06FyKpA1z0VMD4v";
+const SPOTIFY_API = "https://open.spotify.com/embed/iframe-api/v1";
+
+type Playback = {
+  playingURI?: string;
+  isPaused?: boolean;
+  duration?: number;
+  position?: number;
+};
+
+type EmbedController = {
+  play: () => void;
+  pause: () => void;
+  resume: () => void;
+  restart: () => void;
+  addListener: (name: string, cb: (event: { data: Playback }) => void) => void;
+};
+
+type IFrameAPI = {
+  createController: (
+    element: HTMLElement,
+    options: { uri: string; width: string | number; height: number },
+    callback: (controller: EmbedController) => void,
+  ) => void;
+};
+
+declare global {
+  interface Window {
+    onSpotifyIframeApiReady?: (api: IFrameAPI) => void;
+  }
+}
 
 type MusicApi = {
-  playing: boolean;
   start: () => void;
-  toggle: () => void;
 };
 
 const MusicContext = createContext<MusicApi | null>(null);
 
+const bridge: {
+  controller: EmbedController | null;
+  playRequested: boolean;
+  setPlaying: ((playing: boolean) => void) | null;
+  restarting: boolean;
+} = {
+  controller: null,
+  playRequested: false,
+  setPlaying: null,
+  restarting: false,
+};
+
+function playPerfectOnce() {
+  if (bridge.playRequested) return;
+  bridge.playRequested = true;
+  bridge.controller?.play();
+}
+
+function onPlayback(event: { data: Playback }) {
+  const { isPaused, position = 0, duration = 0 } = event.data;
+  const playing = isPaused === false;
+  bridge.setPlaying?.(playing);
+
+  const ended = duration > 10_000 && position >= duration - 800 && isPaused === true;
+  if (!ended || bridge.restarting) {
+    if (position < 2_000) bridge.restarting = false;
+    return;
+  }
+  bridge.restarting = true;
+  const controller = bridge.controller;
+  if (!controller) return;
+  if (typeof controller.restart === "function") controller.restart();
+  else controller.play();
+}
+
 export function InvitationMusic({ children }: { children: ReactNode }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const startedRef = useRef(false);
-  const [playing, setPlaying] = useState(false);
-
   const start = useCallback(() => {
-    if (startedRef.current) return;
-    const audio = audioRef.current;
-    if (!audio) return;
-    startedRef.current = true;
-    void audio.play().catch(() => {
-      startedRef.current = false;
-    });
+    playPerfectOnce();
   }, []);
 
-  const toggle = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (audio.paused) {
-      void audio.play();
-      return;
-    }
-    audio.pause();
-  }, []);
-
-  return (
-    <MusicContext.Provider value={{ playing, start, toggle }}>
-      <audio
-        ref={audioRef}
-        src={SRC}
-        loop
-        preload="auto"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        className="pointer-events-none fixed top-0 left-0 h-px w-px opacity-0"
-      />
-      {children}
-    </MusicContext.Provider>
-  );
+  return <MusicContext.Provider value={{ start }}>{children}</MusicContext.Provider>;
 }
 
 export function useInvitationMusic(): MusicApi {
@@ -68,12 +101,72 @@ export function useInvitationMusic(): MusicApi {
   return music;
 }
 
-export function MusicControl() {
-  const { playing, toggle } = useInvitationMusic();
-  const label = playing ? "Pausar música" : "Reproducir música";
+const SpotifyFrame = memo(function SpotifyFrame() {
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = hostRef.current;
+    if (!element) return;
+
+    const mount = (api: IFrameAPI) => {
+      if (bridge.controller) return;
+      api.createController(
+        element,
+        { uri: PERFECT_URI, width: "100%", height: 152 },
+        (controller) => {
+          bridge.controller = controller;
+          controller.addListener("playback_update", onPlayback);
+          controller.addListener("playback_started", () => {
+            bridge.restarting = false;
+            bridge.setPlaying?.(true);
+          });
+          if (bridge.playRequested) controller.play();
+        },
+      );
+    };
+
+    const previous = window.onSpotifyIframeApiReady;
+    window.onSpotifyIframeApiReady = (api: IFrameAPI) => {
+      previous?.(api);
+      mount(api);
+    };
+
+    if (!document.getElementById("spotify-iframe-api")) {
+      const script = document.createElement("script");
+      script.id = "spotify-iframe-api";
+      script.src = SPOTIFY_API;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
 
   return (
-    <div className="mb-5 flex justify-center">
+    <div className="w-full">
+      <div ref={hostRef} />
+    </div>
+  );
+});
+
+export function MusicControl() {
+  const [playing, setPlaying] = useState(false);
+  const label = playing ? "Pausar música" : "Reproducir música";
+
+  useEffect(() => {
+    bridge.setPlaying = setPlaying;
+    return () => {
+      if (bridge.setPlaying === setPlaying) bridge.setPlaying = null;
+    };
+  }, []);
+
+  const toggle = () => {
+    const controller = bridge.controller;
+    if (!controller) return;
+    if (playing) controller.pause();
+    else controller.resume();
+  };
+
+  return (
+    <div className="mx-auto mb-6 flex w-full max-w-[360px] flex-col items-center gap-3 px-4">
       <button
         type="button"
         onClick={toggle}
@@ -96,6 +189,7 @@ export function MusicControl() {
         </span>
         <span className="text-[0.75rem] tracking-wide text-[#7a3f32]">{label}</span>
       </button>
+      <SpotifyFrame />
     </div>
   );
 }
