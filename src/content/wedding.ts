@@ -50,6 +50,7 @@ export const wedding = {
   reception: {
     time: "7:00 pm",
     place: "Hacienda Hotel Macacona",
+    area: 'Area "Las terrazas del Cesar"',
     city: "Ica",
     address: "Urb. La Florida 4ta Etapa Sector Macacona, Ica",
     lat: -14.030912,
@@ -139,10 +140,9 @@ export const wedding = {
     accounts: [
       {
         bank: "Banco de Crédito del Perú",
-        holder: "Joselyn / Enrique",
-        account: "191-XXXXXXX-0-XX",
-        clabeOrCci: "CCI 002191XXXXXXXXXXXXXX",
-        alias: "joselyn.enrique.boda",
+        holder: "Enrique Mejia Chau",
+        account: "38020617447065",
+        clabeOrCci: "00238012061744706540",
       },
     ],
   },

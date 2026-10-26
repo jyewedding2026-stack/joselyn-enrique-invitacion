@@ -91,6 +91,11 @@ export function LogisticsSection() {
               >
                 {wedding.reception.place}
               </p>
+              <p
+                className={`${serifFont} mt-2 text-[clamp(1.15rem,2.8vw,1.45rem)] leading-snug text-[var(--ink)]`}
+              >
+                {wedding.reception.area}
+              </p>
               <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-[var(--ink-soft)] md:text-base">
                 {wedding.reception.address}
               </p>

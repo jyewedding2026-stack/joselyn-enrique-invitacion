@@ -131,25 +131,21 @@ export function GiftsSection() {
             <div className="grid items-end gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-10">
               <div>
                 <p className="text-sm text-[var(--olive)]">{account.bank}</p>
-                <p className="mt-1 font-[family-name:var(--font-display)] text-[1.7rem] leading-tight text-[var(--olive-deep)]">
-                  {account.holder}
-                </p>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <p className="text-sm text-[var(--ink-soft)] break-all">{account.account}</p>
-                  <CopyButton
-                    label="Cuenta"
-                    value={account.account}
-                    copied={copied === `Cuenta-${account.account}`}
-                    onCopied={setCopied}
-                  />
+                <div className="mt-3">
+                  <p className="text-[0.7rem] tracking-[0.14em] text-[var(--olive-muted)] uppercase">
+                    Nombre
+                  </p>
+                  <p className="mt-0.5 font-[family-name:var(--font-display)] text-[1.7rem] leading-tight text-[var(--olive-deep)]">
+                    {account.holder}
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 {(
                   [
+                    ["Cuenta", account.account],
                     ["CCI", account.clabeOrCci],
-                    ["Alias", account.alias],
                   ] as const
                 ).map(([label, value]) => (
                   <div key={label} className="flex items-center justify-between gap-3">
