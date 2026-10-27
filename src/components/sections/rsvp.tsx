@@ -194,7 +194,7 @@ export function RsvpSection() {
               {/* Relative path for Arweave / path-hosted static export */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="./images/rsvp-copas.jpg"
+                src="./images/rsvp-copas.png"
                 alt=""
                 width={547}
                 height={315}
