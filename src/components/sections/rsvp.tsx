@@ -14,23 +14,18 @@ import {
 
 type Phase = "loading" | "missing" | "rejected" | "network" | "form" | "done";
 
-type AttendanceChoice = "Asistirá" | "No asistirá";
+type AttendanceChoice = "Sí, asistiré" | "No podré asistir";
 
 const CHOICE_BUTTONS: Array<{ label: string; estado: AttendanceChoice }> = [
-  { label: "Sí, asistiré", estado: "Asistirá" },
-  { label: "No podré asistir", estado: "No asistirá" },
+  { label: "Sí, asistiré", estado: "Sí, asistiré" },
+  { label: "No podré asistir", estado: "No podré asistir" },
 ];
 
 const NETWORK_MESSAGE =
   "No pudimos conectar con la lista de invitados. Intenta de nuevo más tarde.";
 
-function labelForEstado(estado: string): string {
-  return CHOICE_BUTTONS.find((choice) => choice.estado === estado)?.label ?? estado;
-}
-
 function estadoToChoice(estado: RsvpEstado): AttendanceChoice | "" {
-  if (estado === "Asistirá") return "Asistirá";
-  if (estado === "No asistirá") return "No asistirá";
+  if (estado === "Sí, asistiré" || estado === "No podré asistir") return estado;
   return "";
 }
 
@@ -44,21 +39,38 @@ function initialChoices(
   return next;
 }
 
-function personIsSaved(estado: string): boolean {
+function estadoIsAnswered(estado: string): boolean {
   const value = estado.trim();
   return value !== "" && value !== "Pendiente";
 }
 
+function personAnswered(persona: RsvpPersona): boolean {
+  return persona.yaRespondio || estadoIsAnswered(persona.estado);
+}
+
+function groupIsMixed(personas: RsvpPersona[]): boolean {
+  return (
+    personas.some((persona) => personAnswered(persona)) &&
+    personas.some((persona) => !personAnswered(persona))
+  );
+}
+
+function personIsLocked(persona: RsvpPersona, grupo: RsvpGrupo): boolean {
+  if (personAnswered(persona)) return true;
+  return grupo.yaRespondio && !groupIsMixed(grupo.personas);
+}
+
 function pendingSelections(
   personas: RsvpPersona[],
+  grupo: RsvpGrupo,
   choices: Record<string, AttendanceChoice | "">,
 ): Array<{ idPersona: string; estado: AttendanceChoice }> {
   const confirmaciones: Array<{ idPersona: string; estado: AttendanceChoice }> =
     [];
   for (const persona of personas) {
-    if (personIsSaved(persona.estado)) continue;
+    if (personIsLocked(persona, grupo)) continue;
     const choice = choices[persona.idPersona];
-    if (choice === "Asistirá" || choice === "No asistirá") {
+    if (choice === "Sí, asistiré" || choice === "No podré asistir") {
       confirmaciones.push({ idPersona: persona.idPersona, estado: choice });
     }
   }
@@ -137,8 +149,10 @@ export function RsvpSection() {
 
   const personas = grupo?.personas ?? [];
   const nonePending =
-    personas.length > 0 && personas.every((persona) => personIsSaved(persona.estado));
-  const confirmaciones = pendingSelections(personas, choices);
+    grupo != null &&
+    personas.length > 0 &&
+    personas.every((persona) => personIsLocked(persona, grupo));
+  const confirmaciones = grupo ? pendingSelections(personas, grupo, choices) : [];
 
   async function onConfirmSubmit(e: FormEvent) {
     e.preventDefault();
@@ -254,7 +268,7 @@ export function RsvpSection() {
               <div className="space-y-4">
                 {grupo?.personas.map((persona) => {
                   const recorded = choices[persona.idPersona] ?? "";
-                  const saved = personIsSaved(persona.estado);
+                  const saved = personIsLocked(persona, grupo);
                   return (
                     <div
                       key={persona.idPersona}
@@ -306,7 +320,7 @@ export function RsvpSection() {
 
                       {saved && (
                         <p className="mt-3 text-center text-sm text-[#7a3f32]">
-                          Estado registrado: {labelForEstado(persona.estado)}
+                          Tu respuesta ya está registrada.
                         </p>
                       )}
                     </div>

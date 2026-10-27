@@ -6,13 +6,14 @@
 export const RSVP_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbwn1z05mOqA0qjYcKO14799S18GNYh0gCR2Azb-tgPVwrsCp9uH5amaVq5lr1W5ahVd7A/exec";
 
-export type RsvpEstado = "Asistirá" | "No asistirá" | "Pendiente";
+export type RsvpEstado = "Sí, asistiré" | "No podré asistir" | "Pendiente";
 
 export type RsvpPersona = {
   idPersona: string;
   nombre: string;
   tipo: string;
   estado: RsvpEstado;
+  yaRespondio: boolean;
 };
 
 export type RsvpGrupo = {
@@ -32,7 +33,10 @@ export type BuscarResult =
 
 export type ConfirmarPayload = {
   idGrupo: string;
-  confirmaciones: Array<{ idPersona: string; estado: "Asistirá" | "No asistirá" }>;
+  confirmaciones: Array<{
+    idPersona: string;
+    estado: "Sí, asistiré" | "No podré asistir";
+  }>;
 };
 
 export type ConfirmarResult = { success: true } | { success: false; message: string };
@@ -50,19 +54,29 @@ function readYaRespondio(raw: Record<string, unknown>): boolean {
 
 function normalizeEstado(raw: unknown): RsvpEstado {
   const s = asString(raw).toLowerCase();
-  if (s.includes("no") || s === "no asistirá" || s === "no asistira") {
-    return "No asistirá";
+  if (!s || s === "pendiente" || s.includes("pend")) return "Pendiente";
+  if (
+    s === "no podré asistir" ||
+    s === "no podre asistir" ||
+    s === "no asistirá" ||
+    s === "no asistira" ||
+    s === "no" ||
+    (s.includes("no") && s.includes("asist"))
+  ) {
+    return "No podré asistir";
   }
   if (
-    s.includes("asist") &&
-    !s.includes("pend") &&
-    s !== "pendiente"
+    s === "sí, asistiré" ||
+    s === "si, asistire" ||
+    s === "asistirá" ||
+    s === "asistira" ||
+    s === "sí" ||
+    s === "si" ||
+    s === "yes" ||
+    s.includes("asist")
   ) {
-    // "Asistirá", "asistira", "Asistira", etc.
-    if (!s.includes("no")) return "Asistirá";
+    return "Sí, asistiré";
   }
-  if (s === "sí" || s === "si" || s === "yes") return "Asistirá";
-  if (s === "no") return "No asistirá";
   return "Pendiente";
 }
 
@@ -84,7 +98,7 @@ function normalizePersona(raw: Record<string, unknown>): RsvpPersona | null {
   if (!idPersona || !nombre) return null;
   const tipo = asString(raw.tipo ?? raw.TIPO ?? raw.rol ?? "Invitado") || "Invitado";
   const estado = normalizeEstado(raw.estado ?? raw.ESTADO ?? raw.status);
-  return { idPersona, nombre, tipo, estado };
+  return { idPersona, nombre, tipo, estado, yaRespondio: readYaRespondio(raw) };
 }
 
 function normalizeGrupo(raw: Record<string, unknown>): RsvpGrupo | null {
