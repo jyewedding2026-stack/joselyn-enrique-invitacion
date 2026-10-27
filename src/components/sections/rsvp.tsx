@@ -259,11 +259,11 @@ export function RsvpSection() {
               onSubmit={onConfirmSubmit}
               noValidate
             >
-              <p className="mb-5 text-center text-sm text-[#7a7268]">
-                {nonePending
-                  ? "Ya recibimos la confirmación de este grupo."
-                  : "Confirma la asistencia de cada persona de tu grupo."}
-              </p>
+              {nonePending && (
+                <p className="mb-5 text-center text-sm text-[#7a7268]">
+                  Ya recibimos la confirmación de este grupo.
+                </p>
+              )}
 
               <div className="space-y-4">
                 {grupo?.personas.map((persona) => {
