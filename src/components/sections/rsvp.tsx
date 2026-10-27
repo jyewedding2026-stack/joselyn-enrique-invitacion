@@ -259,12 +259,6 @@ export function RsvpSection() {
               onSubmit={onConfirmSubmit}
               noValidate
             >
-              {nonePending && (
-                <p className="mb-5 text-center text-sm text-[#7a7268]">
-                  Ya recibimos la confirmación de este grupo.
-                </p>
-              )}
-
               <div className="space-y-4">
                 {grupo?.personas.map((persona) => {
                   const recorded = choices[persona.idPersona] ?? "";
@@ -320,7 +314,7 @@ export function RsvpSection() {
 
                       {saved && (
                         <p className="mt-3 text-center text-sm text-[#7a3f32]">
-                          Tu respuesta ya está registrada.
+                          Ya recibimos tu confirmación, Gracias!
                         </p>
                       )}
                     </div>
