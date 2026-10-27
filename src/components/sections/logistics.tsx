@@ -109,7 +109,7 @@ export function LogisticsSection() {
               </a>
               <p
                 style={scriptStyle}
-                className="mx-auto mt-10 max-w-md text-center text-[clamp(2.1rem,4.8vw,2.6rem)] leading-[1.85] text-[var(--olive-muted)]"
+                className="mx-auto mt-10 max-w-md text-center text-[clamp(1.15rem,2.8vw,1.45rem)] leading-[1.85] text-[var(--olive-muted)]"
               >
                 Evento exclusivo para adultos.
               </p>
