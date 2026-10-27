@@ -63,8 +63,8 @@ export const wedding = {
     label: "Elegante",
     illustration: "./images/dress-code.png",
     lines: [
-      { lead: "Hombres", text: "terno y corbata" },
-      { lead: "Mujeres", text: "vestido largo o cocktail sofisticado" },
+      { lead: "Hombres", text: "terno y corbata clasica" },
+      { lead: "Mujeres", text: "vestido largo o cocktail" },
       {
         lead: "Nota",
         text: "Reservamos los colores blanco, beige y marfil exclusivamente para la novia. ¡Gracias por tu comprensión!",
