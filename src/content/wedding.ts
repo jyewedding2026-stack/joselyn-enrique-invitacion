@@ -61,7 +61,7 @@ export const wedding = {
 
   dressCode: {
     label: "Elegante",
-    illustration: "./images/dress-code-couple.jpg",
+    illustration: "./images/dress-code.png",
     lines: [
       { lead: "Hombres", text: "terno y corbata" },
       { lead: "Mujeres", text: "vestido largo o cocktail sofisticado" },

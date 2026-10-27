@@ -111,7 +111,7 @@ export function LogisticsSection() {
                 style={scriptStyle}
                 className="mx-auto mt-10 max-w-md text-center text-[clamp(1.05rem,2.4vw,1.3rem)] leading-[1.85] text-[var(--olive-muted)]"
               >
-                Celebraremos nuestra boda con una velada de amor, elegancia y encanto, en un ambiente íntimo y exclusivo, pensado para el disfrute de nuestros invitados adultos.
+                Evento exclusivo para adultos.
               </p>
             </article>
           </FadeIn>

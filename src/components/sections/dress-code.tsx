@@ -14,8 +14,8 @@ export function DressCodeSection() {
             <img
               src={wedding.dressCode.illustration}
               alt="Código de vestimenta elegante"
-              width={800}
-              height={1329}
+              width={896}
+              height={1200}
               className="h-auto w-full select-none"
               loading="lazy"
               decoding="async"
