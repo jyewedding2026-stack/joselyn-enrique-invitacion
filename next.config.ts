@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  output: "standalone",
   trailingSlash: true,
   // "." is required for the Arweave export. Dev needs the default prefix
   // or the flight runtime never hydrates.
