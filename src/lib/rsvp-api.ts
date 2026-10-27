@@ -4,7 +4,7 @@
  */
 
 export const RSVP_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbwOiuMpwh6ZVRcnGJZ9xlxj_Lixjtcpoim3eJRGn5xDLVznfdBBvM8-55Lh79MFb7aq5w/exec";
+  "https://script.google.com/macros/s/AKfycbwn1z05mOqA0qjYcKO14799S18GNYh0gCR2Azb-tgPVwrsCp9uH5amaVq5lr1W5ahVd7A/exec";
 
 export type RsvpEstado = "Asistirá" | "No asistirá" | "Pendiente";
 
